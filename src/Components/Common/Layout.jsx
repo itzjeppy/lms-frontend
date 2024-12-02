@@ -23,7 +23,7 @@ const Layout = () => {
   return (
     <>
       <AppBar
-        position="fixed" // Changed from 'sticky' to 'fixed'
+        position="fixed"
         sx={{
           backgroundColor: "#634E94",
           zIndex: (theme) => theme.zIndex.drawer + 1,
@@ -103,8 +103,8 @@ const Layout = () => {
         paddingBottom: 1,
         marginTop: `${appBarHeight}px`, // Added top margin to compensate for the fixed AppBar
         height: `calc(100vh - ${appBarHeight}px)`,
-        width: '100%',
-        overflow: '',
+        width: '100vw',
+        overflow: 'auto',
         transition: theme => theme.transitions.create(['margin', 'width'], {
           easing: theme.transitions.easing.sharp,
           duration: theme.transitions.duration.leavingScreen,
@@ -113,8 +113,8 @@ const Layout = () => {
         <Box
         component="main"
         sx={{
-          width: '100%', // Full width
-          height: '100%', // Full height
+          width: '100vh', // Full width
+          height: '100vw', // Full height
           p: 0 
         }}>
           <Outlet  sidebarOpen={open} />

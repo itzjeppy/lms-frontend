@@ -1,22 +1,17 @@
 import React, { useState } from "react";
-import { Paper } from "@mui/material";
-import Modal from "react-modal";
-import FormikForm from './FormicForm';
+import {
+  Paper,
+  Button,
+  Typography,
+  Box,
+  IconButton,
+  Container,
+} from "@mui/material";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import CloseIcon from "@mui/icons-material/Close";
+import { Modal } from "@mui/material";
+import FormikForm from "./FormicForm";
 import OffersList from "./OffersList";
-
-const customStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "500px",
-    height: "500px",
-    padding: "20px",
-    border: "1px solid #ddd",
-    borderRadius: "10px",
-    boxShadow: "0px 0px 10px rgba(0,0,0,0.2)",
-  },
-};
 
 const OffersContent = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -38,36 +33,117 @@ const OffersContent = () => {
   };
 
   return (
-        <Paper
+    <Container
       sx={{
-        width: '100%', // Always take full width provided by the parent
-        height: '100%', // Full height of the container
-        margin: 0, // No margin
-        padding: 2, // Padding inside the Paper
-        boxSizing: 'border-box', // Ensure padding is accounted for in dimensions
-        display: 'flex', // Flex container
-        flexDirection: 'column', // Stack children vertically
-        position: 'relative', // Position relative for inner content alignment
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        p: 3,
+        bgcolor: "#f9f9f9", // Light background
+        borderRadius: 2,
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)", // Subtle shadow
       }}
     >
-      <div className="offers-content">
-        <h2>Your Offers</h2>
-        <button
-          className="add-offer-btn"
+      {/* Header Section */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+        }}
+      >
+        <Typography
+          variant="h2"
+          sx={{
+            fontWeight: "bold",
+            color: "#4A4A4A",
+          }}
+        >
+          Your Offers
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<AddCircleOutlineIcon />}
           onClick={() => setModalIsOpen(true)}
+          sx={{
+            fontWeight: "bold",
+            textTransform: "none", // Avoid uppercase
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+          }}
         >
           Add Offer
-        </button>
-        <Modal
-          isOpen={modalIsOpen}
-          style={customStyles}
-          onRequestClose={() => setModalIsOpen(false)}
+        </Button>
+      </Box>
+
+      {/* Offers List Section */}
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflowY: "auto", // Scrollable content
+          bgcolor: "#ffffff", // White card background
+          p: 2,
+          borderRadius: 2,
+          boxShadow: "0 1px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow
+        }}
+      >
+        {offers.length > 0 ? (
+          <OffersList offers={offers} onStatusToggle={handleStatusToggle} />
+        ) : (
+          <Typography
+            variant="body1"
+            color="textSecondary"
+            sx={{ textAlign: "center", mt: 2 }}
+          >
+            No offers available. Start by adding a new offer!
+          </Typography>
+        )}
+      </Box>
+
+      {/* Add Offer Modal */}
+      <Modal
+        open={modalIsOpen}
+        onClose={() => setModalIsOpen(false)}
+        aria-labelledby="add-offer-modal-title"
+        aria-describedby="add-offer-modal-description"
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Paper
+          sx={{
+            width: "500px",
+            maxWidth: "90%",
+            p: 3,
+            borderRadius: 3,
+            boxShadow: "0 8px 24px rgba(0, 0, 0, 0.2)", // Stronger shadow
+            position: "relative",
+          }}
         >
+          <IconButton
+            onClick={() => setModalIsOpen(false)}
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              color: "grey.600",
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <Typography
+            variant="h5"
+            sx={{ fontWeight: "bold", mb: 2, textAlign: "center" }}
+          >
+            Add a New Offer
+          </Typography>
           <FormikForm onSubmit={handleSubmit} />
-        </Modal>
-        <OffersList offers={offers} onStatusToggle={handleStatusToggle} />
-      </div>
-    </Paper>
+        </Paper>
+      </Modal>
+    </Container>
   );
 };
 
