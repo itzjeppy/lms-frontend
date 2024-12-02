@@ -103,16 +103,19 @@ const Layout = () => {
         paddingBottom: 1,
         marginTop: `${appBarHeight}px`, // Added top margin to compensate for the fixed AppBar
         height: `calc(100vh - ${appBarHeight}px)`,
-        overflow: 'auto',
+        width: '100%',
+        overflow: '',
         transition: theme => theme.transitions.create(['margin', 'width'], {
           easing: theme.transitions.easing.sharp,
           duration: theme.transitions.duration.leavingScreen,
         })
       }}>
-        <Box sx={{
+        <Box
+        component="main"
+        sx={{
           width: '100%', // Full width
           height: '100%', // Full height
-          p: 0 // No padding, let the child components handle their own padding
+          p: 0 
         }}>
           <Outlet  sidebarOpen={open} />
         </Box>
