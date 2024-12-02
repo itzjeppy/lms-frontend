@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { AppBar, Toolbar, Typography, IconButton, Avatar, SvgIcon, Box, Drawer, List, ListItem, ListItemText, ListItemIcon, Divider, Container, Button } from "@mui/material";
+import { AppBar, Toolbar, IconButton, Avatar, Box, Drawer, List, ListItem, ListItemText, ListItemIcon, Divider, Container } from "@mui/material";
 import { Link } from "react-router-dom";
-import { Home, LocalOffer, Sell, Mail, ConfirmationNumber, Menu } from "@mui/icons-material";
+import { Home, LocalOffer, Mail, ConfirmationNumber, Menu } from "@mui/icons-material";
 import Logo from '../../Icons/Logo';
 
 const Layout = () => {
