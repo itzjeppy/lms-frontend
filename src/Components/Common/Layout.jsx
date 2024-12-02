@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { AppBar, Toolbar, Typography, IconButton, Avatar, SvgIcon, Box, Drawer, List, ListItem, ListItemText, ListItemIcon, Divider, Container, Button } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { Home, LocalOffer, Sell, Mail, ConfirmationNumber, Menu } from "@mui/icons-material";
 import Logo from '../../Icons/Logo';
 
@@ -90,12 +90,19 @@ const Layout = () => {
         </Box>
       </Drawer>
 
-      <Container sx={{ marginLeft: open ? `${drawerWidth}px` : 0, padding: 3, marginTop: `${appBarHeight}px`, transition: theme => theme.transitions.create(['margin', 'width'], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }) }}>
-        {/* Main content goes here */}
-      </Container>
+      <Container sx={{
+    marginLeft: open ? `${drawerWidth}px` : 0,
+    padding: 3,
+    marginTop: `${appBarHeight}px`,
+    transition: theme => theme.transitions.create(['margin', 'width'], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  })
+}}>
+  <Container>
+    <Outlet /> {/* This renders the selected component based on the sidebar link clicked */}
+    </Container>
+    </Container>
     </>
   );
 };

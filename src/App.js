@@ -1,8 +1,9 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import theme from "./theme";
-import Layout from "../../lms-frontend/src/Components/Common/Layout.jsx"; // Assuming Layout is stored here
+import Layout from "../../lms-frontend/src/Components/Common/Layout.jsx"; // Ensure this path is correct
+import AppRoutes from "./Components/Utils/AppRoutes";
 
 const App = () => {
   return (
@@ -10,11 +11,7 @@ const App = () => {
       <CssBaseline />
       <Router>
         <Layout>
-          {/* Main Content */}
-          <Routes>
-            {/* Define your routes and components here */}
-            {/* Example: <Route path="/" element={<HomePage />} /> */}
-          </Routes>
+          <AppRoutes/>
         </Layout>
       </Router>
     </ThemeProvider>
