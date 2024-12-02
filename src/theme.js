@@ -8,7 +8,7 @@ const theme = createTheme({
     },
     secondary: {
       main: "#7F69B3", // Sidebar color
-      contrastText: "#ECEFF5", // Sidebar text color`
+      contrastText: "#ECEFF5", // Sidebar text color
     },
     background: {
       default: "#D0D8E8", // Background color
@@ -31,6 +31,13 @@ const theme = createTheme({
         paper: {
           backgroundColor: "#7F69B3",
           color: "#ECEFF5", // Sidebar text color
+        },
+      },
+    },
+    MuiContainer: { // Assuming MuiContainer wraps the Outlet, adjust as necessary
+      styleOverrides: {
+        root: {
+          zIndex: 1400, // Ensure this is higher than AppBar's zIndex
         },
       },
     },

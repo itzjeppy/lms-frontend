@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { Paper } from "@mui/material";
 import Modal from "react-modal";
-import FormikForm from "./FormicForm";
+import FormikForm from './FormicForm'
 import OffersList from "./OffersList";
 
 const customStyles = {
@@ -17,7 +18,7 @@ const customStyles = {
   },
 };
 
-const OffersContent = () => {
+const OffersContent = ({ sidebarOpen }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [offers, setOffers] = useState([]);
 
@@ -36,21 +37,33 @@ const OffersContent = () => {
     setOffers(updatedOffers);
   };
 
+  const drawerWidth = 240; // Ensure this matches the drawerWidth in your Layout component
+
   return (
-    <div className="offers-content">
-      <h2>Your Offers</h2>
-      <button className="add-offer-btn" onClick={() => setModalIsOpen(true)}>
-        Add Offer
-      </button>
-      <Modal
-        isOpen={modalIsOpen}
-        style={customStyles}
-        onRequestClose={() => setModalIsOpen(false)}
-      >
-        <FormikForm onSubmit={handleSubmit} />
-      </Modal>
-      <OffersList offers={offers} onStatusToggle={handleStatusToggle} />
-    </div>
+    <Paper sx={{
+      width: sidebarOpen ? `calc(100% - ${drawerWidth}px)` : '100%', // Adjust width based on sidebar
+      height: '100%', // Full height
+      margin: 0, // No margin
+      padding: 2, // Padding inside the paper
+      boxSizing: 'border-box', // Include padding in width/height calculations
+      display: 'flex', // Use flex to fill the container
+      flexDirection: 'column', // Stack children vertically
+    }}>
+      <div className="offers-content">
+        <h2>Your Offers</h2>
+        <button className="add-offer-btn" onClick={() => setModalIsOpen(true)}>
+          Add Offer
+        </button>
+        <Modal
+          isOpen={modalIsOpen}
+          style={customStyles}
+          onRequestClose={() => setModalIsOpen(false)}
+        >
+          <FormikForm onSubmit={handleSubmit} />
+        </Modal>
+        <OffersList offers={offers} onStatusToggle={handleStatusToggle} />
+      </div>
+    </Paper>
   );
 };
 

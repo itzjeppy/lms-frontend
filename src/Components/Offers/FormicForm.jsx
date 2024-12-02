@@ -1,7 +1,6 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import "./Styles/Modal.css";
 
 const schema = Yup.object().shape({
   tier_id: Yup.string().required("Tier ID is required"),

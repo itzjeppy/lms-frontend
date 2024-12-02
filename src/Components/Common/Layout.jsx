@@ -1,26 +1,33 @@
-import React, { useState } from "react";
-import { AppBar, Toolbar, Typography, IconButton, Avatar, SvgIcon, Box, Drawer, List, ListItem, ListItemText, ListItemIcon, Divider, Container, Button } from "@mui/material";
-import { Link, Outlet } from "react-router-dom";
-import { Home, LocalOffer, Sell, Mail, ConfirmationNumber, Menu } from "@mui/icons-material";
+import React, { useEffect, useState } from "react";
+import { AppBar, Toolbar, IconButton, Avatar, Box, Drawer, List, ListItem, ListItemText, ListItemIcon, Divider, Container, Paper } from "@mui/material";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Home, LocalOffer, ConfirmationNumber, Mail, Menu } from "@mui/icons-material";
 import Logo from '../../Icons/Logo';
+import OffersContent from "../Offers/OffersContent";
 
 const Layout = () => {
   const drawerWidth = 240;
-  const appBarHeight = 64; // Adjust this value as needed based on your AppBar's height
-  const [open, setOpen] = useState(false); // State to manage Drawer open/close
+  const appBarHeight = 64; // Height of the AppBar
+  const [open, setOpen] = useState(true);
 
   const handleDrawerToggle = () => {
-    setOpen(!open); // Toggle the state to open/close the Drawer
+    setOpen(!open);
   };
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate('/offers');
+  }, []);
 
   return (
     <>
       <AppBar
-        position="sticky"
+        position="fixed" // Changed from 'sticky' to 'fixed'
         sx={{
           backgroundColor: "#634E94",
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          height: `${appBarHeight}px`, // Ensure AppBar has a fixed height
+          width: "100%"
         }}
       >
         <Toolbar>
@@ -67,7 +74,7 @@ const Layout = () => {
               </ListItemIcon>
               <ListItemText sx={{ color: "#ECEFF5" }} primary="Your Tiers" />
             </ListItem>
-            <ListItem button component={Link} to="/offers">
+            <ListItem button component={Link} to='/offers'>
               <ListItemIcon>
                 <LocalOffer sx={{ color: "#ECEFF5" }} />
               </ListItemIcon>
@@ -91,18 +98,24 @@ const Layout = () => {
       </Drawer>
 
       <Container sx={{
-    marginLeft: open ? `${drawerWidth}px` : 0,
-    padding: 3,
-    marginTop: `${appBarHeight}px`,
-    transition: theme => theme.transitions.create(['margin', 'width'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  })
-}}>
-  <Container>
-    <Outlet /> {/* This renders the selected component based on the sidebar link clicked */}
-    </Container>
-    </Container>
+        marginLeft: open ? `${drawerWidth}px` : 0,
+        padding: 3,
+        marginTop: `${appBarHeight}px`, // Added top margin to compensate for the fixed AppBar
+        height: `calc(100vh - ${appBarHeight}px)`,
+        overflow: 'auto',
+        transition: theme => theme.transitions.create(['margin', 'width'], {
+          easing: theme.transitions.easing.sharp,
+          duration: theme.transitions.duration.leavingScreen,
+        })
+      }}>
+        <Box sx={{
+          width: '100%', // Full width
+          height: '100%', // Full height
+          p: 0 // No padding, let the child components handle their own padding
+        }}>
+          <Outlet  sidebarOpen={open} />
+        </Box>
+      </Container>
     </>
   );
 };
