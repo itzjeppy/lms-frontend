@@ -98,8 +98,9 @@ const Layout = () => {
       </Drawer>
 
       <Container sx={{
-        marginLeft: open ? `${drawerWidth}px` : 0,
-        padding: 3,
+        marginLeft: open ? `${drawerWidth-15}px` : -2,
+        paddingTop: 1,
+        paddingBottom: 1,
         marginTop: `${appBarHeight}px`, // Added top margin to compensate for the fixed AppBar
         height: `calc(100vh - ${appBarHeight}px)`,
         overflow: 'auto',

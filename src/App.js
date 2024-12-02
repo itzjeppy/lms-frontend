@@ -5,12 +5,13 @@ import theme from "./theme";
 import AppRoutes from "./Components/Utils/AppRoutes";
 const App = () => {
   return (
-  <ThemeProvider theme={theme}>
-    <CssBaseline />
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
-  </ThemeProvider>
+
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </ThemeProvider>
   );
 };
  
