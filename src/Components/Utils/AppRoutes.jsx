@@ -1,12 +1,14 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import OffersList from "../Offers/OffersList";
+import OffersContent from "../Offers/OffersContent";
+import Layout from "../Common/Layout";
 
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/offers" element={<OffersList />} />
-      {/* Add more routes as needed */}
+      <Route path="/" element={<Layout />}>
+        <Route path="offers" element={<OffersContent />} />
+      </Route>
     </Routes>
   );
 };
