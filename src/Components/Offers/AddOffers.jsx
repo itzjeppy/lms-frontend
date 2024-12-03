@@ -51,7 +51,7 @@ const AddOffers = () => {
       localStorage.setItem("offers", JSON.stringify(offers));
 
       // Navigate back to the offers page
-      navigate("/offers");
+      navigate(-1);
     };
     reader.readAsDataURL(values.image);
   };
@@ -62,12 +62,11 @@ const AddOffers = () => {
       display: "flex",
       flexDirection: "column",
       height: "100%",
-      paddingRight: '100px',
       p: 3,
       bgcolor: "#f9f9f9", // Light background
       borderRadius: 2,
       boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)", // Subtle shadow
-      width: "100vw"
+      width: "100%", // Changed to prevent overflow
     }}
     >
     <Formik
@@ -84,104 +83,121 @@ const AddOffers = () => {
     >
       {({ isSubmitting, setFieldValue }) => (
         <Form>
-          <Typography variant="h3">
+          <Typography variant="h3"
+          sx={{
+            fontWeight: "bold",
+            color: "#4A4A4A",
+          }}         
+          >
             Add Offer
           </Typography>
           <Divider/>
-          <Box mb={2}>
-            <FormControl fullWidth error={!!ErrorMessage.tier_id}>
-              <Field
-                name="tier_id"
-                as={TextField}
-                label="Tier ID"
-                variant="outlined"
-              />
-              <ErrorMessage name="tier_id">
-                {(msg) => <FormHelperText>{msg}</FormHelperText>}
-              </ErrorMessage>
-            </FormControl>
-          </Box>
-          <Box mb={2}>
-            <FormControl fullWidth error={!!ErrorMessage.offerTitle}>
-              <Field
-                name="offerTitle"
-                as={TextField}
-                label="Offer Title"
-                variant="outlined"
-              />
-              <ErrorMessage name="offerTitle">
-                {(msg) => <FormHelperText>{msg}</FormHelperText>}
-              </ErrorMessage>
-            </FormControl>
-          </Box>
-          <Box mb={2}>
-            <FormControl fullWidth error={!!ErrorMessage.offerDescription}>
-              <Field
-                name="offerDescription"
-                as={TextField}
-                label="Offer Description"
-                variant="outlined"
-                multiline
-                rows={4}
-              />
-              <ErrorMessage name="offerDescription">
-                {(msg) => <FormHelperText>{msg}</FormHelperText>}
-              </ErrorMessage>
-            </FormControl>
-          </Box>
-          <Box mb={2}>
-            <FormControl fullWidth error={!!ErrorMessage.image}>
-              <input
-                type="file"
-                name="image"
-                accept=".jpg, .png"
-                onChange={(event) =>
-                  setFieldValue("image", event.target.files[0])
-                }
-              />
-              <ErrorMessage name="image">
-                {(msg) => <FormHelperText>{msg}</FormHelperText>}
-              </ErrorMessage>
-            </FormControl>
-          </Box>
-          <Box mb={2}>
-            <FormControl fullWidth error={!!ErrorMessage.benefit}>
-              <Field
-                name="benefit"
-                as={TextField}
-                label="Benefit"
-                type="number"
-                variant="outlined"
-              />
-              <ErrorMessage name="benefit">
-                {(msg) => <FormHelperText>{msg}</FormHelperText>}
-              </ErrorMessage>
-            </FormControl>
-          </Box>
-          <Box mb ={2}>
-            <FormControl error={!!ErrorMessage.status}>
-              <Field
-                name="status"
-                as={Checkbox}
-                color="primary"
-              />
-              <FormControlLabel
-                control={<Checkbox name="status" />}
-                label="Status"
-              />
-              <ErrorMessage name="status">
-                {(msg) => <FormHelperText>{msg}</FormHelperText>}
-              </ErrorMessage>
-            </FormControl>
-          </Box>
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            variant="contained"
-            color="primary"
+          <Box
+           sx={{
+            flexGrow: 1,
+            overflowY: "auto", // Scrollable content
+            bgcolor: "#ffffff", // White card background
+            p: 2,
+            borderRadius: 2,
+            boxShadow: "0 1px 6px rgba(0, 0, 0, 0.1)"
+            }}
           >
-            Submit
-          </Button>
+            <Box mb={2}
+            >
+              <FormControl fullWidth error={!!ErrorMessage.tier_id}>
+                <Field
+                  name="tier_id"
+                  as={TextField}
+                  label="Tier ID"
+                  variant="outlined"
+                />
+                <ErrorMessage name="tier_id">
+                  {(msg) => <FormHelperText>{msg}</FormHelperText>}
+                </ErrorMessage>
+              </FormControl>
+            </Box>
+            <Box mb={2}>
+              <FormControl fullWidth error={!!ErrorMessage.offerTitle}>
+                <Field
+                  name="offerTitle"
+                  as={TextField}
+                  label="Offer Title"
+                  variant="outlined"
+                />
+                <ErrorMessage name="offerTitle">
+                  {(msg) => <FormHelperText>{msg}</FormHelperText>}
+                </ErrorMessage>
+              </FormControl>
+            </Box>
+            <Box mb={2}>
+              <FormControl fullWidth error={!!ErrorMessage.offerDescription}>
+                <Field
+                  name="offerDescription"
+                  as={TextField}
+                  label="Offer Description"
+                  variant="outlined"
+                  multiline
+                  rows={4}
+                />
+                <ErrorMessage name="offerDescription">
+                  {(msg) => <FormHelperText>{msg}</FormHelperText>}
+                </ErrorMessage>
+              </FormControl>
+            </Box>
+            <Box mb={2}>
+              <FormControl fullWidth error={!!ErrorMessage.image}>
+                <input
+                  type="file"
+                  name="image"
+                  accept=".jpg, .png"
+                  onChange={(event) =>
+                    setFieldValue("image", event.target.files[0])
+                  }
+                />
+                <ErrorMessage name="image">
+                  {(msg) => <FormHelperText>{msg}</FormHelperText>}
+                </ErrorMessage>
+              </FormControl>
+            </Box>
+            <Box mb={2}>
+              <FormControl fullWidth error={!!ErrorMessage.benefit}>
+                <Field
+                  name="benefit"
+                  as={TextField}
+                  label="Benefit"
+                  type="number"
+                  variant="outlined"
+                />
+                <ErrorMessage name="benefit">
+                  {(msg) => <FormHelperText>{msg}</FormHelperText>}
+                </ErrorMessage>
+              </FormControl>
+            </Box>
+            <Box mb ={2}>
+              <FormControl error={!!ErrorMessage.status}>
+                <Field
+                  name="status"
+                  as={Checkbox}
+                  color="primary"
+                />
+                <FormControlLabel
+                  control={<Checkbox name="status" />}
+                  label="Status"
+                />
+                <ErrorMessage name="status">
+                  {(msg) => <FormHelperText>{msg}</FormHelperText>}
+                </ErrorMessage>
+              </FormControl>
+            </Box>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              variant="contained"
+              color="primary"
+            >
+              Submit
+            </Button>
+          </Box>
         </Form>
       )}
     </Formik>
