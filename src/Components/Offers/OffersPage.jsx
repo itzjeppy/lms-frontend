@@ -30,22 +30,24 @@ const OffersPage = () => {
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        p: 3,
+        p: { xs: 2, md: 3 }, // Adjust padding for small and larger screens
         bgcolor: "#f9f9f9", // Light background
         borderRadius: 2,
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)", // Subtle shadow
         maxWidth: "1200px", // Limit maximum width
         margin: "0 auto", // Center horizontally
-        width: "100%", // Ensure it doesn't overflow
+        width: "100%",
       }}
     >
       {/* Header Section */}
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: { xs: "center", md: "space-between" }, // Center align on small screens
+          flexDirection: { xs: "column", md: "row" }, // Stack vertically on small screens
           alignItems: "center",
           mb: 2,
+          gap: { xs: 2, md: 0 }, // Add spacing between elements on small screens
         }}
       >
         <Typography
@@ -53,6 +55,7 @@ const OffersPage = () => {
           sx={{
             fontWeight: "bold",
             color: "#4A4A4A",
+            textAlign: { xs: "center", md: "left" }, // Center align on small screens
           }}
         >
           Your Offers

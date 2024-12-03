@@ -49,6 +49,11 @@ const TiersContent = () => {
     },
   ]);
 
+  // Utility function to generate a random hex color
+  const getRandomColor = () => {
+    return `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, "0")}`;
+  };
+
   const handleAddTier = (tier) => {
     setTiers([...tiers, tier]);
     setModalIsOpen(false);
@@ -60,10 +65,12 @@ const TiersContent = () => {
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        p: 3,
+        p: { xs: 2, md: 3 }, // Adjust padding for small and larger screens
         bgcolor: "#f9f9f9", // Light background
         borderRadius: 2,
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)", // Subtle shadow
+        maxWidth: "1200px", // Limit maximum width
+        margin: "0 auto", // Center horizontally
         width: "100%",
       }}
     >
@@ -71,13 +78,15 @@ const TiersContent = () => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: { xs: "center", md: "space-between" }, // Center align on small screens
+          flexDirection: { xs: "column", md: "row" }, // Stack vertically on small screens
           alignItems: "center",
           mb: 2,
+          gap: { xs: 2, md: 0 }, // Add spacing between elements on small screens
         }}
       >
         <Typography
-          variant="h2"
+          variant="h4"
           sx={{
             fontWeight: "bold",
             color: "#4A4A4A",
@@ -101,24 +110,21 @@ const TiersContent = () => {
       </Box>
 
       {/* Tiers Timeline Section */}
-      <Container
+      <Box
         sx={{
-          paddingTop: "-10px",
-          flexGrow: 2,
-          overflowY: "auto",
-          bgcolor: "#ffffff",
-          p: 3,
+          flexGrow: 1,
+          overflowY: "auto", // Scrollable content
+          bgcolor: "#ffffff", // White card background
+          p: 2,
           borderRadius: 2,
-          boxShadow: "0 1px 6px rgba(0, 0, 0, 0.1)",
-          width: "100%",
-          ml: 0,
+          boxShadow: "0 1px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow
         }}
       >
         {tiers.length > 0 ? (
           <Timeline
             sx={{
               "& .MuiTimelineItem-root:before": {
-                flex: 0, // Remove default gap
+                flex: 0,
               },
             }}
           >
@@ -126,18 +132,19 @@ const TiersContent = () => {
               <TimelineItem key={tier.id}>
                 {/* Timeline Separator */}
                 <TimelineSeparator>
-                  {/* Set the color of the TimelineDot */}
                   <TimelineDot style={{ backgroundColor: tier.color }} />
                   {index < tiers.length - 1 && <TimelineConnector />}
                 </TimelineSeparator>
                 {/* Timeline Content */}
-                <TimelineContent>
+                <TimelineContent >
                   <Accordion
                     sx={{
-                      boxShadow: "none", // Remove shadow to make it flat
-                      border: "1px solid #ddd", // Optional: add a light border for distinction
+                      boxShadow: "none",
+                      border: "1px solid #ddd",
                       borderRadius: 1,
+                      mb: 2,
                     }}
+                    style={{ backgroundColor: tier.color }}
                   >
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
@@ -178,7 +185,7 @@ const TiersContent = () => {
             No tiers available. Start by adding a new tier!
           </Typography>
         )}
-      </Container>
+      </Box>
 
       {/* Add Tier Modal */}
       <Modal
@@ -223,7 +230,6 @@ const TiersContent = () => {
           >
             Add a New Tier
           </Typography>
-          {/* Replace with your form */}
           <Box
             sx={{
               mt: 2,
@@ -239,7 +245,7 @@ const TiersContent = () => {
                   id: tiers.length + 1,
                   name: `New Tier ${tiers.length + 1}`,
                   price: `$${tiers.length * 10}`,
-                  color: "#FF5722", // Example of a custom hex color
+                  color: getRandomColor(), // Use the random color generator
                   details: "Details about this new tier.",
                 })
               }
