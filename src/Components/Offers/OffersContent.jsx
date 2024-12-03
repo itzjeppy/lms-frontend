@@ -42,7 +42,7 @@ const OffersContent = () => {
         bgcolor: "#f9f9f9", // Light background
         borderRadius: 2,
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)", // Subtle shadow
-        width: "78vw"
+        width: "100vw"
 
       }}
     >

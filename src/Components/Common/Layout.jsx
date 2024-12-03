@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { AppBar, Toolbar, IconButton, Avatar, Box, Drawer, List, ListItem, ListItemText, ListItemIcon, Divider, Container, Paper } from "@mui/material";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { AppBar, Toolbar, IconButton, Avatar, Box, Drawer, List, ListItem, ListItemText, ListItemIcon, Divider, Container } from "@mui/material";
+import { Link, Outlet} from "react-router-dom";
 import { Home, LocalOffer, ConfirmationNumber, Mail, Menu } from "@mui/icons-material";
 import Logo from '../../Icons/Logo';
-import OffersContent from "../Offers/OffersContent";
 
 const Layout = () => {
   const drawerWidth = 240;
@@ -13,13 +12,6 @@ const Layout = () => {
   const handleDrawerToggle = () => {
     setOpen(!open);
   };
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    navigate('/offers');
-  }, []);
-
   return (
     <>
       <AppBar
@@ -68,26 +60,26 @@ const Layout = () => {
       >
         <Box>
           <List>
-            <ListItem button component={Link} to="/tiers">
+            <ListItem button component={Link} to="./tiers">
               <ListItemIcon>
                 <Home sx={{ color: "#ECEFF5" }} />
               </ListItemIcon>
               <ListItemText sx={{ color: "#ECEFF5" }} primary="Your Tiers" />
             </ListItem>
-            <ListItem button component={Link} to='/offers'>
+            <ListItem button component={Link} to='./offers'>
               <ListItemIcon>
                 <LocalOffer sx={{ color: "#ECEFF5" }} />
               </ListItemIcon>
               <ListItemText sx={{ color: "#ECEFF5" }} primary="Your Offers" />
             </ListItem>
-            <ListItem button component={Link} to="/coupons">
+            <ListItem button component={Link} to="./coupons">
               <ListItemIcon>
                 <ConfirmationNumber sx={{ color: "#ECEFF5" }} />
               </ListItemIcon>
               <ListItemText sx={{ color: "#ECEFF5" }} primary="Your Coupons" />
             </ListItem>
             <Divider />
-            <ListItem button component={Link} to="/contact">
+            <ListItem button component={Link} to="./contact">
               <ListItemIcon>
                 <Mail sx={{ color: "#ECEFF5" }} />
               </ListItemIcon>
@@ -98,26 +90,22 @@ const Layout = () => {
       </Drawer>
 
       <Container sx={{
-        marginLeft: open ? `${drawerWidth-15}px` : -2,
+        marginLeft: open ? `${drawerWidth - 15}px` : -2,
         paddingTop: 1,
         paddingBottom: 1,
         marginTop: `${appBarHeight}px`, // Added top margin to compensate for the fixed AppBar
         height: `calc(100vh - ${appBarHeight}px)`,
-        width: '100vw',
+        width: '100%', // Adjusted to prevent overflow
         overflow: 'auto',
-        transition: theme => theme.transitions.create(['margin', 'width'], {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.leavingScreen,
-        })
       }}>
         <Box
-        component="main"
-        sx={{
-          width: '100vh', // Full width
-          height: '100vw', // Full height
-          p: 0 
-        }}>
-          <Outlet  sidebarOpen={open} />
+          component="main"
+          sx={{
+            width: ' 100%',
+            height: '100%',
+            p: 0 
+          }}>
+          <Outlet sidebarOpen={open} />
         </Box>
       </Container>
     </>
