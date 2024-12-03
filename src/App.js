@@ -4,6 +4,8 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import theme from "./theme";
 import LandingPage from "./Components/Common/LandingPage";
 import Layout from "./Components/Common/Layout";
+import SignUp from "./Components/Common/SignUp";
+import SignIn from "./Components/Common/SignIn";
 
 const App = () => {
   return (
@@ -12,7 +14,9 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/partner" element={<Layout/>} />
+          <Route path="/partner" element={<Layout />} />
+          <Route path="/signIn" element={<SignIn />} />
+          <Route path="/signUp" element={<SignUp />} />
         </Routes>
       </Router>
     </ThemeProvider>

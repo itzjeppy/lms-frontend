@@ -179,20 +179,23 @@ export default function Features() {
           }}
         >
           <Card
-            variant="outlined"
             sx={{
               height: '100%',
               width: '100%',
               display: { xs: 'none', sm: 'flex' },
               pointerEvents: 'none',
+              backgroundColor: '#D0D8E8',
+              boxShadow: 'none'
             }}
           >
             <Box
               sx={{
                 m: 'auto',
-                width: 420,
-                height: 500,
+                width: '100%',
+                height: '100%',
                 backgroundSize: 'contain',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
                 backgroundImage: items[selectedItemIndex].imageLight,
               }}
             />

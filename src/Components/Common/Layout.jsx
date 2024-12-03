@@ -6,11 +6,11 @@ import Logo from '../../Icons/Logo';
 
 const Layout = () => {
   const drawerWidth = 240;
-  const appBarHeight = 64; // Adjust this value as needed based on your AppBar's height
-  const [open, setOpen] = useState(false); // State to manage Drawer open/close
+  const appBarHeight = 64;
+  const [open, setOpen] = useState(false);
 
   const handleDrawerToggle = () => {
-    setOpen(!open); // Toggle the state to open/close the Drawer
+    setOpen(!open);
   };
 
   return (
@@ -20,7 +20,7 @@ const Layout = () => {
         sx={{
           backgroundColor: "#634E94",
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          height: `${appBarHeight}px`, // Ensure AppBar has a fixed height
+          height: `${appBarHeight}px`
         }}
       >
         <Toolbar>
@@ -94,7 +94,6 @@ const Layout = () => {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
       }) }}>
-        {/* Main content goes here */}
       </Container>
     </>
   );
