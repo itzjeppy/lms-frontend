@@ -4,23 +4,15 @@ import {
   Button,
   Typography,
   Box,
-  IconButton,
   Container,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import CloseIcon from "@mui/icons-material/Close";
-import { Modal } from "@mui/material";
-import FormikForm from "./FormicForm";
 import OffersList from "./OffersList";
+import { useNavigate } from "react-router-dom";
 
 const OffersContent = () => {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [offers, setOffers] = useState([]);
-
-  const handleSubmit = (values) => {
-    setOffers([...offers, values]);
-    setModalIsOpen(false);
-  };
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleStatusToggle = (offerId) => {
     const updatedOffers = offers.map((offer) => {
@@ -43,7 +35,6 @@ const OffersContent = () => {
         borderRadius: 2,
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)", // Subtle shadow
         width: "100vw"
-
       }}
     >
       {/* Header Section */}
@@ -68,7 +59,7 @@ const OffersContent = () => {
           variant="contained"
           color="primary"
           startIcon={<AddCircleOutlineIcon />}
-          onClick={() => setModalIsOpen(true)}
+          onClick={() => navigate("../add-offer")} // Navigate to AddOffers component
           sx={{
             fontWeight: "bold",
             textTransform: "none", // Avoid uppercase
@@ -102,49 +93,6 @@ const OffersContent = () => {
           </Typography>
         )}
       </Box>
-
-      {/* Add Offer Modal */}
-      <Modal
-        open={modalIsOpen}
-        onClose={() => setModalIsOpen(false)}
-        aria-labelledby="add-offer-modal-title"
-        aria-describedby="add-offer-modal-description"
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Paper
-          sx={{
-            width: "500px",
-            maxWidth: "90%",
-            p: 3,
-            borderRadius: 3,
-            boxShadow: "0 8px 24px rgba(0, 0, 0, 0.2)", // Stronger shadow
-            position: "relative",
-          }}
-        >
-          <IconButton
-            onClick={() => setModalIsOpen(false)}
-            sx={{
-              position: "absolute",
-              top: 8,
-              right: 8,
-              color: "grey.600",
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-          <Typography
-            variant="h5"
-            sx={{ fontWeight: "bold", mb: 2, textAlign: "center" }}
-          >
-            Add a New Offer
-          </Typography>
-          <FormikForm onSubmit={handleSubmit} />
-        </Paper>
-      </Modal>
     </Container>
   );
 };
