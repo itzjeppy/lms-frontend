@@ -61,10 +61,10 @@ const TiersContent = () => {
         flexDirection: "column",
         height: "100%",
         p: 3,
-        bgcolor: "#f9f9f9",
+        bgcolor: "#f9f9f9", // Light background
         borderRadius: 2,
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
-        width: "78vw",
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)", // Subtle shadow
+        width: "100%",
       }}
     >
       {/* Header Section */}

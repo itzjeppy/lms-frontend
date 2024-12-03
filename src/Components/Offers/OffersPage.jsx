@@ -10,7 +10,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import OffersList from "./OffersList";
 import { useNavigate } from "react-router-dom";
 
-const OffersContent = () => {
+const OffersPage = () => {
   const [offers, setOffers] = useState([]);
   const navigate = useNavigate(); // Hook for navigation
 
@@ -34,7 +34,9 @@ const OffersContent = () => {
         bgcolor: "#f9f9f9", // Light background
         borderRadius: 2,
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)", // Subtle shadow
-        width: "100%", // Changed to prevent overflow
+        maxWidth: "1200px", // Limit maximum width
+        margin: "0 auto", // Center horizontally
+        width: "100%", // Ensure it doesn't overflow
       }}
     >
       {/* Header Section */}
@@ -47,7 +49,7 @@ const OffersContent = () => {
         }}
       >
         <Typography
-          variant="h2"
+          variant="h4"
           sx={{
             fontWeight: "bold",
             color: "#4A4A4A",
@@ -97,4 +99,4 @@ const OffersContent = () => {
   );
 };
 
-export default OffersContent;
+export default OffersPage;

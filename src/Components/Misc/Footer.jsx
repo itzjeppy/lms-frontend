@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/Twitter';
-import SVGComponent from '../Icons/Logo';
+import SVGComponent from '../../Icons/Logo';
 
 function Copyright() {
   return (
