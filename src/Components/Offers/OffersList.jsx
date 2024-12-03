@@ -17,6 +17,14 @@ const OffersList = ({ offers = [], onStatusToggle }) => {
           button={true}
           className={`offer-item ${offer.status ? "active" : "inactive"}`}
         >
+          <div className="offer-image">
+            {offer.image && (
+              <img
+                style={{ width: "100px", height: "100px" }}
+                src={`data:image/${offer.image.type};base64,${offer.image.base64}`}
+                alt={offer.offerTitle}
+              />
+            )}
           <ListItemIcon>
             {/* Icon can be placed here */}
           </ListItemIcon>
