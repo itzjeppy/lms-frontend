@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import {
   Paper,
   Button,
@@ -12,7 +12,16 @@ import { useNavigate } from "react-router-dom";
 
 const OffersPage = () => {
   const [offers, setOffers] = useState([]);
+   const [loading, setLoading] = useState(true);
   const navigate = useNavigate(); // Hook for navigation
+
+    useEffect(() => {
+    const existingOffers = localStorage.getItem("offers");
+    if (existingOffers) {
+      setOffers(JSON.parse(existingOffers));
+    }
+    setLoading(false);
+  }, []);
 
   const handleStatusToggle = (offerId) => {
     const updatedOffers = offers.map((offer) => {
@@ -23,6 +32,11 @@ const OffersPage = () => {
     });
     setOffers(updatedOffers);
   };
+
+    if (loading) {
+    return <div>Loading...</div>;
+  }
+
 
   return (
     <Container
