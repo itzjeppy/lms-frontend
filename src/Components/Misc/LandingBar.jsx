@@ -10,7 +10,7 @@ import Logo from '../../Icons/Logo';
 const LandingBar = () => {
   const navigate = useNavigate();
     return(<div><AppBar
-        position="sticky"
+        position="fixed"
         sx={{
           backgroundColor: "#634E94",
           zIndex: (theme) => theme.zIndex.drawer + 1,

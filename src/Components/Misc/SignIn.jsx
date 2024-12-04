@@ -117,7 +117,9 @@ export default function SignIn(props) {
   };
 
   return (
-    <div>
+    <div
+    position="fixed"
+    >
       <LandingBar />
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">

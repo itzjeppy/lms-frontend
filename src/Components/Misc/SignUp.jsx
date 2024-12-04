@@ -114,7 +114,9 @@ export default function SignUp(props) {
   };
 
   return (
-    <div>
+    <div
+    position="fixed"
+    >
       <LandingBar />
       <CssBaseline enableColorScheme />
       <SignUpContainer direction="column" justifyContent="space-between">

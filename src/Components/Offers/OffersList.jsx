@@ -25,6 +25,7 @@ const OffersList = ({ offers = [], onStatusToggle }) => {
                 alt={offer.offerTitle}
               />
             )}
+          </div> {/* Closing tag for the div wrapping the image */}
           <ListItemIcon>
             {/* Icon can be placed here */}
           </ListItemIcon>
