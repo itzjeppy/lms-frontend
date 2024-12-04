@@ -4,12 +4,15 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // Corrected import for Link
 import Logo from '../../Icons/Logo';
 
 const LandingBar = () => {
   const navigate = useNavigate();
-    return(<div><AppBar
+
+  return (
+    <div>
+      <AppBar
         position="fixed"
         sx={{
           backgroundColor: "#634E94",
@@ -24,25 +27,29 @@ const LandingBar = () => {
             aria-label="open drawer"
             edge="start"
           />
-          <Logo />
+          <IconButton component={Link} to="/" aria-label="home"> {/* Corrected usage of Link */}
+            <Logo />
+          </IconButton>
           <Box flexGrow={1} />
           <Stack spacing={2} direction="row">
-          <Button 
-        variant="contained" 
-        onClick={() => navigate('/signIn')}
-      >
-        LOGIN
-      </Button>
-      <Button 
-        variant="outlined" 
-        color="inherit" 
-        onClick={() => navigate('/signUp')}
-      >
-        REGISTER
-      </Button>
+            <Button  
+              variant="contained"  
+              onClick={() => navigate('/signIn')}
+            >
+              LOGIN
+            </Button>
+            <Button  
+              variant="outlined"  
+              color="inherit"  
+              onClick={() => navigate('/signUp')}
+            >
+              REGISTER
+            </Button>
           </Stack>
         </Toolbar>
-      </AppBar></div>)
+      </AppBar>
+    </div>
+  );
 }
 
 export default LandingBar;
