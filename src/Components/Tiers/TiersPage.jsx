@@ -4,12 +4,11 @@ import {
   Box,
   Typography,
   Button,
-  Modal,
-  Paper,
-  IconButton,
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  IconButton,
+  Divider,
 } from "@mui/material";
 import {
   Timeline,
@@ -21,42 +20,73 @@ import {
 } from "@mui/lab";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import CloseIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router-dom";
 
 const TiersContent = () => {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [tiers, setTiers] = useState([
     {
       id: 1,
       name: "Free Tier",
-      price: "$0",
-      color: "#2196F3", // Blue color for Free Tier
-      details: "This is a basic free plan for individual users.",
+      triggerAmount: 0,
+      triggerDuration: 0,
+      accrualMultiplier: 1.0,
+      redemptionLimitOfPurchase: 0,
+      conversion: 0.0,
+      description: "This is a basic free plan for individual users.",
+      couponProbability: 0.0,
+      color: "#2196F3",
+      nonDeletable: true, // Mark Free Tier as non-deletable
     },
     {
       id: 2,
       name: "Silver Tier",
-      price: "$10",
-      color: "#C0C0C0", // Silver color
-      details: "This plan is suitable for small teams.",
+      triggerAmount: 5000,
+      triggerDuration: 6,
+      accrualMultiplier: 1.2,
+      redemptionLimitOfPurchase: 2000,
+      conversion: 0.01,
+      description: "This plan is suitable for small teams.",
+      couponProbability: 0.7,
+      color: "#C0C0C0",
     },
     {
       id: 3,
       name: "Gold Tier",
-      price: "$20",
-      color: "#FFD700", // Gold color
-      details: "This is the premium plan for large organizations.",
+      triggerAmount: 10000,
+      triggerDuration: 12,
+      accrualMultiplier: 1.5,
+      redemptionLimitOfPurchase: 5000,
+      conversion: 0.02,
+      description: "This is the premium plan for large organizations.",
+      couponProbability: 1.0,
+      color: "#FFD700",
     },
   ]);
 
-  // Utility function to generate a random hex color
-  const getRandomColor = () => {
-    return `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, "0")}`;
+  const navigate = useNavigate();
+
+  const handleDelete = (id) => {
+    const tierToDelete = tiers.find((tier) => tier.id === id);
+
+    // Prevent deleting non-deletable tiers
+    if (tierToDelete?.nonDeletable) {
+      alert("The Free Tier cannot be deleted.");
+      return;
+    }
+
+    // Prevent deleting the last remaining tier
+    if (tiers.length === 1) {
+      alert("At least one tier must exist.");
+      return;
+    }
+
+    setTiers(tiers.filter((tier) => tier.id !== id));
   };
 
-  const handleAddTier = (tier) => {
-    setTiers([...tiers, tier]);
-    setModalIsOpen(false);
+  const handleEdit = (id) => {
+    navigate(`/edit-tier/${id}`);
   };
 
   return (
@@ -65,12 +95,12 @@ const TiersContent = () => {
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        p: { xs: 2, md: 3 }, // Adjust padding for small and larger screens
-        bgcolor: "#f9f9f9", // Light background
+        p: { xs: 2, md: 3 },
+        bgcolor: "#f9f9f9",
         borderRadius: 2,
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)", // Subtle shadow
-        maxWidth: "1200px", // Limit maximum width
-        margin: "0 auto", // Center horizontally
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+        maxWidth: "1200px",
+        margin: "0 auto",
         width: "100%",
       }}
     >
@@ -78,11 +108,11 @@ const TiersContent = () => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: { xs: "center", md: "space-between" }, // Center align on small screens
-          flexDirection: { xs: "column", md: "row" }, // Stack vertically on small screens
+          justifyContent: { xs: "center", md: "space-between" },
+          flexDirection: { xs: "column", md: "row" },
           alignItems: "center",
           mb: 2,
-          gap: { xs: 2, md: 0 }, // Add spacing between elements on small screens
+          gap: { xs: 2, md: 0 },
         }}
       >
         <Typography
@@ -98,7 +128,7 @@ const TiersContent = () => {
           variant="contained"
           color="primary"
           startIcon={<AddCircleOutlineIcon />}
-          onClick={() => setModalIsOpen(true)}
+          onClick={() => navigate("../add-tier")}
           sx={{
             fontWeight: "bold",
             textTransform: "none",
@@ -113,11 +143,11 @@ const TiersContent = () => {
       <Box
         sx={{
           flexGrow: 1,
-          overflowY: "auto", // Scrollable content
-          bgcolor: "#ffffff", // White card background
+          overflowY: "auto",
+          bgcolor: "#ffffff",
           p: 2,
           borderRadius: 2,
-          boxShadow: "0 1px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow
+          boxShadow: "0 1px 6px rgba(0, 0, 0, 0.1)",
         }}
       >
         {tiers.length > 0 ? (
@@ -136,7 +166,7 @@ const TiersContent = () => {
                   {index < tiers.length - 1 && <TimelineConnector />}
                 </TimelineSeparator>
                 {/* Timeline Content */}
-                <TimelineContent >
+                <TimelineContent>
                   <Accordion
                     sx={{
                       boxShadow: "none",
@@ -144,7 +174,7 @@ const TiersContent = () => {
                       borderRadius: 1,
                       mb: 2,
                     }}
-                    style={{ backgroundColor: tier.color }}
+                    style={{ backgroundColor: "#f9f9f9" }}
                   >
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
@@ -158,18 +188,58 @@ const TiersContent = () => {
                           color: "#4A4A4A",
                         }}
                       >
-                        {tier.name} - {tier.price}
+                        {tier.name}
                       </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                      <Typography
-                        variant="body2"
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        <strong>Trigger Amount:</strong> ${tier.triggerAmount}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        <strong>Trigger Duration:</strong> {tier.triggerDuration} months
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        <strong>Accrual Multiplier:</strong> {tier.accrualMultiplier}x
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        <strong>Redemption Limit:</strong> ${tier.redemptionLimitOfPurchase}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        <strong>Conversion:</strong> {tier.conversion * 100}%
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        <strong>Coupon Probability:</strong> {tier.couponProbability * 100}%
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        <strong>Description:</strong> {tier.description}
+                      </Typography>
+                      <Divider sx={{ my: 2 }} />
+                      <Box
                         sx={{
-                          color: "#6B6B6B",
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          gap: 2,
                         }}
                       >
-                        {tier.details}
-                      </Typography>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          startIcon={<EditIcon />}
+                          onClick={() => handleEdit(tier.id)}
+                        >
+                          Edit
+                        </Button>
+                        {!tier.nonDeletable && (
+                          <Button
+                            variant="outlined"
+                            color="error"
+                            startIcon={<DeleteIcon />}
+                            onClick={() => handleDelete(tier.id)}
+                          >
+                            Delete
+                          </Button>
+                        )}
+                      </Box>
                     </AccordionDetails>
                   </Accordion>
                 </TimelineContent>
@@ -186,75 +256,6 @@ const TiersContent = () => {
           </Typography>
         )}
       </Box>
-
-      {/* Add Tier Modal */}
-      <Modal
-        open={modalIsOpen}
-        onClose={() => setModalIsOpen(false)}
-        aria-labelledby="add-tier-modal-title"
-        aria-describedby="add-tier-modal-description"
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Paper
-          sx={{
-            width: "500px",
-            maxWidth: "90%",
-            p: 3,
-            borderRadius: 3,
-            boxShadow: "0 8px 24px rgba(0, 0, 0, 0.2)",
-            position: "relative",
-          }}
-        >
-          <IconButton
-            onClick={() => setModalIsOpen(false)}
-            sx={{
-              position: "absolute",
-              top: 8,
-              right: 8,
-              color: "grey.600",
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-          <Typography
-            variant="h5"
-            sx={{
-              fontWeight: "bold",
-              mb: 2,
-              textAlign: "center",
-            }}
-          >
-            Add a New Tier
-          </Typography>
-          <Box
-            sx={{
-              mt: 2,
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-            }}
-          >
-            <Button
-              variant="contained"
-              onClick={() =>
-                handleAddTier({
-                  id: tiers.length + 1,
-                  name: `New Tier ${tiers.length + 1}`,
-                  price: `$${tiers.length * 10}`,
-                  color: getRandomColor(), // Use the random color generator
-                  details: "Details about this new tier.",
-                })
-              }
-            >
-              Add Tier Example
-            </Button>
-          </Box>
-        </Paper>
-      </Modal>
     </Container>
   );
 };

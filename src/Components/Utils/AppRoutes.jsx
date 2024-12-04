@@ -1,28 +1,46 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import Layout from "../Common/Layout"; // Layout for dashboard
-import AddOffers from "../Offers/AddOffers"; // Import AddOffers component
-import TiersPage from "../Tiers/TiersPage"; // Tiers page
-import LandingPage from "../Misc/LandingPage"
+
+// Layout
+import Layout from "../Common/Layout";
+
+// Misc Pages
+import LandingPage from "../Misc/LandingPage";
 import SignIn from "../Misc/SignIn";
-import SignUp from "../Misc/SignUp"
+import SignUp from "../Misc/SignUp";
+
+// Dashboard Pages
 import OffersPage from "../Offers/OffersPage";
+import AddOffers from "../Offers/AddOffers";
 import CouponsPage from "../Coupons/CouponsPage";
 import AddCoupons from "../Coupons/AddCoupon";
+import TiersPage from "../Tiers/TiersPage";
+import AddTier from "../Tiers/AddTier";
+import EditTier from "../Tiers/EditTier";
 
 const AppRoutes = () => {
   return (
     <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/signIn" element={<SignIn />} />
-          <Route path="/signUp" element={<SignUp />} />
-      <Route path="/dashboard" element={<Layout />}> {/* Layout for dashboard routes */}
+      {/* Public Routes */}
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/signIn" element={<SignIn />} />
+      <Route path="/signUp" element={<SignUp />} />
+
+      {/* Dashboard Routes */}
+      <Route path="/dashboard" element={<Layout />}>
+        {/* Offers */}
+        <Route index element={<OffersPage />} /> {/* Default dashboard page */}
         <Route path="offers" element={<OffersPage />} />
-        <Route path="add-offer" element={<AddOffers />} /> {/* New route for AddOffers */}
-        <Route path="add-coupon" element={<AddCoupons />} />{" "}
+        <Route path="add-offer" element={<AddOffers />} />
+
+        {/* Coupons */}
+        <Route path="coupons" element={<CouponsPage />} />
+        <Route path="add-coupon" element={<AddCoupons />} />
+
+        {/* Tiers */}
         <Route path="tiers" element={<TiersPage />} />
-        <Route path="coupons" element={<CouponsPage />}/>
-        <Route index element={<OffersPage />} /> {/* Default dashboard home */}
+        <Route path="add-tier" element={<AddTier />} />
+        <Route path="edit-tier/:id" element={<EditTier />} />
       </Route>
     </Routes>
   );
