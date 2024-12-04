@@ -10,6 +10,12 @@ const OffersList = ({ offers = [], onStatusToggle }) => {
     <List className="offers-list">
       {offers.map((offer) => (
         <ListItem
+        sx={{
+          boxShadow: 2,
+          backgroundColor:  offer.status === "active" ? "#bbfccb" : "#fc8e86",
+          borderRadius: 5,
+          marginBottom: 1,
+        }}
           key={offer.id} // Use offer.id for keys
           button={true}
           className={`offer-item ${offer.status ? "active" : "inactive"}`}
