@@ -1,6 +1,5 @@
 import React from "react";
-import { List, ListItem, ListItemText, ListItemIcon } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import { List, ListItem, ListItemText, ListItemIcon, Switch } from "@mui/material";
 
 const OffersList = ({ offers = [], onStatusToggle }) => {
   if (offers.length === 0) {
@@ -12,8 +11,6 @@ const OffersList = ({ offers = [], onStatusToggle }) => {
       {offers.map((offer) => (
         <ListItem
           key={offer.id} // Use offer.id for keys
-          component={RouterLink}
-          to={`/some-path/${offer.id}`}
           button={true}
           className={`offer-item ${offer.status ? "active" : "inactive"}`}
         >
@@ -39,15 +36,15 @@ const OffersList = ({ offers = [], onStatusToggle }) => {
             }
           />
           <div className="offer-status">
-            <button
+            <Switch
               className="status-toggle"
-              onClick={(e) => {
+              onToggle={(e) => {
                 e.stopPropagation(); // Stop propagation to prevent ListItem from triggering
                 onStatusToggle(offer.tier_id);
               }}
             >
               {offer.status ? "Active" : "Inactive"}
-            </button>
+            </Switch>
           </div>
         </ListItem>
       ))}
