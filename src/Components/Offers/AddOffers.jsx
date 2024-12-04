@@ -11,8 +11,7 @@ import {
   FormControlLabel,
   Box,
   Typography,
-  Paper,
-  Divider,
+  Divider
 } from "@mui/material";
 import { Container } from "@mui/system";
 

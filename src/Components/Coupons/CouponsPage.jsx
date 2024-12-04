@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Paper, Button, Typography, Box, Container } from "@mui/material";
+import { Button, Typography, Box, Container } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import CouponsList from "./CouponsList";
 import { useNavigate } from "react-router-dom";
