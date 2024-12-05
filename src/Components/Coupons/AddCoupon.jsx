@@ -1,5 +1,5 @@
-import React from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import React, { useState, useEffect } from "react";
+import { Formik, Form, Field, ErrorMessage, setFieldTouched } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import {
@@ -13,11 +13,14 @@ import {
   Typography,
   Paper,
   Divider,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import { Container } from "@mui/system";
 
 const schema = Yup.object().shape({
   coupon_id: Yup.string().required("Tier ID is required"),
+  tierName: Yup.string().required("Tier name is required"),
   couponTitle: Yup.string().required("coupon title is required"),
   couponDescription: Yup.string().required("coupon description is required"),
   validity: Yup.number().required("Validity is required"),
@@ -27,15 +30,26 @@ const schema = Yup.object().shape({
 
 const AddCoupons = () => {
   const navigate = useNavigate();
+  const [tiers, setTiers] = useState([]);
+  const [tierNames, setTierNames] = useState([]);
+
+  useEffect(() => {
+    const storedTiers = localStorage.getItem("tiers");
+    if (storedTiers) {
+      const tiersData = JSON.parse(storedTiers);
+      setTiers(tiersData);
+      const tierNamesData = tiersData.map((tier) => tier.tierName);
+      setTierNames(tierNamesData);
+    }
+  }, []);
+
   const handleSubmit = (values) => {
     // Get the existing coupons from local storage
     const existingCoupons = localStorage.getItem("coupons");
     const coupons = existingCoupons ? JSON.parse(existingCoupons) : [];
 
     // Add the new coupon to the list
-    coupons.push({
-      ...values,
-    });
+    coupons.push(values);
 
     // Save the updated list to local storage
     localStorage.setItem("coupons", JSON.stringify(coupons));
@@ -60,6 +74,7 @@ const AddCoupons = () => {
       <Formik
         initialValues={{
           coupon_id: "",
+          tierName: "",
           couponTitle: "",
           couponDescription: "",
           validity: 0,
@@ -100,6 +115,28 @@ const AddCoupons = () => {
                     variant="outlined"
                   />
                   <ErrorMessage name="coupon_id">
+                    {(msg) => <FormHelperText>{msg}</FormHelperText>}
+                  </ErrorMessage>
+                </FormControl>
+              </Box>
+              <Box mb={2}>
+                <FormControl fullWidth error={!!ErrorMessage.tierName}>
+                  <Field
+                    as={TextField}
+                    select
+                    name="tierName"
+                    label="Tier Name"
+                    onChange={(event) =>
+                      setFieldValue("tierName", event.target.value)
+                    }
+                  >
+                    {tierNames.map((tierName) => (
+                      <MenuItem key={tierName} value={tierName}>
+                        {tierName}
+                      </MenuItem>
+                    ))}
+                  </Field>
+                  <ErrorMessage name="tierName">
                     {(msg) => <FormHelperText>{msg}</FormHelperText>}
                   </ErrorMessage>
                 </FormControl>
