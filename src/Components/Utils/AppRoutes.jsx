@@ -19,6 +19,7 @@ import AddTier from "../Tiers/AddTier";
 import EditTier from "../Tiers/EditTier";
 
 import Contacts from "../Common/Contacts"
+import ProfilePage from "../Misc/PartnerProfile";
 
 const AppRoutes = () => {
   return (
@@ -45,6 +46,7 @@ const AppRoutes = () => {
         <Route path="edit-tier/:id" element={<EditTier />} />
 
         <Route path="contact" element={<Contacts/>} />
+        <Route path="profile" element={<ProfilePage/>}/>
       </Route>
     </Routes>
   );

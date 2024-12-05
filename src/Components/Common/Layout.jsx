@@ -90,7 +90,7 @@ const Layout = () => {
           </IconButton>
           <Box flexGrow={1} />
           <IconButton>
-            <Avatar alt="Profile" src="/profile.jpg" />
+            <Avatar alt="Profile" src="/profile.jpg" component={Link} to="./profile" />
           </IconButton>
         </Toolbar>
       </AppBar>
