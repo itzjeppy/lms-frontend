@@ -31,7 +31,7 @@ const AppRoutes = () => {
       {/* Dashboard Routes */}
       <Route path="/dashboard" element={<Layout />}>
         {/* Offers */}
-        <Route index element={<OffersPage />} /> {/* Default dashboard page */}
+        <Route index element={<Contacts />} /> {/* Default dashboard page */}
         <Route path="offers" element={<OffersPage />} />
         <Route path="add-offer" element={<AddOffers />} />
 
