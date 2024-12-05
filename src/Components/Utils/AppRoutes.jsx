@@ -18,6 +18,8 @@ import TiersPage from "../Tiers/TiersPage";
 import AddTier from "../Tiers/AddTier";
 import EditTier from "../Tiers/EditTier";
 
+import Contacts from "../Common/Contacts"
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -37,10 +39,12 @@ const AppRoutes = () => {
         <Route path="coupons" element={<CouponsPage />} />
         <Route path="add-coupon" element={<AddCoupons />} />
 
-        {/* Tiers */}
+        {/* Tiers */}   
         <Route path="tiers" element={<TiersPage />} />
         <Route path="add-tier" element={<AddTier />} />
         <Route path="edit-tier/:id" element={<EditTier />} />
+
+        <Route path="contact" element={<Contacts/>} />
       </Route>
     </Routes>
   );
