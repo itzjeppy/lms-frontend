@@ -15,9 +15,10 @@ import {
   Divider,
 } from "@mui/material";
 import { Container } from "@mui/system";
+import OfferService from "../Services/OfferService";
 
 const schema = Yup.object().shape({
-  tier_id: Yup.string().required("Tier ID is required"),
+  tierId: Yup.string().required("Tier ID is required"),
   offerTitle: Yup.string().required("Offer title is required"),
   offerDescription: Yup.string().required("Offer description is required"),
   image: Yup.mixed().required("Image is required"),
@@ -33,26 +34,27 @@ const AddOffers = () => {
       const imageData = reader.result;
       const imageType = values.image.type;
       const base64Image = imageData.split(",")[1];
-
-      // Get the existing offers from local storage
-      const existingOffers = localStorage.getItem("offers");
-      const offers = existingOffers ? JSON.parse(existingOffers) : [];
-
-      // Add the new offer to the list
-      offers.push({
+  
+      const offer = {
         ...values,
         image: {
           type: imageType,
           base64: base64Image,
         },
-      });
-
-      // Save the updated list to local storage
-      localStorage.setItem("offers", JSON.stringify(offers));
-
-      // Navigate back to the offers page
-      navigate(-1);
+      };
+  
+      console.log("Submitting new offer:", offer);
+  
+      OfferService.createOffers(offer)
+        .then((response) => {
+          console.log("Created offers:", response.data);
+          navigate(-1);
+        })
+        .catch((error) => {
+          console.error("Error creating offers", error);
+        });
     };
+  
     reader.readAsDataURL(values.image);
   };
 
@@ -106,12 +108,12 @@ const AddOffers = () => {
             >
               <FormControl fullWidth error={!!ErrorMessage.tier_id}>
                 <Field
-                  name="tier_id"
+                  name="tierId"
                   as={TextField}
                   label="Tier ID"
                   variant="outlined"
                 />
-                <ErrorMessage name="tier_id">
+                <ErrorMessage name="tierId">
                   {(msg) => <FormHelperText>{msg}</FormHelperText>}
                 </ErrorMessage>
               </FormControl>

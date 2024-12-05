@@ -5,22 +5,32 @@ import {
   Typography,
   Box,
   Container,
+  IconButton,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import OffersList from "./OffersList";
 import { useNavigate } from "react-router-dom";
+import OfferService from "../Services/OfferService";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const OffersPage = () => {
   const [offers, setOffers] = useState([]);
    const [loading, setLoading] = useState(true);
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate(); 
 
-    useEffect(() => {
-    const existingOffers = localStorage.getItem("offers");
-    if (existingOffers) {
-      setOffers(JSON.parse(existingOffers));
-    }
-    setLoading(false);
+  useEffect(() => {
+    const fetchOffers = async () => {
+      try {
+        const response = await OfferService.getOffers();
+        setOffers(response.data); 
+      } catch (error) {
+        console.error("Error fetching offers:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOffers();
   }, []);
 
   const handleStatusToggle = (offerId) => {
@@ -64,6 +74,15 @@ const OffersPage = () => {
           gap: { xs: 2, md: 0 }, // Add spacing between elements on small screens
         }}
       >
+      <IconButton
+        color="inherit"
+        edge="start"
+        aria-label="open drawer"
+        onClick={() => navigate(-1)} // Wrap in an arrow function
+        sx={{ mr: 2 }}
+      >
+      <ArrowBackIcon/>  
+      </IconButton>
         <Typography
           variant="h4"
           sx={{
