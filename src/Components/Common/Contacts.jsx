@@ -1,18 +1,18 @@
-import React from 'react';
-import { Container, Typography, Grid, Paper, Grid2 } from '@mui/material';
+import React from "react";
+import { Container, Typography, Grid2, Paper, Avatar, Box } from "@mui/material";
 
 const Contacts = () => {
   const teamMembers = [
-    "Saee Chormunge",
-    "Jholline Jepson",
-    "Cibi Sri Balaji",
-    "Balaji Senthilkumar",
-    "Lakshmi Sowmya",
-    "Sadhana",
-    "Spoorthy Pateel",
-    "Bhavya Sri",
-    "Mohammed Zaid Farooki",
-    "Om Prakash Gupta"
+    { name: "Saee Chormunge", image: "https://via.placeholder.com/150" },
+    { name: "Jholline Jepson", image: "https://via.placeholder.com/150" },
+    { name: "Cibi Sri Balaji", image: "https://via.placeholder.com/150" },
+    { name: "Balaji Senthilkumar", image: "https://via.placeholder.com/150" },
+    { name: "Lakshmi Sowmya", image: "https://via.placeholder.com/150" },
+    { name: "Sadhana Madina", image: "https://via.placeholder.com/150" },
+    { name: "Spoorthy Pateel", image: "https://via.placeholder.com/150" },
+    { name: "K Bhavya Sri", image: "https://via.placeholder.com/150" },
+    { name: "Mohammed Zaid Farooki", image: "https://via.placeholder.com/150" },
+    { name: "Om Prakash Gupta", image: "https://via.placeholder.com/150" },
   ];
 
   return (
@@ -20,34 +20,57 @@ const Contacts = () => {
       sx={{
         mt: 4,
         mb: 4,
-        p: 3,
-        bgcolor: '#f5f5f5',
-        borderRadius: 2,
-        boxShadow: 3,
+        p: 4,
+        background: "linear-gradient(to right bottom, #e3f2fd, #e1bee7)",
+        borderRadius: 3,
+        boxShadow: 6,
+        overflow: "hidden",
       }}
     >
-      <Typography variant="h4" align="center" gutterBottom>
-        Created by
-      </Typography>
-      <Grid2 container spacing={2} justifyContent="center">
+      {/* Header Section */}
+      <Box
+      sx={{ textAlign: "center", mb: 4 }}>
+        <Typography variant="h3" fontWeight="bold" gutterBottom>
+          Meet Our Team
+        </Typography>
+        <Typography variant="h6" color="textSecondary">
+          The brilliant minds behind the project
+        </Typography>
+      </Box>
+
+      {/* Team Members Grid2 */}
+      <Grid2 container spacing={4} justifyContent="center">
         {teamMembers.map((member, index) => (
-          <Grid2 item xs={12} sm={6} md={4} key={index}>
+          <Grid2 item xs={12} sm={6} md={4} lg={3} key={index}>
             <Paper
-              elevation={3}
+              elevation={4}
               sx={{
-                p: 2,
-                bgcolor: '#ffffff',
-                borderRadius: 2,
-                textAlign: 'center',
-                transition: '0.3s',
-                '&:hover': {
-                  boxShadow: 6,
-                  transform: 'scale(1.02)',
+                p: 3,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                borderRadius: 4,
+                bgcolor: "white",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+                transition: "transform 0.3s, box-shadow 0.3s",
+                "&:hover": {
+                  transform: "translateY(-5px)",
+                  boxShadow: "0 6px 16px rgba(0,0,0,0.3)",
                 },
               }}
             >
-              <Typography variant="h6" color="primary">
-                {member}
+              <Avatar
+                src={member.image}
+                alt={member.name}
+                sx={{
+                  width: 80,
+                  height: 80,
+                  mb: 2,
+                  border: "3px solid #673ab7",
+                }}
+              />
+              <Typography variant="h6" fontWeight="bold" gutterBottom>
+                {member.name}
               </Typography>
             </Paper>
           </Grid2>

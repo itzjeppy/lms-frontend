@@ -14,7 +14,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { Link, Outlet } from "react-router-dom";
-import { Home, LocalOffer, ConfirmationNumber, Mail, Menu } from "@mui/icons-material";
+import { Home, CalendarToday, Mail, Menu, Info } from "@mui/icons-material"; // Replaced icons for Programs
 import { useTheme } from "@mui/material/styles";
 import Logo from '../../Icons/Logo';
 
@@ -42,18 +42,14 @@ const Layout = () => {
           <ListItemIcon><Home sx={{ color: "#ECEFF5" }} /></ListItemIcon>
           <ListItemText primary="Your Tiers" sx={{ color: "#ECEFF5" }} />
         </ListItem>
-        <ListItem button component={Link} to="./offers">
-          <ListItemIcon><LocalOffer sx={{ color: "#ECEFF5" }} /></ListItemIcon>
-          <ListItemText primary="Your Offers" sx={{ color: "#ECEFF5" }} />
-        </ListItem>
-        <ListItem button component={Link} to="./coupons">
-          <ListItemIcon><ConfirmationNumber sx={{ color: "#ECEFF5" }} /></ListItemIcon>
-          <ListItemText primary="Your Coupons" sx={{ color: "#ECEFF5" }} />
+        <ListItem button component={Link} to="./programs">
+          <ListItemIcon><CalendarToday sx={{ color: "#ECEFF5" }} /></ListItemIcon>
+          <ListItemText primary="Your Programs" sx={{ color: "#ECEFF5" }} />
         </ListItem>
         <Divider />
         <ListItem button component={Link} to="./contact">
-          <ListItemIcon><Mail sx={{ color: "#ECEFF5" }} /></ListItemIcon>
-          <ListItemText primary="Contact Us" sx={{ color: "#ECEFF5" }} />
+          <ListItemIcon><Info sx={{ color: "#ECEFF5" }} /></ListItemIcon>
+          <ListItemText primary="About us" sx={{ color: "#ECEFF5" }} />
         </ListItem>
       </List>
     </Box>

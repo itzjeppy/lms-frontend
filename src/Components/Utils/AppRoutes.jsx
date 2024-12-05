@@ -18,8 +18,13 @@ import TiersPage from "../Tiers/TiersPage";
 import AddTier from "../Tiers/AddTier";
 import EditTier from "../Tiers/EditTier";
 
-import Contacts from "../Common/Contacts"
+import Contacts from "../Common/Contacts";
 import ProfilePage from "../Misc/PartnerProfile";
+
+// Programs Pages
+import ProgramsPage from "../Programs/ProgramsPage";
+import AddProgram from "../Programs/AddProgram";
+import EditProgram from "../Programs/EditProgram";
 
 const AppRoutes = () => {
   return (
@@ -40,13 +45,19 @@ const AppRoutes = () => {
         <Route path="coupons" element={<CouponsPage />} />
         <Route path="add-coupon" element={<AddCoupons />} />
 
-        {/* Tiers */}   
+        {/* Tiers */}
         <Route path="tiers" element={<TiersPage />} />
         <Route path="add-tier" element={<AddTier />} />
         <Route path="edit-tier/:id" element={<EditTier />} />
 
-        <Route path="contact" element={<Contacts/>} />
-        <Route path="profile" element={<ProfilePage/>}/>
+        {/* Programs */}
+        <Route path="programs" element={<ProgramsPage />} />
+        <Route path="add-program" element={<AddProgram />} />
+        <Route path="edit-program/:id" element={<EditProgram />} />
+
+        {/* Misc */}
+        <Route path="contact" element={<Contacts />} />
+        <Route path="profile" element={<ProfilePage />} />
       </Route>
     </Routes>
   );
