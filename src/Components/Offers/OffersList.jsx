@@ -24,7 +24,7 @@ const OffersList = ({ offers = [], onStatusToggle }) => {
             {offer.image && (
               <img
                 style={{ width: "100px", height: "100px" }}
-                src={`data:image/${offer.image.type};base64,${offer.image.base64}`}
+                src={`data:image/${offer.imageType};base64,${offer.imageUrl}`}
                 alt={offer.offerTitle}
               />
             )}

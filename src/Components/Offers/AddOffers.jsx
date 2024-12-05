@@ -37,10 +37,8 @@ const AddOffers = () => {
   
       const offer = {
         ...values,
-        image: {
-          type: imageType,
-          base64: base64Image,
-        },
+          imageType: imageType,
+          imageUrl: base64Image,
       };
   
       console.log("Submitting new offer:", offer);
