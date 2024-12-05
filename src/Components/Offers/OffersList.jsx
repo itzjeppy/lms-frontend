@@ -10,12 +10,12 @@ const OffersList = ({ offers = [], onStatusToggle }) => {
     <List className="offers-list">
       {offers.map((offer) => (
         <ListItem
-        sx={{
-          boxShadow: 2,
-          backgroundColor:  offer.status === "active" ? "#bbfccb" : "#fc8e86",
-          borderRadius: 5,
-          marginBottom: 1,
-        }}
+          sx={{
+            boxShadow: 2,
+            backgroundColor: offer.status ? "#bbfccb" : "#fc8e86", // Use boolean directly
+            borderRadius: 5,
+            marginBottom: 1,
+          }}
           key={offer.id} // Use offer.id for keys
           button={true}
           className={`offer-item ${offer.status ? "active" : "inactive"}`}
@@ -28,7 +28,7 @@ const OffersList = ({ offers = [], onStatusToggle }) => {
                 alt={offer.offerTitle}
               />
             )}
-          </div> {/* Closing tag for the div wrapping the image */}
+          </div>
           <ListItemIcon>
             {/* Icon can be placed here */}
           </ListItemIcon>
@@ -44,13 +44,12 @@ const OffersList = ({ offers = [], onStatusToggle }) => {
           <div className="offer-status">
             <Switch
               className="status-toggle"
-              onToggle={(e) => {
+              checked={offer.status} // Set checked based on boolean status
+              onChange={(e) => {
                 e.stopPropagation(); // Stop propagation to prevent ListItem from triggering
-                onStatusToggle(offer.tier_id);
+                onStatusToggle(offer.tier_id); // Call the toggle function
               }}
-            >
-              {offer.status ? "Active" : "Inactive"}
-            </Switch>
+            />
           </div>
         </ListItem>
       ))}
