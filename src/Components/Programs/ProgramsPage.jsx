@@ -3,7 +3,7 @@ import {
  Container,
  Box,
  Typography,
- Grid,
+ Grid2,
  IconButton,
  CircularProgress,
  Button,
@@ -124,16 +124,16 @@ program.id === programId
          boxShadow: "0 1px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow
        }}
 >
-<Grid container spacing={3}>
+<Grid2 container spacing={3}>
          {programs.length > 0 ? (
            programs.map((program) => (
-<Grid item xs={12} key={program.id}>
+<Grid2 item xs={12} key={program.id}>
                {/* Full-width card in stacked layout */}
 <ProgramCard
                  program={program}
                  onToggle={() => handleToggleProgram(program.id)}
                />
-</Grid>
+</Grid2>
            ))
          ) : (
 <Typography
@@ -144,7 +144,7 @@ program.id === programId
              No programs available. Start by adding a new program!
 </Typography>
          )}
-</Grid>
+</Grid2>
 </Box>
 </Container>
  );
