@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
@@ -11,13 +11,23 @@ import {
   Typography,
   Paper,
   Divider,
+  Grid2,
+  Tooltip,
+  Switch,
+  FormControlLabel,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
 import { Container } from "@mui/system";
-import { MuiColorInput } from "mui-color-input"; // Import MuiColorInput
+import { MuiColorInput } from "mui-color-input";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import InfoIcon from "@mui/icons-material/Info";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 // Validation Schema
 const schema = Yup.object().shape({
-  tierName: Yup.string().required("Tier Name is required"),
+  name: Yup.string().required("Tier Name is required"),
   triggerAmount: Yup.number()
     .required("Trigger Amount is required")
     .min(0, "Trigger Amount cannot be negative"),
@@ -45,13 +55,24 @@ const schema = Yup.object().shape({
 
 const AddTier = () => {
   const navigate = useNavigate();
+  const [isFreeTier, setIsFreeTier] = useState(false);
 
   const handleSubmit = (values) => {
-    // Save the new tier in local storage or send to backend
     const existingTiers = JSON.parse(localStorage.getItem("tiers") || "[]");
-    localStorage.setItem("tiers", JSON.stringify([...existingTiers, values]));
+    const newTier = {
+      id: Date.now(),
+      name: values.name,
+      triggerAmount: values.triggerAmount,
+      triggerDuration: values.triggerDuration,
+      accrualMultiplier: values.accrualMultiplier,
+      redemptionLimitOfPurchase: values.redemptionLimitOfPurchase,
+      conversion: values.conversion,
+      description: values.description,
+      couponProbability: values.couponProbability,
+      colour: values.colour,
+    };
 
-    // Navigate back to the tiers page
+    localStorage.setItem("tiers", JSON.stringify([...existingTiers, newTier]));
     navigate(-1);
   };
 
@@ -66,7 +87,7 @@ const AddTier = () => {
         borderRadius: 2,
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
         width: "100%",
-        maxWidth: "800px", // Responsive max width
+        maxWidth: "800px",
         margin: "0 auto",
       }}
     >
@@ -79,160 +100,216 @@ const AddTier = () => {
       >
         <Formik
           initialValues={{
-            tierName: "",
-            triggerAmount: "",
+            name: "",
+            triggerAmount: isFreeTier ? 0 : "",
             triggerDuration: "",
             accrualMultiplier: "",
             redemptionLimitOfPurchase: "",
             conversion: "",
             description: "",
             couponProbability: "",
-            colour: "#FFFFFF", // Default color
+            colour: "#FFFFFF",
           }}
           validationSchema={schema}
           onSubmit={handleSubmit}
         >
           {({ isSubmitting, values, setFieldValue }) => (
             <Form>
-              <Typography variant="h4" sx={{ fontWeight: "bold", mb: 2 }}>
-                Add Tier
-              </Typography>
-              <Divider sx={{ mb: 3 }} />
+              {/* Title Section */}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 3,
+                }}
+              >
+                <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+                  Add New Tier
+                </Typography>
+                <AddCircleOutlineIcon color="primary" fontSize="large" />
+              </Box>
 
-              <Box sx={{ display: "grid", gap: 2 }}>
-                {/* Tier Name */}
-                <FormControl fullWidth>
-                  <Field
-                    name="tierName"
-                    as={TextField}
-                    label="Tier Name"
-                    variant="outlined"
+              {/* Free Tier Toggle */}
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={isFreeTier}
+                    onChange={(event) => {
+                      setIsFreeTier(event.target.checked);
+                      setFieldValue("triggerAmount", event.target.checked ? 0 : "");
+                    }}
+                    color="primary"
                   />
-                  <ErrorMessage name="tierName" component={FormHelperText} />
-                </FormControl>
+                }
+                label="Is this a Free Tier?"
+                sx={{ mb: 3 }}
+              />
 
-                {/* Trigger Amount */}
-                <FormControl fullWidth>
-                  <Field
-                    name="triggerAmount"
-                    as={TextField}
-                    label="Trigger Amount"
-                    type="number"
-                    variant="outlined"
-                  />
-                  <ErrorMessage
-                    name="triggerAmount"
-                    component={FormHelperText}
-                  />
-                </FormControl>
+              {/* Accordion for Form Sections */}
+              <Accordion defaultExpanded>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Basic Details
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid2 container spacing={2}>
+                    <Grid2 item xs={12}>
+                      <Field
+                        name="name"
+                        as={TextField}
+                        label="Tier Name"
+                        fullWidth
+                        variant="outlined"
+                      />
+                      <ErrorMessage name="name" component={FormHelperText} />
+                    </Grid2>
 
-                {/* Trigger Duration */}
-                <FormControl fullWidth>
-                  <Field
-                    name="triggerDuration"
-                    as={TextField}
-                    label="Trigger Duration (months)"
-                    type="number"
-                    variant="outlined"
-                  />
-                  <ErrorMessage
-                    name="triggerDuration"
-                    component={FormHelperText}
-                  />
-                </FormControl>
+                    <Grid2 item xs={6}>
+                      <Field
+                        name="triggerAmount"
+                        as={TextField}
+                        label="Trigger Amount"
+                        type="number"
+                        fullWidth
+                        variant="outlined"
+                        disabled={isFreeTier}
+                      />
+                      <ErrorMessage name="triggerAmount" component={FormHelperText} />
+                    </Grid2>
 
-                {/* Accrual Multiplier */}
-                <FormControl fullWidth>
-                  <Field
-                    name="accrualMultiplier"
-                    as={TextField}
-                    label="Accrual Multiplier"
-                    type="number"
-                    variant="outlined"
-                  />
-                  <ErrorMessage
-                    name="accrualMultiplier"
-                    component={FormHelperText}
-                  />
-                </FormControl>
+                    <Grid2 item xs={6}>
+                      <Field
+                        name="triggerDuration"
+                        as={TextField}
+                        label="Trigger Duration (months)"
+                        type="number"
+                        fullWidth
+                        variant="outlined"
+                      />
+                      <ErrorMessage
+                        name="triggerDuration"
+                        component={FormHelperText}
+                      />
+                    </Grid2>
+                  </Grid2>
+                </AccordionDetails>
+              </Accordion>
 
-                {/* Redemption Limit */}
-                <FormControl fullWidth>
-                  <Field
-                    name="redemptionLimitOfPurchase"
-                    as={TextField}
-                    label="Redemption Limit"
-                    type="number"
-                    variant="outlined"
-                  />
-                  <ErrorMessage
-                    name="redemptionLimitOfPurchase"
-                    component={FormHelperText}
-                  />
-                </FormControl>
+              <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Rewards and Metrics
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid2 container spacing={2}>
+                    <Grid2 item xs={6}>
+                      <Field
+                        name="accrualMultiplier"
+                        as={TextField}
+                        label="Accrual Multiplier"
+                        type="number"
+                        fullWidth
+                        variant="outlined"
+                      />
+                      <ErrorMessage
+                        name="accrualMultiplier"
+                        component={FormHelperText}
+                      />
+                    </Grid2>
+                    <Grid2 item xs={6}>
+                      <Field
+                        name="redemptionLimitOfPurchase"
+                        as={TextField}
+                        label="Redemption Limit"
+                        type="number"
+                        fullWidth
+                        variant="outlined"
+                      />
+                      <ErrorMessage
+                        name="redemptionLimitOfPurchase"
+                        component={FormHelperText}
+                      />
+                    </Grid2>
+                    <Grid2 item xs={6}>
+                      <Field
+                        name="conversion"
+                        as={TextField}
+                        label="Conversion Rate"
+                        type="number"
+                        fullWidth
+                        variant="outlined"
+                      />
+                      <ErrorMessage name="conversion" component={FormHelperText} />
+                    </Grid2>
+                    <Grid2 item xs={6}>
+                      <Field
+                        name="couponProbability"
+                        as={TextField}
+                        label={
+                          <span>
+                            Coupon Probability (0-1)
+                            <Tooltip
+                              title="The likelihood a user receives a coupon (between 0 and 1)."
+                              arrow
+                            >
+                              <InfoIcon sx={{ ml: 1 }} fontSize="small" />
+                            </Tooltip>
+                          </span>
+                        }
+                        type="number"
+                        fullWidth
+                        variant="outlined"
+                      />
+                      <ErrorMessage
+                        name="couponProbability"
+                        component={FormHelperText}
+                      />
+                    </Grid2>
+                  </Grid2>
+                </AccordionDetails>
+              </Accordion>
 
-                {/* Conversion Rate */}
-                <FormControl fullWidth>
-                  <Field
-                    name="conversion"
-                    as={TextField}
-                    label="Conversion Rate"
-                    type="number"
-                    variant="outlined"
-                  />
-                  <ErrorMessage name="conversion" component={FormHelperText} />
-                </FormControl>
-
-                {/* Description */}
-                <FormControl fullWidth>
+              <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Additional Information
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
                   <Field
                     name="description"
                     as={TextField}
                     label="Description"
-                    variant="outlined"
                     multiline
-                    rows={3}
-                  />
-                  <ErrorMessage
-                    name="description"
-                    component={FormHelperText}
-                  />
-                </FormControl>
-
-                {/* Coupon Probability */}
-                <FormControl fullWidth>
-                  <Field
-                    name="couponProbability"
-                    as={TextField}
-                    label="Coupon Probability (0-1)"
-                    type="number"
+                    rows={4}
+                    fullWidth
                     variant="outlined"
                   />
-                  <ErrorMessage
-                    name="couponProbability"
-                    component={FormHelperText}
-                  />
-                </FormControl>
+                  <ErrorMessage name="description" component={FormHelperText} />
 
-                {/* Colour Picker */}
-                <FormControl fullWidth>
                   <MuiColorInput
                     format="hex"
                     label="Tier Colour"
                     value={values.colour}
                     onChange={(color) => setFieldValue("colour", color)}
+                    fullWidth
+                    sx={{ mt: 3 }}
                   />
                   <ErrorMessage name="colour" component={FormHelperText} />
-                </FormControl>
-              </Box>
+                </AccordionDetails>
+              </Accordion>
 
               {/* Submit Button */}
-              <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
+              <Box sx={{ mt: 3, textAlign: "right" }}>
                 <Button
                   type="submit"
                   disabled={isSubmitting}
                   variant="contained"
                   color="primary"
+                  size="large"
                 >
                   Submit
                 </Button>
