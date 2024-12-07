@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Formik, Form, Field, ErrorMessage, setFieldTouched } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import {
@@ -14,47 +14,39 @@ import {
   Paper,
   Divider,
   MenuItem,
-  Select,
+  Tooltip,
+  Container,
 } from "@mui/material";
-import { Container } from "@mui/system";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import InfoIcon from '@mui/icons-material/Info';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
 const schema = Yup.object().shape({
-  coupon_id: Yup.string().required("Tier ID is required"),
-  tierName: Yup.string().required("Tier name is required"),
-  couponTitle: Yup.string().required("coupon title is required"),
-  couponDescription: Yup.string().required("coupon description is required"),
+  couponTitle: Yup.string().required("Coupon title is required"),
+  couponDescription: Yup.string().required("Coupon description is required"),
+  tierId: Yup.string().required("Tier is required"), 
   validity: Yup.number().required("Validity is required"),
   benefit: Yup.number().required("Benefit is required"),
-  status: Yup.boolean().required("Status is required"),
+  status: Yup.boolean(),
 });
 
 const AddCoupons = () => {
   const navigate = useNavigate();
   const [tiers, setTiers] = useState([]);
-  const [tierNames, setTierNames] = useState([]);
 
   useEffect(() => {
     const storedTiers = localStorage.getItem("tiers");
     if (storedTiers) {
-      const tiersData = JSON.parse(storedTiers);
-      setTiers(tiersData);
-      const tierNamesData = tiersData.map((tier) => tier.tierName);
-      setTierNames(tierNamesData);
+      setTiers(JSON.parse(storedTiers));
     }
   }, []);
 
   const handleSubmit = (values) => {
-    // Get the existing coupons from local storage
     const existingCoupons = localStorage.getItem("coupons");
     const coupons = existingCoupons ? JSON.parse(existingCoupons) : [];
-
-    // Add the new coupon to the list
     coupons.push(values);
-
-    // Save the updated list to local storage
     localStorage.setItem("coupons", JSON.stringify(coupons));
-
-    // Navigate back to the coupons page
     navigate(-1);
   };
 
@@ -65,162 +57,168 @@ const AddCoupons = () => {
         flexDirection: "column",
         height: "100%",
         p: 3,
-        bgcolor: "#f9f9f9", // Light background
+        bgcolor: "#f9f9f9",
         borderRadius: 2,
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)", // Subtle shadow
-        width: "100%", // Changed to prevent overflow
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+        width: "100%",
+        maxWidth: "800px",
+        margin: "0 auto",
       }}
     >
-      <Formik
-        initialValues={{
-          coupon_id: "",
-          tierName: "",
-          couponTitle: "",
-          couponDescription: "",
-          validity: 0,
-          benefit: 0,
-          status: false,
+      <Paper
+        sx={{
+          p: 3,
+          borderRadius: 2,
+          boxShadow: "0 8px 20px rgba(0, 0, 0, 0.1)",
         }}
-        validationSchema={schema}
-        onSubmit={handleSubmit}
       >
-        {({ isSubmitting, setFieldValue }) => (
-          <Form>
-            <Typography
-              variant="h3"
-              sx={{
-                fontWeight: "bold",
-                color: "#4A4A4A",
-              }}
-            >
-              Add coupon
-            </Typography>
-            <Divider />
-            <Box
-              sx={{
-                flexGrow: 1,
-                overflowY: "auto", // Scrollable content
-                bgcolor: "#ffffff", // White card background
-                p: 2,
-                borderRadius: 2,
-                boxShadow: "0 1px 6px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              <Box mb={2}>
-                <FormControl fullWidth error={!!ErrorMessage.coupon_id}>
-                  <Field
-                    name="coupon_id"
-                    as={TextField}
-                    label="Coupon ID"
-                    variant="outlined"
-                  />
-                  <ErrorMessage name="coupon_id">
-                    {(msg) => <FormHelperText>{msg}</FormHelperText>}
-                  </ErrorMessage>
-                </FormControl>
-              </Box>
-              <Box mb={2}>
-                <FormControl fullWidth error={!!ErrorMessage.tierName}>
-                  <Field
-                    as={TextField}
-                    select
-                    name="tierName"
-                    label="Tier Name"
-                    onChange={(event) =>
-                      setFieldValue("tierName", event.target.value)
-                    }
-                  >
-                    {tierNames.map((tierName) => (
-                      <MenuItem key={tierName} value={tierName}>
-                        {tierName}
-                      </MenuItem>
-                    ))}
-                  </Field>
-                  <ErrorMessage name="tierName">
-                    {(msg) => <FormHelperText>{msg}</FormHelperText>}
-                  </ErrorMessage>
-                </FormControl>
-              </Box>
-              <Box mb={2}>
-                <FormControl fullWidth error={!!ErrorMessage.couponTitle}>
+        <Typography 
+          variant="h4" 
+          sx={{ fontWeight: "bold", mb: 2, textAlign: 'center' }}
+        >
+          Add New Coupon
+        </Typography>
+
+        <Divider sx={{ mb: 3 }} />
+
+        <Formik
+          initialValues={{
+            couponTitle: "",
+            couponDescription: "",
+            tierId: "",
+            validity: 0,
+            benefit: 0,
+            status: false,
+          }}
+          validationSchema={schema}
+          onSubmit={handleSubmit}
+        >
+          {({ isSubmitting, setFieldValue }) => (
+            <Form>
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                📄 **Coupon Details**
+              </Typography>
+
+              <Box sx={{ display: "grid", gap: 2 }}>
+                <FormControl fullWidth>
                   <Field
                     name="couponTitle"
                     as={TextField}
-                    label="coupon Title"
+                    label="Coupon Title"
                     variant="outlined"
+                    placeholder="Enter coupon title (e.g., 10% Off)"
                   />
-                  <ErrorMessage name="couponTitle">
-                    {(msg) => <FormHelperText>{msg}</FormHelperText>}
-                  </ErrorMessage>
+                  <ErrorMessage name="couponTitle" component={FormHelperText} />
                 </FormControl>
-              </Box>
-              <Box mb={2}>
-                <FormControl fullWidth error={!!ErrorMessage.couponDescription}>
+
+                <FormControl fullWidth>
                   <Field
                     name="couponDescription"
                     as={TextField}
-                    label="coupon Description"
+                    label="Coupon Description"
                     variant="outlined"
                     multiline
-                    rows={4}
+                    rows={3}
+                    placeholder="Provide a brief description of the coupon"
                   />
-                  <ErrorMessage name="couponDescription">
-                    {(msg) => <FormHelperText>{msg}</FormHelperText>}
-                  </ErrorMessage>
+                  <ErrorMessage name="couponDescription" component={FormHelperText} />
                 </FormControl>
-              </Box>
-              <Box mb={2}>
-                <FormControl fullWidth error={!!ErrorMessage.validity}>
+
+                <FormControl fullWidth>
+                  <Field
+                    name="tierId"
+                    as={TextField}
+                    select
+                    label="Select Tier"
+                    variant="outlined"
+                    onChange={(event) => setFieldValue("tierId", event.target.value)}
+                  >
+                    {tiers.length > 0 ? (
+                      tiers.map((tier) => (
+                        <MenuItem key={tier.id} value={tier.id}>
+                          {tier.name}
+                        </MenuItem>
+                      ))
+                    ) : (
+                      <MenuItem disabled>No tiers available</MenuItem>
+                    )}
+                  </Field>
+                  <ErrorMessage name="tierId" component={FormHelperText} />
+                </FormControl>
+
+                <Typography variant="h6" sx={{ mt: 4, mb: 2 }}>
+                  ⚙️ **Coupon Settings**
+                </Typography>
+
+                <FormControl fullWidth>
                   <Field
                     name="validity"
                     as={TextField}
-                    label="Validity"
+                    label="Validity (in days)"
                     type="number"
                     variant="outlined"
+                    InputProps={{
+                      endAdornment: (
+                        <Tooltip title="How long the coupon is valid for">
+                          <CalendarTodayIcon />
+                        </Tooltip>
+                      ),
+                    }}
                   />
-                  <ErrorMessage name="validity">
-                    {(msg) => <FormHelperText>{msg}</FormHelperText>}
-                  </ErrorMessage>
+                  <ErrorMessage name="validity" component={FormHelperText} />
                 </FormControl>
-              </Box>
-              <Box mb={2}>
-                <FormControl fullWidth error={!!ErrorMessage.benefit}>
+
+                <FormControl fullWidth>
                   <Field
                     name="benefit"
                     as={TextField}
-                    label="Benefit"
+                    label="Benefit Amount"
                     type="number"
                     variant="outlined"
+                    InputProps={{
+                      startAdornment: (
+                        <AttachMoneyIcon color="primary" />
+                      ),
+                    }}
                   />
-                  <ErrorMessage name="benefit">
-                    {(msg) => <FormHelperText>{msg}</FormHelperText>}
-                  </ErrorMessage>
+                  <ErrorMessage name="benefit" component={FormHelperText} />
                 </FormControl>
-              </Box>
-              <Box mb={2}>
-                <FormControl error={!!ErrorMessage.status}>
-                  <Field name="status" as={Checkbox} color="primary" />
+
+                <FormControl>
                   <FormControlLabel
-                    control={<Checkbox name="status" />}
-                    label="Status"
+                    control={<Field name="status" as={Checkbox} color="primary" />}
+                    label="Activate Coupon"
                   />
-                  <ErrorMessage name="status">
-                    {(msg) => <FormHelperText>{msg}</FormHelperText>}
-                  </ErrorMessage>
                 </FormControl>
               </Box>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                variant="contained"
-                color="primary"
+
+              <Box 
+                sx={{ 
+                  mt: 4, 
+                  display: "flex", 
+                  justifyContent: "flex-end" 
+                }}
               >
-                Submit
-              </Button>
-            </Box>
-          </Form>
-        )}
-      </Formik>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  variant="contained"
+                  color="primary"
+                  startIcon={<AddCircleOutlineIcon />}
+                  sx={{
+                    fontWeight: "bold",
+                    textTransform: "none",
+                    py: 1.5,
+                    px: 4,
+                  }}
+                >
+                  Add Coupon
+                </Button>
+              </Box>
+            </Form>
+          )}
+        </Formik>
+      </Paper>
     </Container>
   );
 };

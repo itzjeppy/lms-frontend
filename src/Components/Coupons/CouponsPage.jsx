@@ -1,35 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Paper, Button, Typography, Box, Container } from "@mui/material";
+import { Container, Typography, Box, Grid2, Button } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import CouponsList from "./CouponsList";
 import { useNavigate } from "react-router-dom";
+import CouponsCard from "./CouponsCard";
 
 const CouponsPage = () => {
   const [coupons, setCoupons] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate(); // Hook for navigation
+  const [tiers, setTiers] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const existingCoupons = localStorage.getItem("coupons");
-    if (existingCoupons) {
-      setCoupons(JSON.parse(existingCoupons));
-    }
-    setLoading(false);
+    const storedCoupons = JSON.parse(localStorage.getItem("coupons") || "[]");
+    setCoupons(storedCoupons);
+
+    const storedTiers = JSON.parse(localStorage.getItem("tiers") || "[]");
+    setTiers(storedTiers);
   }, []);
 
-  const handleStatusToggle = (couponId) => {
-    const updatedCoupons = coupons.map((coupon) => {
-      if (coupon.coupon_id === couponId) {
-        return { ...coupon, status: !coupon.status };
-      }
-      return coupon;
-    });
-    setCoupons(updatedCoupons);
-    localStorage.setItem("coupons", JSON.stringify(updatedCoupons));
+  const getTierColor = (tierId) => {
+    const tier = tiers.find((tier) => tier.id === tierId);
+    return tier ? tier.colour : "#cccccc";
   };
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <Container
@@ -37,74 +28,46 @@ const CouponsPage = () => {
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        p: { xs: 2, md: 3 }, // Adjust padding for small and larger screens
-        bgcolor: "#f9f9f9", // Light background
+        p: 3,
+        bgcolor: "#f9f9f9",
         borderRadius: 2,
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)", // Subtle shadow
-        maxWidth: "1200px", // Limit maximum width
-        margin: "0 auto", // Center horizontally
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+        maxWidth: "1200px",
+        margin: "0 auto",
         width: "100%",
       }}
     >
-      {/* Header Section */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: { xs: "center", md: "space-between" }, // Center align on small screens
-          flexDirection: { xs: "column", md: "row" }, // Stack vertically on small screens
-          alignItems: "center",
-          mb: 2,
-          gap: { xs: 2, md: 0 }, // Add spacing between elements on small screens
-        }}
-      >
-        <Typography
-          variant="h4"
-          sx={{
-            fontWeight: "bold",
-            color: "#4A4A4A",
-            textAlign: { xs: "center", md: "left" }, // Center align on small screens
-          }}
-        >
-          Your Coupons
-        </Typography>
+      <Typography variant="h4" sx={{ fontWeight: "bold", mb: 3 }}>
+        Standalone Coupons
+      </Typography>
+
+      <Box sx={{ mb: 3, textAlign: "right" }}>
         <Button
           variant="contained"
           color="primary"
           startIcon={<AddCircleOutlineIcon />}
-          onClick={() => navigate("../add-coupon")} // Navigate to AddCoupons component
-          sx={{
-            fontWeight: "bold",
-            textTransform: "none", // Avoid uppercase
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
-          }}
+          onClick={() => navigate("../add-coupon")}
         >
           Add Coupon
         </Button>
       </Box>
 
-      {/* Coupons List Section */}
-      <Box
-        sx={{
-          flexGrow: 1,
-          overflowY: "auto", // Scrollable content
-          bgcolor: "#ffffff", // White card background
-          p: 2,
-          borderRadius: 2,
-          boxShadow: "0 1px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow
-        }}
-      >
+      <Grid2 container spacing={3}>
         {coupons.length > 0 ? (
-          <CouponsList coupons={coupons} onStatusToggle={handleStatusToggle} />
+          coupons.map((coupon) => (
+            <Grid2 item xs={12} sm={6} md={4} key={coupon.couponTitle}>
+              <CouponsCard
+                coupon={coupon}
+                tierColor={getTierColor(coupon.tierId)}
+              />
+            </Grid2>
+          ))
         ) : (
-          <Typography
-            variant="body1"
-            color="textSecondary"
-            sx={{ textAlign: "center", mt: 2 }}
-          >
-            No coupons available. Start by adding a new coupon!
+          <Typography variant="body1" sx={{ textAlign: "center", width: "100%" }}>
+            No coupons available. Add some!
           </Typography>
         )}
-      </Box>
+      </Grid2>
     </Container>
   );
 };

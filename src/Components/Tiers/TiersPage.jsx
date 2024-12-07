@@ -10,7 +10,7 @@ import {
   IconButton,
   Divider,
   ButtonGroup,
-  Grid,
+  Grid2,
   Paper,
 } from "@mui/material";
 import {
@@ -207,7 +207,7 @@ const TiersContent = () => {
                       </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                      <Grid container spacing={2}>
+                      <Grid2 container spacing={2}>
                         {[
                           {
                             label: "Trigger Amount",
@@ -239,7 +239,7 @@ const TiersContent = () => {
                             value: tier.description,
                           },
                         ].map((item, i) => (
-                          <Grid key={i} item xs={12} sm={6}>
+                          <Grid2 key={i} item xs={12} sm={6}>
                             <Paper
                               sx={{
                                 p: 2,
@@ -265,9 +265,9 @@ const TiersContent = () => {
                                 </Typography>
                               </Box>
                             </Paper>
-                          </Grid>
+                          </Grid2>
                         ))}
-                      </Grid>
+                      </Grid2>
                       <Divider sx={{ my: 2 }} />
                       {!tier.isFreeTier && (
                         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>

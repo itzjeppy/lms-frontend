@@ -5,24 +5,20 @@ import { useNavigate } from "react-router-dom";
 import {
   TextField,
   Button,
-  FormControl,
-  FormHelperText,
+  FormControlLabel,
+  Switch,
   Box,
   Typography,
   Paper,
-  Divider,
-  Grid2,
-  Tooltip,
-  Switch,
-  FormControlLabel,
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  FormHelperText,
+  Container,
+  Grid2
 } from "@mui/material";
-import { Container } from "@mui/system";
 import { MuiColorInput } from "mui-color-input";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import InfoIcon from "@mui/icons-material/Info";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 // Validation Schema
@@ -31,9 +27,16 @@ const schema = Yup.object().shape({
   triggerAmount: Yup.number()
     .required("Trigger Amount is required")
     .min(0, "Trigger Amount cannot be negative"),
-  triggerDuration: Yup.number()
-    .required("Trigger Duration is required")
-    .min(1, "Duration must be at least 1 month"),
+    triggerDuration: Yup.number()
+    .when('isFreeTier', (isFreeTier) => { 
+      if (!isFreeTier) {
+        return Yup.number()
+          .min(1, "Duration must be at least 1 month for non-free tiers")
+          .required("Trigger Duration is required");
+      } else {
+        return Yup.number().notRequired();
+      }
+    }),
   accrualMultiplier: Yup.number()
     .required("Accrual Multiplier is required")
     .min(0, "Multiplier cannot be negative"),
@@ -46,8 +49,8 @@ const schema = Yup.object().shape({
   description: Yup.string().required("Description is required"),
   couponProbability: Yup.number()
     .required("Coupon Probability is required")
-    .min(0)
-    .max(1, "Probability must be between 0 and 1"),
+    .min(0, "Probability cannot be negative")
+    .max(1, "Probability must be 1 or less"),
   colour: Yup.string()
     .required("Colour is required")
     .matches(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Enter a valid hex color"),
@@ -61,15 +64,7 @@ const AddTier = () => {
     const existingTiers = JSON.parse(localStorage.getItem("tiers") || "[]");
     const newTier = {
       id: Date.now(),
-      name: values.name,
-      triggerAmount: values.triggerAmount,
-      triggerDuration: values.triggerDuration,
-      accrualMultiplier: values.accrualMultiplier,
-      redemptionLimitOfPurchase: values.redemptionLimitOfPurchase,
-      conversion: values.conversion,
-      description: values.description,
-      couponProbability: values.couponProbability,
-      colour: values.colour,
+      ...values,
     };
 
     localStorage.setItem("tiers", JSON.stringify([...existingTiers, newTier]));
@@ -102,18 +97,19 @@ const AddTier = () => {
           initialValues={{
             name: "",
             triggerAmount: isFreeTier ? 0 : "",
-            triggerDuration: "",
+            triggerDuration: isFreeTier ? 0 : "",
             accrualMultiplier: "",
             redemptionLimitOfPurchase: "",
             conversion: "",
             description: "",
             couponProbability: "",
             colour: "#FFFFFF",
+            isFreeTier,
           }}
           validationSchema={schema}
           onSubmit={handleSubmit}
         >
-          {({ isSubmitting, values, setFieldValue }) => (
+          {({ isSubmitting, setFieldValue, values }) => (
             <Form>
               {/* Title Section */}
               <Box
@@ -137,7 +133,9 @@ const AddTier = () => {
                     checked={isFreeTier}
                     onChange={(event) => {
                       setIsFreeTier(event.target.checked);
+                      setFieldValue("isFreeTier", event.target.checked);
                       setFieldValue("triggerAmount", event.target.checked ? 0 : "");
+                      setFieldValue("triggerDuration", event.target.checked ? 0 : "");
                     }}
                     color="primary"
                   />
@@ -187,6 +185,7 @@ const AddTier = () => {
                         type="number"
                         fullWidth
                         variant="outlined"
+                        disabled={isFreeTier}
                       />
                       <ErrorMessage
                         name="triggerDuration"
@@ -248,17 +247,7 @@ const AddTier = () => {
                       <Field
                         name="couponProbability"
                         as={TextField}
-                        label={
-                          <span>
-                            Coupon Probability (0-1)
-                            <Tooltip
-                              title="The likelihood a user receives a coupon (between 0 and 1)."
-                              arrow
-                            >
-                              <InfoIcon sx={{ ml: 1 }} fontSize="small" />
-                            </Tooltip>
-                          </span>
-                        }
+                        label="Coupon Probability (0-1)"
                         type="number"
                         fullWidth
                         variant="outlined"
