@@ -8,7 +8,7 @@ import {
   Modal, 
   Box, 
   Divider, 
-  Switch 
+  Chip 
 } from "@mui/material";
 import InfoIcon from '@mui/icons-material/Info';
 import EditIcon from '@mui/icons-material/Edit';
@@ -33,100 +33,110 @@ const getTextColor = (tierColor) => {
 
 const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
   const [openInfoModal, setOpenInfoModal] = useState(false);
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState(coupon.isActive);
 
   const lightColor = lightenColor(tierColor, 60);
   const textColor = getTextColor(tierColor);
 
   const handleInfoModalOpen = () => setOpenInfoModal(true);
   const handleInfoModalClose = () => setOpenInfoModal(false);
-  const handleToggleActive = () => setIsActive(!isActive);
+
+  // Toggle isActive status when the Chip is clicked
+  const handleChipClick = () => {
+    setIsActive(prevState => !prevState);
+  };
 
   return (
     <div>
       <Card
         sx={{
           background: `linear-gradient(to bottom right, ${lightColor}, ${tierColor})`,
-          borderRadius: 4,
-          boxShadow: "0 8px 24px rgba(0, 0, 0, 0.15)",
+          borderRadius: 8,
+          boxShadow: "0 6px 18px rgba(0, 0, 0, 0.15)",
           color: textColor,
-          p: 3,
           position: "relative",
+          p: 2,
+          overflow: 'hidden',
           transition: "transform 0.2s, box-shadow 0.2s",
           '&:hover': {
             transform: 'scale(1.02)',
-            boxShadow: "0 12px 28px rgba(0, 0, 0, 0.2)"
+            boxShadow: "0 10px 20px rgba(0, 0, 0, 0.2)"
           }
         }}
       >
-        <CardContent>
-          <Box 
-            sx={{ 
-              display: "flex", 
-              justifyContent: "space-between", 
-              alignItems: "center" 
-            }}
-          >
-            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+        <CardContent sx={{ p: 2 }}>
+          {/* Title Section */}
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Typography 
+              variant="h6" 
+              sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+            >
               {coupon.couponTitle}
             </Typography>
-            <IconButton
-              aria-label="info"
-              onClick={handleInfoModalOpen}
+            <Chip 
+              label={isActive ? 'Active' : 'Inactive'} 
+              color={isActive ? 'success' : 'error'} 
+              size="small"
+              onClick={handleChipClick} // Handle the click to toggle state
+              sx={{ cursor: 'pointer' }} // Optional: Add a pointer cursor for better UX
+            />
+          </Box>
+
+          <Typography variant="h5" sx={{ fontWeight: 'bold', mt: 1 }}>
+            Benefit {coupon.benefit}
+          </Typography>
+
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+            <Typography variant="body2"><strong>Valid for:</strong> {coupon.validity} days</Typography>
+            <IconButton 
+              aria-label="info" 
+              onClick={handleInfoModalOpen} 
               sx={{ color: textColor }}
             >
               <InfoIcon />
             </IconButton>
           </Box>
-
-          <Typography variant="body2" sx={{ my: 2 }}>
-            {coupon.couponDescription}
-          </Typography>
-
-          <Divider sx={{ my: 2 }} />
-
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography variant="body2"><strong>Benefit:</strong> ${coupon.benefit}</Typography>
-            <Typography variant="body2"><strong>Validity:</strong> {coupon.validity} days</Typography>
-          </Box>
-
         </CardContent>
 
         <Box 
           sx={{ 
             display: "flex", 
             justifyContent: "space-between", 
-            p: 2 
+            p: 2, 
+            backgroundColor: lightenColor(tierColor, 30), 
+            borderTop: '2px solid rgba(0,0,0,0.1)' 
           }}
         >
-          <Box>
-            <Typography variant="body2">Active:</Typography>
-            <Switch 
-              checked={isActive} 
-              onChange={handleToggleActive} 
-              color="primary" 
-            />
-          </Box>
+          <Button 
+            onClick={() => onEdit(coupon)} 
+            variant="outlined" 
+            size="small"
+            sx={{ 
+              color: textColor, 
+              borderColor: textColor 
+            }}
+          >
+            Edit
+          </Button>
 
-          <Box>
-            <IconButton 
-              aria-label="edit" 
-              onClick={() => onEdit(coupon)} 
-              sx={{ color: textColor, mr: 1 }}
-            >
-              <EditIcon />
-            </IconButton>
-            <IconButton 
-              aria-label="delete" 
-              onClick={() => onDelete(coupon)} 
-              sx={{ color: textColor }}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Box>
+          <Button 
+            onClick={() => onDelete(coupon)} 
+            variant="contained" 
+            size="small"
+            sx={{ 
+              bgcolor: 'error.main', 
+              color: '#fff',
+              '&:hover': {
+                bgcolor: 'error.dark'
+              } 
+            }}
+          >
+            Delete
+          </Button>
         </Box>
       </Card>
 
+      {/* MODAL FOR DETAILS */}
       <Modal
         open={openInfoModal}
         onClose={handleInfoModalClose}
@@ -146,12 +156,26 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
             width: 400 
           }}
         >
-          <Typography id="info-modal-title" variant="h6" component="h2">
-            More Details
+          <Typography id="info-modal-title" variant="h6" component="h2" sx={{ mb: 2 }}>
+            Coupon Details
           </Typography>
-          <Typography id="info-modal-description" sx={{ mt: 2 }}>
-            {coupon.couponDescription}
+
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            <strong>Title:</strong> {coupon.couponTitle}
           </Typography>
+
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            <strong>Description:</strong> {coupon.couponDescription}
+          </Typography>
+
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            <strong>Benefit:</strong> Save ${coupon.benefit}
+          </Typography>
+
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            <strong>Validity:</strong> {coupon.validity} days
+          </Typography>
+
           <Button 
             onClick={handleInfoModalClose} 
             sx={{ mt: 2 }} 
