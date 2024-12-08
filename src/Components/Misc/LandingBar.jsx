@@ -4,7 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import { useNavigate, Link } from 'react-router-dom'; // Corrected import for Link
+import { useNavigate, Link } from 'react-router-dom';
 import Logo from '../../Icons/Logo';
 
 const LandingBar = () => {

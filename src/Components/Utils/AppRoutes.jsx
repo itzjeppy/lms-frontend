@@ -27,6 +27,8 @@ import AddProgram from "../Programs/AddProgram";
 import EditProgram from "../Programs/EditProgram";
 
 import ProgressPage from "../UserProgress/ProgressPage";
+import SuperAdminBar from "../SuperAdmin/SuperAdminBar";
+import AllPartnersPage from "../SuperAdmin/AllPartners";
 
 const AppRoutes = () => {
   return (
@@ -35,6 +37,11 @@ const AppRoutes = () => {
       <Route path="/" element={<LandingPage />} />
       <Route path="/signIn" element={<SignIn />} />
       <Route path="/signUp" element={<SignUp />} />
+
+      {/* Super-Admin Routes */}
+      <Route path="/admin" element={<SuperAdminBar />}>
+        <Route path="allPartners" element={<AllPartnersPage />} />
+      </Route>
 
       {/* Dashboard Routes */}
       <Route path="/dashboard" element={<Layout />}>

@@ -14,11 +14,11 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { Link, Outlet } from "react-router-dom";
-import { Home, CalendarToday, Menu, Info, ConfirmationNumber } from "@mui/icons-material";
+import { People, Block, Menu } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import Logo from "../../Icons/Logo";
 
-const Layout = () => {
+const SuperAdminBar = () => {
   const drawerWidth = 240;
   const appBarHeight = 64;
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -37,31 +37,25 @@ const Layout = () => {
   const drawerContent = (
     <Box>
       <List>
-        <ListItem button component={Link} to="./tiers">
+        <ListItem button component={Link} to="allPartners">
           <ListItemIcon>
-            <Home sx={{ color: "#ECEFF5" }} />
+            <People sx={{ color: "#ECEFF5" }} />
           </ListItemIcon>
-          <ListItemText primary="Your Tiers" sx={{ color: "#ECEFF5" }} />
+          <ListItemText primary="All Partners" sx={{ color: "#ECEFF5" }} />
         </ListItem>
-        <ListItem button component={Link} to="./programs">
+        <ListItem button component={Link} to="newPartners">
           <ListItemIcon>
-            <CalendarToday sx={{ color: "#ECEFF5" }} />
+            <People sx={{ color: "#ECEFF5" }} />
           </ListItemIcon>
-          <ListItemText primary="Your Programs" sx={{ color: "#ECEFF5" }} />
+          <ListItemText primary="New Partners" sx={{ color: "#ECEFF5" }} />
         </ListItem>
-        <ListItem button component={Link} to="./coupons">
+        <ListItem button component={Link} to="disabledPartners">
           <ListItemIcon>
-            <ConfirmationNumber sx={{ color: "#ECEFF5" }} />
+            <Block sx={{ color: "#ECEFF5" }} />
           </ListItemIcon>
-          <ListItemText primary="Your Standalone Coupons" sx={{ color: "#ECEFF5" }} />
+          <ListItemText primary="Disabled Partners" sx={{ color: "#ECEFF5" }} />
         </ListItem>
         <Divider />
-        <ListItem button component={Link} to="./contact">
-          <ListItemIcon>
-            <Info sx={{ color: "#ECEFF5" }} />
-          </ListItemIcon>
-          <ListItemText primary="About Us" sx={{ color: "#ECEFF5" }} />
-        </ListItem>
       </List>
     </Box>
   );
@@ -150,4 +144,4 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default SuperAdminBar;

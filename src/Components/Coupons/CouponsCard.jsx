@@ -7,12 +7,9 @@ import {
   Button,
   Modal,
   Box,
-  Divider,
   Chip,
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 
 const lightenColor = (color, percent) => {
   const num = parseInt(color?.replace("#", ""), 16);

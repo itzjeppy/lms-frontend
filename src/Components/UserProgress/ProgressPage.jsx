@@ -2,21 +2,10 @@ import React, { useState, useEffect } from "react";
 import {
   Container,
   Box,
-  Typography,
   Button,
   Grid2,
-  Paper,
 } from "@mui/material";
-import {
-  Timeline,
-  TimelineItem,
-  TimelineSeparator,
-  TimelineConnector,
-  TimelineContent,
-  TimelineDot,
-} from "@mui/lab";
 import CouponsCard from "../Coupons/CouponsCard";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import Tier from "./Mytiers";
 
 const ProgressPage = () => {
