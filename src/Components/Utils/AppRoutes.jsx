@@ -26,6 +26,8 @@ import ProgramsPage from "../Programs/ProgramsPage";
 import AddProgram from "../Programs/AddProgram";
 import EditProgram from "../Programs/EditProgram";
 
+import ProgressPage from "../UserProgress/ProgressPage";
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -40,24 +42,21 @@ const AppRoutes = () => {
         <Route index element={<Contacts />} /> {/* Default dashboard page */}
         <Route path="offers" element={<OffersPage />} />
         <Route path="add-offer" element={<AddOffers />} />
-
         {/* Coupons */}
         <Route path="coupons" element={<CouponsPage />} />
         <Route path="add-coupon" element={<AddCoupons />} />
-
         {/* Tiers */}
         <Route path="tiers" element={<TiersPage />} />
         <Route path="add-tier" element={<AddTier />} />
         <Route path="edit-tier/:id" element={<EditTier />} />
-
         {/* Programs */}
         <Route path="programs" element={<ProgramsPage />} />
         <Route path="add-program" element={<AddProgram />} />
         <Route path="edit-program/:id" element={<EditProgram />} />
-
         {/* Misc */}
         <Route path="contact" element={<Contacts />} />
         <Route path="profile" element={<ProfilePage />} />
+        <Route path="progress" element={<ProgressPage />} />
       </Route>
     </Routes>
   );

@@ -1,21 +1,21 @@
 import React, { useState } from "react";
-import { 
-  Card, 
-  CardContent, 
-  Typography, 
-  IconButton, 
-  Button, 
-  Modal, 
-  Box, 
-  Divider, 
-  Chip 
+import {
+  Card,
+  CardContent,
+  Typography,
+  IconButton,
+  Button,
+  Modal,
+  Box,
+  Divider,
+  Chip,
 } from "@mui/material";
-import InfoIcon from '@mui/icons-material/Info';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import InfoIcon from "@mui/icons-material/Info";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const lightenColor = (color, percent) => {
-  const num = parseInt(color.replace("#", ""), 16);
+  const num = parseInt(color?.replace("#", ""), 16);
   const amt = Math.round(2.55 * percent);
   const R = (num >> 16) + amt;
   const G = ((num >> 8) & 0x00ff) + amt;
@@ -24,9 +24,9 @@ const lightenColor = (color, percent) => {
 };
 
 const getTextColor = (tierColor) => {
-  const r = parseInt(tierColor.substring(1, 3), 16);
-  const g = parseInt(tierColor.substring(3, 5), 16);
-  const b = parseInt(tierColor.substring(5, 7), 16);
+  const r = parseInt(tierColor?.substring(1, 3), 16);
+  const g = parseInt(tierColor?.substring(3, 5), 16);
+  const b = parseInt(tierColor?.substring(5, 7), 16);
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
   return luminance > 0.5 ? "#000000" : "#ffffff";
 };
@@ -43,7 +43,7 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
 
   // Toggle isActive status when the Chip is clicked
   const handleChipClick = () => {
-    setIsActive(prevState => !prevState);
+    setIsActive((prevState) => !prevState);
   };
 
   return (
@@ -56,41 +56,49 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
           color: textColor,
           position: "relative",
           p: 2,
-          overflow: 'hidden',
+          overflow: "hidden",
           transition: "transform 0.2s, box-shadow 0.2s",
-          '&:hover': {
-            transform: 'scale(1.02)',
-            boxShadow: "0 10px 20px rgba(0, 0, 0, 0.2)"
-          }
+          "&:hover": {
+            transform: "scale(1.02)",
+            boxShadow: "0 10px 20px rgba(0, 0, 0, 0.2)",
+          },
         }}
       >
         <CardContent sx={{ p: 2 }}>
           {/* Title Section */}
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Typography 
-              variant="h6" 
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography
+              variant="h6"
               sx={{ fontWeight: "bold", textTransform: "uppercase" }}
             >
               {coupon.couponTitle}
             </Typography>
-            <Chip 
-              label={isActive ? 'Active' : 'Inactive'} 
-              color={isActive ? 'success' : 'error'} 
+            <Chip
+              label={isActive ? "Active" : "Inactive"}
+              color={isActive ? "success" : "error"}
               size="small"
               onClick={handleChipClick} // Handle the click to toggle state
-              sx={{ cursor: 'pointer' }} // Optional: Add a pointer cursor for better UX
+              sx={{ cursor: "pointer" }} // Optional: Add a pointer cursor for better UX
             />
           </Box>
 
-          <Typography variant="h5" sx={{ fontWeight: 'bold', mt: 1 }}>
+          <Typography variant="h5" sx={{ fontWeight: "bold", mt: 1 }}>
             Benefit {coupon.benefit}
           </Typography>
 
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-            <Typography variant="body2"><strong>Valid for:</strong> {coupon.validity} days</Typography>
-            <IconButton 
-              aria-label="info" 
-              onClick={handleInfoModalOpen} 
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
+            <Typography variant="body2">
+              <strong>Valid for:</strong> {coupon.validity} days
+            </Typography>
+            <IconButton
+              aria-label="info"
+              onClick={handleInfoModalOpen}
               sx={{ color: textColor }}
             >
               <InfoIcon />
@@ -98,37 +106,37 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
           </Box>
         </CardContent>
 
-        <Box 
-          sx={{ 
-            display: "flex", 
-            justifyContent: "space-between", 
-            p: 2, 
-            backgroundColor: lightenColor(tierColor, 30), 
-            borderTop: '2px solid rgba(0,0,0,0.1)' 
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            p: 2,
+            backgroundColor: lightenColor(tierColor, 30),
+            borderTop: "2px solid rgba(0,0,0,0.1)",
           }}
         >
-          <Button 
-            onClick={() => onEdit(coupon)} 
-            variant="outlined" 
+          <Button
+            onClick={() => onEdit(coupon)}
+            variant="outlined"
             size="small"
-            sx={{ 
-              color: textColor, 
-              borderColor: textColor 
+            sx={{
+              color: textColor,
+              borderColor: textColor,
             }}
           >
             Edit
           </Button>
 
-          <Button 
-            onClick={() => onDelete(coupon)} 
-            variant="contained" 
+          <Button
+            onClick={() => onDelete(coupon)}
+            variant="contained"
             size="small"
-            sx={{ 
-              bgcolor: 'error.main', 
-              color: '#fff',
-              '&:hover': {
-                bgcolor: 'error.dark'
-              } 
+            sx={{
+              bgcolor: "error.main",
+              color: "#fff",
+              "&:hover": {
+                bgcolor: "error.dark",
+              },
             }}
           >
             Delete
@@ -143,20 +151,25 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
         aria-labelledby="info-modal-title"
         aria-describedby="info-modal-description"
       >
-        <Box 
-          sx={{ 
-            bgcolor: 'background.paper', 
-            boxShadow: 24, 
-            p: 4, 
-            borderRadius: 2, 
-            position: 'absolute', 
-            top: '50%', 
-            left: '50%', 
-            transform: 'translate(-50%, -50%)', 
-            width: 400 
+        <Box
+          sx={{
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
           }}
         >
-          <Typography id="info-modal-title" variant="h6" component="h2" sx={{ mb: 2 }}>
+          <Typography
+            id="info-modal-title"
+            variant="h6"
+            component="h2"
+            sx={{ mb: 2 }}
+          >
             Coupon Details
           </Typography>
 
@@ -176,9 +189,9 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
             <strong>Validity:</strong> {coupon.validity} days
           </Typography>
 
-          <Button 
-            onClick={handleInfoModalClose} 
-            sx={{ mt: 2 }} 
+          <Button
+            onClick={handleInfoModalClose}
+            sx={{ mt: 2 }}
             variant="contained"
           >
             Close
@@ -191,7 +204,7 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
 
 CouponsCard.defaultProps = {
   onEdit: () => {},
-  onDelete: () => {}
+  onDelete: () => {},
 };
 
 export default CouponsCard;
