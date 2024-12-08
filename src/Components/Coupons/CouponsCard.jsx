@@ -9,9 +9,10 @@ import {
   Box,
   Chip,
   ButtonGroup,
+  Divider,
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
-import { DeleteForever, Edit, EditAttributes } from "@mui/icons-material";
+import { DeleteForever, Edit } from "@mui/icons-material";
 
 // Utility function to lighten colors
 const lightenColor = (color, percent) => {

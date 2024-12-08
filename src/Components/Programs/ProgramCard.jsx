@@ -5,13 +5,10 @@ import {
   CardContent,
   Typography,
   Box,
-  Switch,
   Divider,
-  IconButton,
   Button,
   Chip,
 } from "@mui/material";
-import InfoIcon from "@mui/icons-material/Info";
 
 const ProgramCard = ({ program, onToggle }) => {
   const { name, active, startDate, endDate } = program;

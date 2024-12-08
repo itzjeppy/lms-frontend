@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Typography, Avatar, Grid, Divider, Grid2, Paper } from '@mui/material';
+import { Container, Typography, Avatar, Divider, Grid2, Paper } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 
 const ProfilePage = () => {
