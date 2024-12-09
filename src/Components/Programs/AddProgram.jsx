@@ -15,6 +15,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { Container } from "@mui/system";
+import ProgramService from "../Services/ProgramService";
 
 // Validation Schema
 const schema = Yup.object().shape({
@@ -23,7 +24,7 @@ const schema = Yup.object().shape({
   endDate: Yup.date()
     .required("End Date is required")
     .min(Yup.ref("startDate"), "End Date must be after Start Date"),
-  isActive: Yup.boolean().required("Program Status is required"),
+  status: Yup.boolean().required("Program Status is required"),
 });
 
 const AddProgram = () => {
@@ -31,8 +32,24 @@ const AddProgram = () => {
 
   const handleSubmit = (values) => {
     const existingPrograms = JSON.parse(localStorage.getItem("programs") || "[]");
-    localStorage.setItem("programs", JSON.stringify([...existingPrograms, values]));
-    navigate(-1); // Navigate back
+    const {endDate,startDate,...newValues}=values;
+    const program = {
+      partnerId: "5ef61c8d-c9eb-4ad1-aadd-041a5a889c33",
+      ...newValues,
+    };
+
+    console.log("Submitting new program:", program);
+  
+      ProgramService.createProgram(program).then((response) => {
+        console.log("Created program:", response.data);
+        navigate(-1);
+      })
+      .catch((error) => {
+        console.error("Error creating program", error);
+      });
+
+    localStorage.setItem("programs", JSON.stringify([...existingPrograms, program]));
+    navigate(-1);
   };
 
   return (
@@ -62,7 +79,7 @@ const AddProgram = () => {
             programName: "",
             startDate: "",
             endDate: "",
-            isActive: false,
+            status: false,
           }}
           validationSchema={schema}
           onSubmit={handleSubmit}
@@ -116,8 +133,8 @@ const AddProgram = () => {
                 <FormControlLabel
                   control={
                     <Switch
-                      checked={values.isActive}
-                      onChange={(e) => setFieldValue("isActive", e.target.checked)}
+                      checked={values.status}
+                      onChange={(e) => setFieldValue("status", e.target.checked)}
                     />
                   }
                   label="Active"
