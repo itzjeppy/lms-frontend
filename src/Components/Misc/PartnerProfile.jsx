@@ -1,5 +1,6 @@
 import React from 'react';
-import { Container, Typography, Avatar, Divider, Grid2, Paper } from '@mui/material';
+import { useNavigate } from "react-router-dom";
+import { Container, Typography, Avatar, Divider, Grid2, Paper, Button } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 
 const ProfilePage = () => {
@@ -29,6 +30,13 @@ const ProfilePage = () => {
     { field: 'name', headerName: 'Name', width: 150 },
     { field: 'email', headerName: 'Email', width: 200 },
   ];
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/");
+  }
 
   return (
     <Container
@@ -60,6 +68,7 @@ const ProfilePage = () => {
           <Typography variant="h5" color="textSecondary">
             {partner.email}
           </Typography>
+          <Button variant="contained" color="error" sx={{ my: 2 }} onClick={handleLogout}>Logout</Button>
         </Grid2>
       </Grid2>
       <Divider sx={{ my: 4 }} /> {/* Divider between profile and users */}

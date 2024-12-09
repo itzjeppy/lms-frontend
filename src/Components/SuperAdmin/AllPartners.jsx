@@ -23,7 +23,8 @@ const AllPartnersPage = () => {
       name: `Partner ${i + 1}`,
       company: `Company ${i + 1}`,
       email: `partner${i + 1}@company.com`,
-      isActive: i % 2 === 0, // Example: Alternate active/inactive status
+      dateJoined: `${i + 1}/12/2024`,
+      isActive: true,
     }))
   );
 
@@ -48,7 +49,8 @@ const AllPartnersPage = () => {
         mt: 2,
         mb: 4,
         p: 2,
-        background: "linear-gradient(to right bottom, #e3f2fd, #e1bee7)",
+        // background: "linear-gradient(to right bottom, #e3f2fd, #e1bee7)",
+        background: "#ECEFF5",
         borderRadius: 3,
         boxShadow: 6,
         overflow: "hidden",
@@ -57,7 +59,7 @@ const AllPartnersPage = () => {
       {/* Header Section */}
       <Box sx={{ textAlign: "center" }}>
         <Typography variant="h3" fontWeight="bold">
-          Active Partners Management
+          Partner Management
         </Typography>
       </Box>
 
@@ -85,6 +87,9 @@ const AllPartnersPage = () => {
               <TableCell>
                 <Typography fontWeight="bold">Email</Typography>
               </TableCell>
+              <TableCell>
+                <Typography fontWeight="bold">Date Joined</Typography>
+              </TableCell>
               <TableCell align="center">
                 <Typography fontWeight="bold">Actions</Typography>
               </TableCell>
@@ -98,6 +103,7 @@ const AllPartnersPage = () => {
                   <TableCell>{partner.name}</TableCell>
                   <TableCell>{partner.company}</TableCell>
                   <TableCell>{partner.email}</TableCell>
+                  <TableCell>{partner.dateJoined}</TableCell>
                   <TableCell align="center">
                     <Button
                       variant="contained"

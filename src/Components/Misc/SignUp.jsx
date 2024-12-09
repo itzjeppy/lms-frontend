@@ -133,7 +133,7 @@ export default function SignUp(props) {
             width: "75%",
             p: ""
           }}
-          src='/image.png'
+          src='/final.png'
           />
           <Typography
             component="h1"

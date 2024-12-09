@@ -29,6 +29,8 @@ import EditProgram from "../Programs/EditProgram";
 import ProgressPage from "../UserProgress/ProgressPage";
 import SuperAdminBar from "../SuperAdmin/SuperAdminBar";
 import AllPartnersPage from "../SuperAdmin/AllPartners";
+import NewPartnersPage from "../SuperAdmin/NewPartners";
+import DisabledPartnersPage from "../SuperAdmin/DisablePartners";
 
 const AppRoutes = () => {
   return (
@@ -41,6 +43,8 @@ const AppRoutes = () => {
       {/* Super-Admin Routes */}
       <Route path="/admin" element={<SuperAdminBar />}>
         <Route path="allPartners" element={<AllPartnersPage />} />
+        <Route path="newPartners" element={<NewPartnersPage />} />
+        <Route path="disabledPartners" element={<DisabledPartnersPage />} />
       </Route>
 
       {/* Dashboard Routes */}

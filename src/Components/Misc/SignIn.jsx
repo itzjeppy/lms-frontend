@@ -106,8 +106,12 @@ export default function SignIn(props) {
     const email = data.get('email');
     const password = data.get('password');
 
-    if (email === ' username@gmail.com' && password === 'password') {
-      navigate('/partner');
+    if (email === 'admin@lms.com' && password === 'adminadmin') {
+      localStorage.setItem('user', JSON.stringify({ email, password }));
+      navigate('/admin');
+    } else if (email === 'partner@company.com' && password === 'partner') {
+      localStorage.setItem('user', JSON.stringify({ email, password }));
+      navigate('/dashboard');
     } else {
       console.log({
         email,
@@ -117,9 +121,7 @@ export default function SignIn(props) {
   };
 
   return (
-    <div
-    position="fixed"
-    >
+    <div position="fixed">
       <LandingBar />
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
@@ -132,10 +134,10 @@ export default function SignIn(props) {
             component="img"
             alignSelf="center"
             sx={{
-              height: "75%",
-              width: "75%"
+              height: '75%',
+              width: '75%',
             }}
-            src='/image.png'
+            src="/image.png"
           />
           <Typography
             component="h1"
@@ -178,7 +180,7 @@ export default function SignIn(props) {
                 error={passwordError}
                 helperText={passwordErrorMessage}
                 name="password"
-                placeholder="••••••••••••••••••"
+                placeholder="••••••••••••"
                 type="password"
                 id="password"
                 autoComplete="current-password"
@@ -227,11 +229,7 @@ export default function SignIn(props) {
             </Button>
             <Typography sx={{ textAlign: 'center' }}>
               Don't have an account?{' '}
-              <Link
-                href="/signUp"
-                variant="body2"
-                sx={{ alignSelf: 'center' }}
-              >
+              <Link href="/signUp" variant="body2" sx={{ alignSelf: 'center' }}>
                 Sign up
               </Link>
             </Typography>
