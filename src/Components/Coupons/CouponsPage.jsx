@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Container, Box, Typography, Button, Grid2, CircularProgress, useTheme, useMediaQuery } from "@mui/material";
+import { 
+  Container, 
+  Box, 
+  Typography, 
+  Button, 
+  Grid2 as MuiGrid, 
+  CircularProgress, 
+  useTheme, 
+  useMediaQuery 
+} from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useNavigate } from "react-router-dom";
 import CouponsCard from "./CouponsCard";
 import CouponService from "../Services/CouponService";
+import TierService from "../Services/TierService";
 
 const CouponsPage = () => {
   const [coupons, setCoupons] = useState([]);
@@ -19,7 +29,6 @@ const CouponsPage = () => {
       try {
         const response = await CouponService.getCoupons();
         setCoupons(response.data); 
-        console.log("coupon fetch data"+response.data)
       } catch (error) {
         console.error("Error fetching coupons:", error);
       } finally {
@@ -27,7 +36,19 @@ const CouponsPage = () => {
       }
     };
 
+    const fetchTiers = async () => {
+      try {
+        const response = await TierService.getTiersByPartnerId("5ef61c8d-c9eb-4ad1-aadd-041a5a889c33");
+        setTiers(response.data); 
+      } catch (error) {
+        console.error("Error fetching tiers:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchCoupons();
+    fetchTiers();
   }, []);
 
   const getTierColor = (tierId) => {
@@ -87,35 +108,7 @@ const CouponsPage = () => {
           Standalone Coupons
         </Typography>
 
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddCircleOutlineIcon />}
-          onClick={() => navigate("../add-coupon")}
-          sx={{
-            fontWeight: "bold",
-            textTransform: "none",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
-          }}
-        >
-          Add Coupon
-        </Button>
-      </Box>
-
-      {/* Coupons List Section */}
-      {coupons.length === 0 ? (
-        <Box
-          sx={{
-            textAlign: "center",
-            bgcolor: "#ffffff",
-            p: 4,
-            borderRadius: 2,
-            boxShadow: "0 1px 6px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <Typography variant="h6" color="textSecondary" sx={{ mb: 2 }}>
-            No coupons available. Add some!
-          </Typography>
+        {tiers.length > 0 && (
           <Button
             variant="contained"
             color="primary"
@@ -129,6 +122,36 @@ const CouponsPage = () => {
           >
             Add Coupon
           </Button>
+        )}
+      </Box>
+
+      {/* Display Create Tier Message if No Tiers Exist */}
+      {tiers.length === 0 ? (
+        <Box
+          sx={{
+            textAlign: "center",
+            bgcolor: "#ffffff",
+            p: 4,
+            borderRadius: 2,
+            boxShadow: "0 1px 6px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Typography variant="h6" color="textSecondary" sx={{ mb: 2 }}>
+            Please create at least one tier before managing standalone coupons.
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddCircleOutlineIcon />}
+            onClick={() => navigate("../add-tier")}
+            sx={{
+              fontWeight: "bold",
+              textTransform: "none",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+            }}
+          >
+            Create Tier
+          </Button>
         </Box>
       ) : (
         <Box
@@ -141,13 +164,26 @@ const CouponsPage = () => {
             boxShadow: "0 1px 6px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <Grid2 container spacing={isMobile ? 2 : 3}>
-            {coupons.map((coupon) => (
-              <Grid2 item xs={12} sm={6} md={4} key={coupon.couponTitle}>
-                <CouponsCard coupon={coupon} tierColor={getTierColor(coupon.tierId)} />
-              </Grid2>
-            ))}
-          </Grid2>
+          {coupons.length > 0 ? (
+            <MuiGrid container spacing={isMobile ? 2 : 3}>
+              {coupons.map((coupon) => (
+                <MuiGrid item xs={12} sm={6} md={4} key={coupon.couponTitle}>
+                  <CouponsCard 
+                    coupon={coupon} 
+                    tierColor={getTierColor(coupon.tierId)} 
+                  />
+                </MuiGrid>
+              ))}
+            </MuiGrid>
+          ) : (
+            <Typography
+              variant="body1"
+              color="textSecondary"
+              sx={{ textAlign: "center", mt: 2 }}
+            >
+              No coupons available. Start by adding a new coupon!
+            </Typography>
+          )}
         </Box>
       )}
     </Container>
