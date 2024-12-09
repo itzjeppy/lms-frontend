@@ -9,6 +9,7 @@ import {
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useNavigate } from "react-router-dom";
 import OfferService from "../Services/OfferService"; // Adjust the import based on your service structure
+import CouponService from "../Services/CouponService"; // Import the CouponService
 import OfferCard from "../Offers/OfferCard";
 import CouponsCard from "../Coupons/CouponsCard";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -22,9 +23,12 @@ const ProgramDetails = () => {
   useEffect(() => {
     const fetchProgramDetails = async () => {
       try {
-        const offersResponse = await OfferService.getOffers(); // Fetch offers
-        const couponsResponse = await OfferService.getCoupons(); // Fetch coupons
+        // Fetch offers using OfferService
+        const offersResponse = await OfferService.getOffers();
         setOffers(offersResponse.data);
+
+        // Fetch coupons using CouponService
+        const couponsResponse = await CouponService.getCoupons();
         setCoupons(couponsResponse.data);
       } catch (error) {
         console.error("Error fetching program details:", error);
@@ -125,7 +129,7 @@ const ProgramDetails = () => {
             startIcon={<AddCircleOutlineIcon />}
             onClick={() => navigate("../add-offer")}
             sx={{
-              fontWeight: "bold",
+              fontWeight: " bold",
               textTransform: "none",
               boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
             }}
