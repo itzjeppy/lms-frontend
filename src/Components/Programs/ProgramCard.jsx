@@ -20,7 +20,7 @@ const ProgramCard = ({ program, onToggle }) => {
     : "linear-gradient(to bottom right, #FFABAB, #FF7043)"; // Red for inactive
 
   const handleNavigate = () => {
-    navigate("/program-details"); // Replace with actual route
+    navigate("../program-details"); // Replace with actual route
   };
 
   return (

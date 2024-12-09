@@ -31,6 +31,7 @@ import SuperAdminBar from "../SuperAdmin/SuperAdminBar";
 import AllPartnersPage from "../SuperAdmin/AllPartners";
 import NewPartnersPage from "../SuperAdmin/NewPartners";
 import DisabledPartnersPage from "../SuperAdmin/DisablePartners";
+import ProgramDetails from "../Programs/ProgramDetails";
 
 const AppRoutes = () => {
   return (
@@ -62,6 +63,7 @@ const AppRoutes = () => {
         <Route path="edit-tier/:id" element={<EditTier />} />
         {/* Programs */}
         <Route path="programs" element={<ProgramsPage />} />
+        <Route path="program-details" element ={<ProgramDetails/>} />
         <Route path="add-program" element={<AddProgram />} />
         <Route path="edit-program/:id" element={<EditProgram />} />
         {/* Misc */}
