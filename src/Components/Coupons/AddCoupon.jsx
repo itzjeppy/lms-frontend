@@ -22,6 +22,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import ProgramService from "../Services/ProgramService";
 import TierService from "../Services/TierService";
+import CouponService from "../Services/CouponService";
 
 const schema = Yup.object().shape({
   couponTitle: Yup.string().required("Coupon title is required"),
@@ -62,11 +63,28 @@ const AddCoupons = () => {
     fetchPrograms();
   }, []);
 
+  // const handleSubmit = (values) => {
+  //   const existingCoupons = localStorage.getItem("coupons");
+  //   const coupons = existingCoupons ? JSON.parse(existingCoupons) : [];
+  //   coupons.push(values);
+  //   localStorage.setItem("coupons", JSON.stringify(coupons));
+  //   navigate(-1);
+  // };
+
   const handleSubmit = (values) => {
-    const existingCoupons = localStorage.getItem("coupons");
-    const coupons = existingCoupons ? JSON.parse(existingCoupons) : [];
-    coupons.push(values);
-    localStorage.setItem("coupons", JSON.stringify(coupons));
+    const coupon = {
+      ...values,
+    };
+
+    console.log("Submitting new coupon:", coupon);
+  
+      CouponService.createCoupons(coupon).then((response) => {
+        console.log("Created coupon:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error creating coupon", error);
+      });
+
     navigate(-1);
   };
 

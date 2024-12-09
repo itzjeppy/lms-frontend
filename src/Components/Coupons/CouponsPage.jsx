@@ -3,6 +3,7 @@ import { Container, Box, Typography, Button, Grid2, CircularProgress, useTheme, 
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useNavigate } from "react-router-dom";
 import CouponsCard from "./CouponsCard";
+import CouponService from "../Services/CouponService";
 
 const CouponsPage = () => {
   const [coupons, setCoupons] = useState([]);
@@ -14,13 +15,19 @@ const CouponsPage = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
-    const storedCoupons = JSON.parse(localStorage.getItem("coupons") || "[]");
-    setCoupons(storedCoupons);
+    const fetchCoupons = async () => {
+      try {
+        const response = await CouponService.getCoupons();
+        setCoupons(response.data); 
+        console.log("coupon fetch data"+response.data)
+      } catch (error) {
+        console.error("Error fetching coupons:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    const storedTiers = JSON.parse(localStorage.getItem("tiers") || "[]");
-    setTiers(storedTiers);
-
-    setLoading(false); // Once data is fetched from localStorage, stop loading
+    fetchCoupons();
   }, []);
 
   const getTierColor = (tierId) => {
