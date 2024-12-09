@@ -8,9 +8,13 @@ import {
   Divider,
   Button,
   Chip,
+  ButtonGroup,
 } from "@mui/material";
+import { DeleteForever, Edit } from "@mui/icons-material";
 
-const ProgramCard = ({ program, onToggle }) => {
+
+
+const ProgramCard = ({ program, onToggle, onEdit, onDelete }) => {
   const { programName, status, startDate, endDate } = program;
   const navigate = useNavigate();
 
@@ -112,9 +116,43 @@ const ProgramCard = ({ program, onToggle }) => {
           </Button>
 
         </Box>
+        <ButtonGroup variant="outlined" size="small">
+            <Button
+              onClick={() => onEdit(program)}
+              sx={{
+                color: "#ffffff",
+                borderColor: "#ffffff",
+                borderRadius: "20px",
+                "&:hover": {
+                  backgroundColor: "rgba(255,255,255,0.2)",
+                },
+              }}
+            >
+              <Edit/>
+              Edit
+            </Button>
+            <Button
+              onClick={() => onDelete(program)}
+              sx={{
+                color: "#ffffff",
+                borderColor: "#ffffff",
+                borderRadius: "20px",
+                "&:hover": {
+                  backgroundColor: "rgba(255,255,255,0.2)",
+                },
+              }}
+            >
+              <DeleteForever/>
+              Delete
+            </Button>
+          </ButtonGroup>
       </Card>
     </Box>
   );
 };
 
+ProgramCard.defaultProps = {
+  onEdit: () => {},
+  onDelete: () => {},
+};
 export default ProgramCard;
