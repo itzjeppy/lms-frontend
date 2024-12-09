@@ -12,9 +12,13 @@ import {
   ListItemIcon,
   Divider,
   useMediaQuery,
+  Popper,
+  Paper,
+  Button,
+  ClickAwayListener,
 } from "@mui/material";
-import { Link, Outlet } from "react-router-dom";
-import { People, Block, Menu } from "@mui/icons-material";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { People, Block, Menu, AddTask } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import Logo from "../../Icons/Logo";
 
@@ -23,8 +27,10 @@ const SuperAdminBar = () => {
   const appBarHeight = 64;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(true);
+  const [anchorEl, setAnchorEl] = useState(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
     if (isMobile) {
@@ -34,6 +40,22 @@ const SuperAdminBar = () => {
     }
   };
 
+  const handleProfileClick = (event) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/");
+  };
+
+  const handleClickAway = () => {
+    setAnchorEl(null);
+  };
+
+  const openPopper = Boolean(anchorEl);
+  const id = openPopper ? "simple-popper" : undefined;
+
   const drawerContent = (
     <Box>
       <List>
@@ -41,11 +63,11 @@ const SuperAdminBar = () => {
           <ListItemIcon>
             <People sx={{ color: "#ECEFF5" }} />
           </ListItemIcon>
-          <ListItemText primary="All Partners" sx={{ color: "#ECEFF5" }} />
+          <ListItemText primary="Partner Management" sx={{ color: "#ECEFF5" }} />
         </ListItem>
         <ListItem button component={Link} to="newPartners">
           <ListItemIcon>
-            <People sx={{ color: "#ECEFF5" }} />
+            <AddTask sx={{ color: "#ECEFF5" }} />
           </ListItemIcon>
           <ListItemText primary="New Partners" sx={{ color: "#ECEFF5" }} />
         </ListItem>
@@ -89,9 +111,18 @@ const SuperAdminBar = () => {
             <Logo />
           </IconButton>
           <Box flexGrow={1} />
-          <IconButton>
-            <Avatar alt="Profile" src="/profile.jpg" component={Link} to="./profile" />
+          <IconButton onClick={handleProfileClick}>
+            <Avatar alt="Profile" src="/profile.jpg" />
           </IconButton>
+          <Popper id={id} open={openPopper} anchorEl={anchorEl} placement="bottom-end">
+            <ClickAwayListener onClickAway={handleClickAway}>
+              <Paper sx={{ p: 1 }}>
+                <Button variant="contained" color="error" onClick={handleLogout} fullWidth>
+                  LOGOUT
+                </Button>
+              </Paper>
+            </ClickAwayListener>
+          </Popper>
         </Toolbar>
       </AppBar>
 
@@ -135,6 +166,10 @@ const SuperAdminBar = () => {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.leavingScreen,
             }),
+            backgroundImage: "url('/final.png')",
+            backgroundSize: "contain",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
           }}
         >
           <Outlet />
