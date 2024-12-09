@@ -16,29 +16,50 @@ import {
   MenuItem,
   Tooltip,
   Container,
+  Slider,
 } from "@mui/material";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import ProgramService from "../Services/ProgramService";
+import TierService from "../Services/TierService";
 
 const schema = Yup.object().shape({
   couponTitle: Yup.string().required("Coupon title is required"),
   couponDescription: Yup.string().required("Coupon description is required"),
   tierId: Yup.string().required("Tier is required"), 
+  programId: Yup.string().required("Program is required"),
   validity: Yup.number().required("Validity is required"),
-  benefit: Yup.number().required("Benefit is required"),
+  maxLimit: Yup.number().required("Max limit is required").positive().integer(),
+  percentage: Yup.number().required("Percentage is required").min(0).max(100),
   status: Yup.boolean(),
 });
 
 const AddCoupons = () => {
   const navigate = useNavigate();
   const [tiers, setTiers] = useState([]);
+  const [programs, setPrograms] = useState([]);
 
   useEffect(() => {
-    const storedTiers = localStorage.getItem("tiers");
-    if (storedTiers) {
-      setTiers(JSON.parse(storedTiers));
-    }
+    const fetchTiers = async () => {
+      try {
+        const response = await TierService.getTiersByPartnerId("5ef61c8d-c9eb-4ad1-aadd-041a5a889c33")
+        setTiers(response.data);
+      } catch (error) {
+        console.error("Error fetching tiers:", error);
+      }
+    };
+ 
+    const fetchPrograms = async () => {
+      try {
+        const response = await ProgramService.getProgramsByPartner("5ef61c8d-c9eb-4ad1-aadd-041a5a889c33")
+        setPrograms(response.data);
+      } catch (error) {
+        console.error("Error fetching programs:", error);
+      }
+    };
+ 
+    fetchTiers();
+    fetchPrograms();
   }, []);
 
   const handleSubmit = (values) => {
@@ -85,8 +106,10 @@ const AddCoupons = () => {
             couponTitle: "",
             couponDescription: "",
             tierId: "",
+            programId: "",
             validity: 0,
-            benefit: 0,
+            maxLimit: 0,
+            percentage: 0,
             status: false,
           }}
           validationSchema={schema}
@@ -134,8 +157,8 @@ const AddCoupons = () => {
                   >
                     {tiers.length > 0 ? (
                       tiers.map((tier) => (
-                        <MenuItem key={tier.id} value={tier.id}>
-                          {tier.name}
+                        <MenuItem key={tier.tierId} value={tier.tierId}>
+                          {tier.tierName}
                         </MenuItem>
                       ))
                     ) : (
@@ -143,6 +166,27 @@ const AddCoupons = () => {
                     )}
                   </Field>
                   <ErrorMessage name="tierId" component={FormHelperText} />
+                </FormControl>
+
+                <FormControl fullWidth>
+                  <Field
+                    name="programId" // Removed the extra space
+                    as={TextField}
+                    select
+                    label="Select Program"
+                    variant="outlined"
+                  >
+                    {programs.length > 0 ? (
+                      programs.map((program) => (
+                        <MenuItem key={program.programId} value={program.programId}>
+                          {program.programName}
+                        </MenuItem>
+                      ))
+                    ) : (
+                      <MenuItem disabled>No Programs available</MenuItem>
+                    )}
+                  </Field>
+                  <ErrorMessage name="programId" component={FormHelperText} />
                 </FormControl>
 
                 <Typography variant="h6" sx={{ mt: 4, mb: 2 }}>
@@ -169,18 +213,33 @@ const AddCoupons = () => {
 
                 <FormControl fullWidth>
                   <Field
-                    name="benefit"
+                    name="maxLimit"
                     as={TextField}
-                    label="Benefit Amount"
+                    label="Max Limit"
                     type="number"
                     variant="outlined"
-                    InputProps={{
-                      startAdornment: (
-                        <AttachMoneyIcon color="primary" />
-                      ),
-                    }}
                   />
-                  <ErrorMessage name="benefit" component={FormHelperText} />
+                  <ErrorMessage name="maxLimit" component={FormHelperText} />
+                </FormControl>
+
+                <FormControl fullWidth>
+                  <Typography gutterBottom>Percentage</Typography>
+                  <Field name="percentage">
+                    {({ field }) => (
+                      <Slider
+                        {...field}
+                        value={field.value}
+                        onChange={(event, value) => setFieldValue("percentage", value)}
+                        aria-labelledby="percentage-slider"
+                        valueLabelDisplay="auto"
+                        step={1}
+                        marks
+                        min={0}
+                        max={100}
+                      />
+                    )}
+                  </Field>
+                  <ErrorMessage name="percentage" component={FormHelperText} />
                 </FormControl>
 
                 <FormControl>
