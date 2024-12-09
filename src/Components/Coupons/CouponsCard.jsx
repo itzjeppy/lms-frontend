@@ -16,7 +16,7 @@ import { DeleteForever, Edit } from "@mui/icons-material";
 
 // Utility function to lighten colors
 const lightenColor = (color, percent) => {
-  const num = parseInt(color.replace("#", ""), 16);
+  const num = parseInt(color?.replace("#", ""), 16);
   const amt = Math.round(2.55 * percent);
   const R = (num >> 16) + amt;
   const G = ((num >> 8) & 0x00ff) + amt;
@@ -26,9 +26,9 @@ const lightenColor = (color, percent) => {
 
 // Utility function to determine appropriate text color
 const getTextColor = (tierColor) => {
-  const r = parseInt(tierColor.substring(1, 3), 16);
-  const g = parseInt(tierColor.substring(3, 5), 16);
-  const b = parseInt(tierColor.substring(5, 7), 16);
+  const r = parseInt(tierColor?.substring(1, 3), 16);
+  const g = parseInt(tierColor?.substring(3, 5), 16);
+  const b = parseInt(tierColor?.substring(5, 7), 16);
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
   return luminance > 0.5 ? "#000000" : "#ffffff";
 };
