@@ -20,10 +20,11 @@ import {
 import { MuiColorInput } from "mui-color-input";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import TierService from "../Services/TierService";
 
 // Validation Schema
 const schema = Yup.object().shape({
-  name: Yup.string().required("Tier Name is required"),
+  tierName: Yup.string().required("Tier Name is required"),
   triggerAmount: Yup.number()
     .required("Trigger Amount is required")
     .min(0, "Trigger Amount cannot be negative"),
@@ -61,13 +62,27 @@ const AddTier = () => {
   const [isFreeTier, setIsFreeTier] = useState(false);
 
   const handleSubmit = (values) => {
+    console.log("inside handle submit");
     const existingTiers = JSON.parse(localStorage.getItem("tiers") || "[]");
-    const newTier = {
-      id: Date.now(),
-      ...values,
+    const { isFreeTier, ...tierValues } = values;
+
+    const tier = {
+      partner_id: "5ef61c8d-c9eb-4ad1-aadd-041a5a889c33",
+      ...tierValues,
     };
 
-    localStorage.setItem("tiers", JSON.stringify([...existingTiers, newTier]));
+    console.log("Submitting new tier:", tier);
+  
+      TierService.createTiers(tier)
+        .then((response) => {
+          console.log("Created tiers:", response.data);
+          navigate(-1);
+        })
+        .catch((error) => {
+          console.error("Error creating tiers", error);
+        });
+
+    localStorage.setItem("tiers", JSON.stringify([...existingTiers, tier]));
     navigate(-1);
   };
 
@@ -95,7 +110,7 @@ const AddTier = () => {
       >
         <Formik
           initialValues={{
-            name: "",
+            tierName: "",
             triggerAmount: isFreeTier ? 0 : "",
             triggerDuration: isFreeTier ? 0 : "",
             accrualMultiplier: "",
@@ -155,13 +170,13 @@ const AddTier = () => {
                   <Grid2 container spacing={2}>
                     <Grid2 item xs={12}>
                       <Field
-                        name="name"
+                        name="tierName"
                         as={TextField}
                         label="Tier Name"
                         fullWidth
                         variant="outlined"
                       />
-                      <ErrorMessage name="name" component={FormHelperText} />
+                      <ErrorMessage name="tierName" component={FormHelperText} />
                     </Grid2>
 
                     <Grid2 item xs={6}>

@@ -11,11 +11,11 @@ import {
 } from "@mui/material";
 
 const ProgramCard = ({ program, onToggle }) => {
-  const { name, active, startDate, endDate } = program;
+  const { programName, status, startDate, endDate } = program;
   const navigate = useNavigate();
 
   // Preset gradients for consistent styling
-  const backgroundGradient = active
+  const backgroundGradient = status
     ? "linear-gradient(to bottom right, #A5D6A7, #66BB6A)" // Green for active
     : "linear-gradient(to bottom right, #FFABAB, #FF7043)"; // Red for inactive
 
@@ -54,17 +54,17 @@ const ProgramCard = ({ program, onToggle }) => {
               variant="h6"
               sx={{ fontWeight: "bold", textTransform: "uppercase" }}
             >
-              {name}
+              {programName}
             </Typography>
             <Chip
-              label={active ? "Active" : "Inactive"}
-              color={active ? "success" : "error"}
+              label={status ? "Active" : "Inactive"}
+              color={status ? "success" : "error"}
               onClick={onToggle}
               size="small"
               sx={{
                 color: "#fff",
                 fontWeight: "bold",
-                backgroundColor: active ? "#4CAF50" : "#D32F2F",
+                backgroundColor: status ? "#4CAF50" : "#D32F2F",
                 marginLeft: "10px",
               }}
             />
@@ -100,7 +100,8 @@ const ProgramCard = ({ program, onToggle }) => {
             size="small"
             sx={{
               backgroundColor: "#fff",
-              color: active ? "#388E3C" : "#D32F2F",
+              color: status ? "#388E3C" : "#D32F2F",
+              borderRadius: "20px",
               fontWeight: "bold",
               "&:hover": {
                 backgroundColor: "rgba(255,255,255,0.9)",

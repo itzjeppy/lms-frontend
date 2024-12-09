@@ -14,7 +14,8 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import ProgramCard from "./ProgramCard"; // Import the custom ProgramCard component
-import ProgramService from "../Services/ProgramsService"; // Simulate API call
+import ProgramService from "../Services/ProgramService"; // Simulate API call
+import TierService from "../Services/TierService";
 
 const ProgramsPage = () => {
   const [programs, setPrograms] = useState([]);
@@ -26,11 +27,10 @@ const ProgramsPage = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Detect if the screen is mobile
 
   useEffect(() => {
-    // Load programs
     const fetchPrograms = async () => {
       try {
-        const response = await ProgramService.getPrograms();
-        setPrograms(response.data);
+        const response = await ProgramService.getAllPrograms();
+        setPrograms(response.data); 
       } catch (error) {
         console.error("Error fetching programs:", error);
       } finally {
@@ -38,11 +38,16 @@ const ProgramsPage = () => {
       }
     };
 
-    // Load tiers from local storage or API
-    const fetchTiers = () => {
-      const storedTiers = JSON.parse(localStorage.getItem("tiers") || "[]");
-      setTiers(storedTiers);
-    };
+    const fetchTiers = async()=>{
+        try {
+          const response = await TierService.getTiersByPartnerId("5ef61c8d-c9eb-4ad1-aadd-041a5a889c33");
+          setTiers(response.data); 
+        } catch (error) {
+          console.error("Error fetching tiers:", error);
+        } finally {
+          setLoading(false);
+        }
+    }
 
     fetchPrograms();
     fetchTiers();

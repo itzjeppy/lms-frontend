@@ -28,29 +28,46 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import InfoIcon from "@mui/icons-material/Info";
 import { useNavigate } from "react-router-dom";
+import TierService from "../Services/TierService";
 
 const TiersContent = () => {
   const [tiers, setTiers] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedTiers = JSON.parse(localStorage.getItem("tiers") || "[]");
-    setTiers(storedTiers);
+    const fetchTiers = async () => {
+      try {
+        const response = await TierService.getTiersByPartnerId("5ef61c8d-c9eb-4ad1-aadd-041a5a889c33")
+        setTiers(response.data); 
+      } catch (error) {
+        console.error("Error fetching offers:", error);
+      } 
+    };
+
+    fetchTiers();
   }, []);
 
   const handleAddFreeTier = () => {
     navigate("../add-tier");
   };
 
-  const handleEdit = (id) => {
-    navigate(`/edit-tier/${id}`);
+  const handleEdit = (tierId) => {
+    navigate(`/edit-tier/${tierId}`);
   };
-
-  const handleDelete = (id) => {
+  const handleDelete = (tierId) => {
+    console.log("tier id about to be deleted : "+tierId)
     if (window.confirm("Are you sure you want to delete this tier?")) {
-      const updatedTiers = tiers.filter((tier) => tier.id !== id);
-      setTiers(updatedTiers);
-      localStorage.setItem("tiers", JSON.stringify(updatedTiers));
+      // const updatedTiers = tiers.filter((tier) => tier.id !== id);
+      // setTiers(updatedTiers);
+      // localStorage.setItem("tiers", JSON.stringify(updatedTiers));
+      TierService.deleteTiers(tierId)
+        .then((response) => {
+          console.log("Tier deleted successfully");
+          navigate(-1);
+        })
+        .catch((error) => {
+          console.error("Error deleting tier", error);
+        });
     }
   };
 
@@ -168,7 +185,7 @@ const TiersContent = () => {
             }}
           >
             {tiers.map((tier, index) => (
-              <TimelineItem key={tier.id}>
+              <TimelineItem key={tier.tierId}>
                 <TimelineSeparator>
                   <TimelineDot
                     style={{
@@ -199,11 +216,11 @@ const TiersContent = () => {
                   >
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
-                      aria-controls={`panel-${tier.id}-content`}
-                      id={`panel-${tier.id}-header`}
+                      aria-controls={`panel-${tier.tierId}-content`}
+                      id={`panel-${tier.tierId}-header`}
                     >
                       <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                        {tier.name}
+                        {tier.tierName}
                       </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
@@ -284,7 +301,7 @@ const TiersContent = () => {
                               variant="contained"
                               color="secondary"
                               startIcon={<DeleteIcon />}
-                              onClick={() => handleDelete(tier.id)}
+                              onClick={() => handleDelete(tier.tierId)}
                             >
                               Delete
                             </Button>
