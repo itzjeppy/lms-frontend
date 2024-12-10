@@ -15,7 +15,10 @@ import {
   AccordionDetails,
   FormHelperText,
   Container,
-  Grid2
+  Grid2,
+  Slider,
+  Tooltip,
+  CircularProgress
 } from "@mui/material";
 import { MuiColorInput } from "mui-color-input";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -28,7 +31,7 @@ const schema = Yup.object().shape({
   triggerAmount: Yup.number()
     .required("Trigger Amount is required")
     .min(0, "Trigger Amount cannot be negative"),
-    triggerDuration: Yup.number()
+  triggerDuration: Yup.number()
     .when('isFreeTier', (isFreeTier) => { 
       if (!isFreeTier) {
         return Yup.number()
@@ -60,9 +63,10 @@ const schema = Yup.object().shape({
 const AddTier = () => {
   const navigate = useNavigate();
   const [isFreeTier, setIsFreeTier] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = (values) => {
-    console.log("inside handle submit");
+    setIsSubmitting(true);
     const existingTiers = JSON.parse(localStorage.getItem("tiers") || "[]");
     const { isFreeTier, ...tierValues } = values;
 
@@ -71,19 +75,18 @@ const AddTier = () => {
       ...tierValues,
     };
 
-    console.log("Submitting new tier:", tier);
-  
-      TierService.createTiers(tier)
-        .then((response) => {
-          console.log("Created tiers:", response.data);
-          navigate(-1);
-        })
-        .catch((error) => {
-          console.error("Error creating tiers", error);
-        });
-
-    localStorage.setItem("tiers", JSON.stringify([...existingTiers, tier]));
-    navigate(-1);
+    TierService.createTiers(tier)
+      .then((response) => {
+        console.log("Created tiers:", response.data);
+        localStorage.setItem("tiers", JSON.stringify([...existingTiers, tier]));
+        navigate(-1);
+      })
+      .catch((error) => {
+        console.error("Error creating tiers", error);
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
   return (
@@ -104,7 +107,7 @@ const AddTier = () => {
       <Paper
         sx={{
           p: { xs: 2, md: 3 },
-          borderRadius: 2,
+          borderRadius : 2,
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
         }}
       >
@@ -117,14 +120,14 @@ const AddTier = () => {
             redemptionLimitOfPurchase: "",
             conversion: "",
             description: "",
-            couponProbability: "",
+            couponProbability: 0, // Initialize with 0
             colour: "#FFFFFF",
             isFreeTier,
           }}
           validationSchema={schema}
           onSubmit={handleSubmit}
         >
-          {({ isSubmitting, setFieldValue, values }) => (
+          {({ setFieldValue, values }) => (
             <Form>
               {/* Title Section */}
               <Box
@@ -160,8 +163,9 @@ const AddTier = () => {
               />
 
               {/* Accordion for Form Sections */}
-              <Accordion defaultExpanded>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Accordion defaultExpanded sx={{ boxShadow:"none"}}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}
+                >
                   <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                     Basic Details
                   </Typography>
@@ -211,7 +215,7 @@ const AddTier = () => {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion>
+              <Accordion sx={{ boxShadow:"none"}}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                     Rewards and Metrics
@@ -259,13 +263,19 @@ const AddTier = () => {
                       <ErrorMessage name="conversion" component={FormHelperText} />
                     </Grid2>
                     <Grid2 item xs={6}>
-                      <Field
-                        name="couponProbability"
-                        as={TextField}
-                        label="Coupon Probability (0-1)"
-                        type="number"
-                        fullWidth
-                        variant="outlined"
+                      <Typography gutterBottom>
+                        Coupon Probability (0-1)
+                      </Typography>
+                      <Slider
+                        value={values.couponProbability}
+                        onChange={(event, newValue) => {
+                          setFieldValue("couponProbability", newValue);
+                        }}
+                        step={0.01}
+                        min={ 0}
+                        max={1}
+                        valueLabelDisplay="auto"
+                        size="large"
                       />
                       <ErrorMessage
                         name="couponProbability"
@@ -276,7 +286,7 @@ const AddTier = () => {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion>
+              <Accordion sx={{ boxShadow:"none"}}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                     Additional Information
@@ -314,7 +324,9 @@ const AddTier = () => {
                   variant="contained"
                   color="primary"
                   size="large"
+                  sx={{ position: 'relative' }}
                 >
+                  {isSubmitting && <CircularProgress size={24} sx={{ position: 'absolute', left: '50%', top: '50%', marginLeft: '-12px', marginTop: '-12px' }} />}
                   Submit
                 </Button>
               </Box>
