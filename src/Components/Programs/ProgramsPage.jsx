@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Box, Typography, CircularProgress, Button, Grid } from "@mui/material";
+import { Container, Box, Typography, CircularProgress, Button, Grid2 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ProgramCard from "./ProgramCard";
 import ProgramService from "../Services/ProgramService";
@@ -88,26 +88,25 @@ const ProgramsPage = () => {
         </Box>
       ) : (
         <Box sx={{ flexGrow: 1, overflowY: "auto", bgcolor: "#ffffff", p: 2, borderRadius: 2, boxShadow: "0 1px 6px rgba(0, 0, 0, 0.1)" }}>
-          <Grid container spacing={3}>
+          <Grid2 container spacing={3}>
             {programs.length > 0 ? (
               programs.map((program) => (
-                <Grid item xs={12} sm={6} md={4} key={program.programId}>
+                <Grid2 item xs={12} sm={6} md={4} key={program.programId}>
                   <ProgramCard
                     program={program}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
                   />
-                </Grid>
+                </Grid2>
               ))
             ) : (
               <Typography variant="body1" color="textSecondary" sx={{ textAlign: "center", mt: 2 }}>
                 No programs available. Start by adding a new program!
               </Typography>
             )}
-          </Grid>
+          </Grid2>
         </Box>
       )}
- ```javascript
     </Container>
   );
 };
