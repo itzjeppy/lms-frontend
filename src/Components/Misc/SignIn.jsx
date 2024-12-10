@@ -137,7 +137,7 @@ export default function SignIn(props) {
               height: '75%',
               width: '75%',
             }}
-            src="/image.png"
+            src="/final.png"
           />
           <Typography
             component="h1"

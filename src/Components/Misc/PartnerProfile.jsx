@@ -80,7 +80,7 @@ const ProfilePage = () => {
           borderRadius: 2,
         }}
       >
-        <Typography variant="h 6" gutterBottom>
+        <Typography variant="h6" sx={{ p: 1 }}>
           Users
         </Typography>
         <div style={{ height: 'auto', width: '100%' }}>
