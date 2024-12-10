@@ -1,13 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Paper, Typography, Box } from "@mui/material";
-import {
-  Timeline,
-  TimelineItem,
-  TimelineSeparator,
-  TimelineDot,
-  TimelineConnector,
-  TimelineContent,
-} from "@mui/lab";
 
 const Tier = ({ tiers, userPoints }) => {
   // Sort tiers by trigger amount
@@ -21,6 +13,28 @@ const Tier = ({ tiers, userPoints }) => {
     return userPoints >= tier.triggerAmount ? tier : acc;
   }, null);
 
+  const [animatedPoints, setAnimatedPoints] = useState(0);
+
+  useEffect(() => {
+    let animationFrame;
+    const duration = 2000; // Animation duration in ms
+    const startTime = performance.now();
+
+    const animate = (currentTime) => {
+      const elapsedTime = currentTime - startTime;
+      const progress = Math.min(elapsedTime / duration, 1); // Progress between 0 and 1
+      setAnimatedPoints(Math.floor(progress * userPoints));
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(animationFrame);
+  }, [userPoints]);
+
   return (
     <Paper
       sx={{
@@ -33,9 +47,27 @@ const Tier = ({ tiers, userPoints }) => {
         maxWidth: "1000px",
         margin: "0 auto",
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+        background: "linear-gradient(45deg, #FFD700, #FFC300, #FFD700)",
+        backgroundSize: "400% 400%",
+        animation: "shinyGold 3s linear infinite",
+        borderRadius: "10px",
+        "@keyframes shinyGold": {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
+        },
       }}
     >
-      <Typography variant="h5" sx={{ fontWeight: "bold", mb: 3 }}>
+      <Typography
+        variant="h4"
+        sx={{
+          fontWeight: "bold",
+          fontFamily: "Georgia, serif",
+          color: "red",
+          mb: 3,
+          textShadow: "1px 1px 5px rgba(0, 0, 0, 0.5)",
+        }}
+      >
         Tier Progress
       </Typography>
 
@@ -44,121 +76,153 @@ const Tier = ({ tiers, userPoints }) => {
         <Box sx={{ textAlign: "center", mb: 3 }}>
           <Typography
             variant="h6"
-            sx={{ fontWeight: "bold", mb: 1, color: "primary.main" }}
+            sx={{
+              fontWeight: "bold",
+              fontFamily: "Georgia, serif",
+              color: "#fff",
+              mb: 1,
+              textShadow: "1px 1px 4px rgba(0, 0, 0, 0.5)",
+            }}
           >
-            Current Tier: {currentTier.name}
+            Current Tier: {currentTier.tierName}
           </Typography>
-          <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-            Current Points: {userPoints}
+          <Typography
+            variant="body1"
+            sx={{
+              fontWeight: "bold",
+              fontFamily: "Georgia, serif",
+              color: "#fff",
+            }}
+          >
+            Current Points: {animatedPoints}
           </Typography>
         </Box>
       )}
 
-      {/* Progress Bar */}
-      <Timeline position="alternate" sx={{ width: "100%" }}>
-        {sortedTiers.map((tier, index) => (
-          <TimelineItem key={tier.name}>
-            <TimelineSeparator>
-              <TimelineDot
+      {/* Horizontal Progress Bar */}
+      <Box
+        sx={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+            mb: 1,
+          }}
+        >
+          {sortedTiers.map((tier) => {
+            const isActive = animatedPoints >= tier.triggerAmount;
+            return (
+              <Typography
+                key={tier.name}
+                variant="body2"
                 sx={{
-                  bgcolor:
-                    userPoints >= tier.triggerAmount ? "red" : "grey.500",
-                  width: 24,
-                  height: 24,
-                  margin: "2px",
-                }}
-              />
-              {index < sortedTiers.length - 1 && (
-                <TimelineConnector
-                  sx={{
-                    bgcolor:
-                      userPoints >= sortedTiers[index + 1].triggerAmount
-                        ? "red"
-                        : "grey.500",
-                    width: 6,
-                  }}
-                />
-              )}
-              {index === sortedTiers.length - 1 && userPoints > maxPoints && (
-                <TimelineConnector
-                  sx={{
-                    bgcolor: "primary.main",
-                    width: 6,
-                    height: "40px",
-                  }}
-                />
-              )}
-            </TimelineSeparator>
-            <TimelineContent
-              sx={{
-                py: "12px",
-                px: 2,
-                bgcolor:
-                  userPoints >= tier.triggerAmount ? tier.colour : "lightgray",
-                borderRadius: "8px",
-                textAlign: "center",
-                width: "fit-content",
-              }}
-            >
-              <Box
-                sx={{
-                  textAlign: "center",
+                  fontWeight: isActive ? "bold" : "normal",
+                  fontSize: isActive ? "1.2rem" : "1rem",
+                  fontFamily: "Georgia, serif",
+                  color: isActive ? "#fff" : "#C2A679",
+                  animation: isActive ? "blinking 1.5s 1" : "none",
+                  "@keyframes blinking": {
+                    "0%": { opacity: 1 },
+                    "50%": { opacity: 0.5 },
+                    "100%": { opacity: 1 },
+                  },
                 }}
               >
-                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                  {tier.name}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Trigger Amount: {tier.triggerAmount} points
-                </Typography>
-              </Box>
-            </TimelineContent>
-          </TimelineItem>
-        ))}
-        {/* Extra progress beyond the last tier */}
-        {userPoints > maxPoints && (
-          <TimelineItem>
-            <TimelineSeparator>
-              <TimelineDot
+                {tier.tierName}
+              </Typography>
+            );
+          })}
+        </Box>
+        <Box
+          sx={{
+            width: "100%",
+            position: "relative",
+            height: "20px",
+            borderRadius: "10px",
+            backgroundColor: "#e0e0e0",
+            overflow: "hidden",
+          }}
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              width: `${(animatedPoints / maxPoints) * 100}%`,
+              height: "100%",
+              background: "linear-gradient(45deg, #FF6347, #FF4500, #FF6347)",
+              backgroundSize: "200% 200%",
+              borderRadius: "10px",
+              animation: "shinyRed 3s linear infinite",
+              "@keyframes shinyRed": {
+                "0%": { backgroundPosition: "0% 50%" },
+                "50%": { backgroundPosition: "100% 50%" },
+                "100%": { backgroundPosition: "0% 50%" },
+              },
+            }}
+          />
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+            mt: 1,
+          }}
+        >
+          {sortedTiers.map((tier) => {
+            const isActive = animatedPoints >= tier.triggerAmount;
+            return (
+              <Typography
+                key={tier.name}
+                variant="body2"
                 sx={{
-                  bgcolor: "primary.main",
-                  width: 24,
-                  height: 24,
+                  fontWeight: isActive ? "bold" : "normal",
+                  fontSize: isActive ? "1.2rem" : "1rem",
+                  fontFamily: "Georgia, serif",
+                  color: isActive ? "#fff" : "#C2A679",
+                  animation: isActive ? "blinking 1.5s 1" : "none",
+                  "@keyframes blinking": {
+                    "0%": { opacity: 1 },
+                    "50%": { opacity: 0.5 },
+                    "100%": { opacity: 1 },
+                  },
                 }}
-              />
-            </TimelineSeparator>
-            <TimelineContent
-              sx={{
-                py: "12px",
-                px: 2,
-                bgcolor: "lightblue",
-                borderRadius: "8px",
-                textAlign: "center",
-              }}
-            >
-              <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                Progress Beyond Platinum
+              >
+                {tier.triggerAmount}
               </Typography>
-              <Typography variant="body2" color="textSecondary">
-                {userPoints - maxPoints} points above
-              </Typography>
-            </TimelineContent>
-          </TimelineItem>
-        )}
-      </Timeline>
+            );
+          })}
+        </Box>
+      </Box>
 
       {/* Points Needed for Next Tier */}
       {sortedTiers.some((tier) => userPoints < tier.triggerAmount) && (
         <Box sx={{ mt: 3, textAlign: "center", display: "flex" }}>
           <Typography
             variant="body1"
-            sx={{ fontWeight: "bold", color: "text.secondary", mb: 1 }}
+            sx={{
+              fontWeight: "bold",
+              fontFamily: "Georgia, serif",
+              color: "#fff",
+              mb: 1,
+            }}
           >
             Points Needed for Next Tier:
           </Typography>
           <Typography
             variant="body1"
-            sx={{ fontWeight: "bold", color: "error.main", marginLeft: "5px" }}
+            sx={{
+              fontWeight: "bold",
+              fontFamily: "Georgia, serif",
+              color: "#E63946",
+              marginLeft: "5px",
+            }}
           >
             {sortedTiers.find((tier) => userPoints < tier.triggerAmount)
               .triggerAmount - userPoints}
