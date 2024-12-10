@@ -42,7 +42,6 @@ const AddProgram = () => {
   
       ProgramService.createProgram(program).then((response) => {
         console.log("Created program:", response.data);
-        navigate(-1);
       })
       .catch((error) => {
         console.error("Error creating program", error);
