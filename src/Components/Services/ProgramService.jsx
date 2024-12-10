@@ -41,6 +41,42 @@ class ProgramService {
     })
 }
 
+//update program
+updateProgram(programObj) {
+  console.log("Program Object in Service: ",programObj);
+  return axios({
+    method: "put",
+    url: BASE_URL + "/updateProgram",
+    data: programObj,
+    responseType: "json",
+    headers: {
+      "Content-Type": "application/json", 
+      "Access-Control-Allow-Origin": "*"
+    },
+  });
+}
+
+deleteProgram(programId) {
+  return axios({
+    method: "delete",
+    url: BASE_URL + "/deleteProgramById?id=" + programId ,
+    responseType: "string",
+    headers: {
+      "Access-Control-Allow-Origin": "*"
+    },
+  });
+}
+
+getProgramsById(programId) {
+  return axios({
+    method: "get",
+    url: `${BASE_URL}/getProgramById?id=${programId}`,
+    responseType: "json",
+    headers: {
+      "Access-Control-Allow-Origin": "*"
+    },
+  });
+}
 
 }
 

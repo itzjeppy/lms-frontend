@@ -36,7 +36,7 @@ class CouponService {
           },
         });
       }
-      //update Offer
+      //update coupon
       updateCoupons(couponObj,couponId) {
         return axios({
           method: "put",
