@@ -4,7 +4,7 @@ import {
   Typography,
   Box,
   Container,
-  Grid as MuiGrid,
+  Grid2 as MuiGrid,
   IconButton,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
