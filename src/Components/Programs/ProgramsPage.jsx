@@ -4,11 +4,14 @@ import { useNavigate } from "react-router-dom";
 import ProgramCard from "./ProgramCard";
 import ProgramService from "../Services/ProgramService";
 import TierService from "../Services/TierService";
+import ConfirmationModal from "../Common/ConfirmationModal"; // Import the ConfirmationModal
 
 const ProgramsPage = () => {
   const [programs, setPrograms] = useState([]);
   const [tiers, setTiers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [programToDelete, setProgramToDelete] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,17 +46,31 @@ const ProgramsPage = () => {
   };
 
   const handleDelete = (programId) => {
-    if (window.confirm("Are you sure you want to delete this program?")) {
-      ProgramService.deleteProgram(programId)
+    setProgramToDelete(programId);
+    setShowDeleteDialog(true); // Open the dialog
+  };
+
+  const confirmDelete = () => {
+    if (programToDelete) {
+      ProgramService.deleteProgram(programToDelete)
         .then(() => {
           setPrograms((prevPrograms) =>
-            prevPrograms.filter((program) => program.programId !== programId)
+            prevPrograms.filter((program) => program.programId !== programToDelete)
           );
         })
         .catch((error) => {
           console.error("Error deleting program", error);
+        })
+        .finally(() => {
+          setShowDeleteDialog(false); // Close the dialog
+          setProgramToDelete(null); // Reset the program to delete
         });
     }
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteDialog(false); // Close the dialog
+    setProgramToDelete(null); // Reset the program to delete
   };
 
   if (loading) {
@@ -95,7 +112,7 @@ const ProgramsPage = () => {
                   <ProgramCard
                     program={program}
                     onEdit={handleEdit}
-                    onDelete={handleDelete}
+                    onDelete={() => handleDelete(program.programId)} // Pass the programId to handleDelete
                   />
                 </Grid2>
               ))
@@ -107,6 +124,13 @@ const ProgramsPage = () => {
           </Grid2>
         </Box>
       )}
+
+      <ConfirmationModal
+        show={showDeleteDialog}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+        message="Are you sure you want to delete this program?"
+      />
     </Container>
   );
 };

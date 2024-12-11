@@ -14,13 +14,26 @@ import CouponService from "../Services/CouponService";
 import OfferCard from "../Offers/OfferCard";
 import CouponsCard from "../Coupons/CouponsCard";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
- 
+import TierService from "../Services/TierService";
+import ConfirmationModal from "../Common/ConfirmationModal";
+
 const ProgramDetails = () => {
   const [offers, setOffers] = useState([]);
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [tiers, setTiers] = useState([]);
+  
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [isCoupon, setIsCoupon] = useState(false); // Track if the item is a coupon or offer
+  
   const navigate = useNavigate();
   const { id } = useParams(); // Extract the ID from the URL
+
+  const getTierColor = (tierId) => {
+    const tier = tiers.find((tier) => tier.id === tierId);
+    return tier ? tier.colour : "#cccccc";
+  };
  
   useEffect(() => {
     const fetchProgramDetails = async () => {
@@ -38,8 +51,45 @@ const ProgramDetails = () => {
     };
  
     fetchProgramDetails();
-  }, []);
- 
+  }, [id]);
+
+  const handleDeleteConfirmation = (itemId, isCoupon) => {
+    setItemToDelete(itemId);
+    setIsCoupon(isCoupon);
+    setShowDeleteDialog(true); // Open the confirmation dialog
+  };
+
+  const confirmDelete = () => {
+    if (isCoupon) {
+      CouponService.deleteCoupons(itemToDelete)
+        .then(() => {
+          setCoupons((prevCoupons) =>
+            prevCoupons.filter((coupon) => coupon.couponId !== itemToDelete)
+          );
+        })
+        .catch((error) => {
+          console.error("Error deleting coupon", error);
+        });
+    } else {
+      OfferService.deleteOffers(itemToDelete) // Assuming you have a deleteOffer method
+        .then(() => {
+          setOffers((prevOffers) =>
+            prevOffers.filter((offer) => offer.id !== itemToDelete)
+          );
+        })
+        .catch((error) => {
+          console.error("Error deleting offer", error);
+        });
+    }
+    setShowDeleteDialog(false); // Close the dialog
+    setItemToDelete(null); // Reset the item to delete
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteDialog(false); // Close the dialog
+    setItemToDelete(null); // Reset the item to delete
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -99,7 +149,10 @@ const ProgramDetails = () => {
       <MuiGrid container spacing={3}>
         {offers.map((offer) => (
           <MuiGrid item xs={12} sm={6} md={4} key={offer.id}>
-            <OfferCard offer={offer} />
+            <OfferCard 
+              offer={offer} 
+              onDelete={() => handleDeleteConfirmation(offer.id, false)} // Pass false for offer
+            />
           </MuiGrid>
         ))}
  
@@ -136,7 +189,11 @@ const ProgramDetails = () => {
       <MuiGrid container spacing={3}>
         {coupons.map((coupon) => (
           <MuiGrid item xs={12} sm={6} md={4} key={coupon.id}>
-            <CouponsCard coupon={coupon} />
+            <CouponsCard 
+              coupon={coupon} 
+              tierColor={getTierColor(coupon.tierId)}
+              onDelete={() => handleDeleteConfirmation(coupon.couponId, true)} // Pass true for coupon
+            />
           </MuiGrid>
         ))}
  
@@ -145,8 +202,10 @@ const ProgramDetails = () => {
           <Box
             onClick={() => navigate("../add-coupon", { state: { programId: id } })}
             sx={{
-              width: "100%",
-              height: "100%",
+              width: "300px",
+              height: "240px",
+              marginTop: "15px",
+              borderWidth: "5px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -165,6 +224,13 @@ const ProgramDetails = () => {
           </Box>
         </MuiGrid>
       </MuiGrid>
+
+      <ConfirmationModal
+        show={showDeleteDialog}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+        message={`Are you sure you want to delete this ${isCoupon ? 'coupon' : 'offer'}?`}
+      />
     </Container>
   );
 };
