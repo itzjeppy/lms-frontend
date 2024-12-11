@@ -7,7 +7,7 @@ import {
   CardActions,
   Button,
   Box,
-  Grid,
+  Grid2,
   Pagination,
 } from "@mui/material";
 
@@ -69,9 +69,9 @@ const NewPartnersPage = () => {
       </Box>
 
       {/* Cards Section */}
-      <Grid container spacing={2}>
+      <Grid2 container spacing={2}>
         {displayedPartners.map((partner, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
+          <Grid2 item xs={12} sm={6} md={4} key={index}>
             <Card
               sx={{
                 border: `2px solid #634e94`,
@@ -108,9 +108,9 @@ const NewPartnersPage = () => {
                 </Button>
               </CardActions>
             </Card>
-          </Grid>
+          </Grid2>
         ))}
-      </Grid>
+      </Grid2>
 
       {/* Pagination Section */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>

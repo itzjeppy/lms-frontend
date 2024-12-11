@@ -29,11 +29,11 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import InfoIcon from "@mui/icons-material/Info";
 import { useNavigate } from "react-router-dom";
 import TierService from "../Services/TierService";
-
+ 
 const TiersContent = () => {
   const [tiers, setTiers] = useState([]);
   const navigate = useNavigate();
-
+ 
   useEffect(() => {
     const fetchTiers = async () => {
       try {
@@ -46,14 +46,14 @@ const TiersContent = () => {
         console.error("Error fetching offers:", error);
       }
     };
-
+ 
     fetchTiers();
   }, []);
-
+ 
   const handleAddFreeTier = () => {
     navigate("../add-tier");
   };
-
+ 
   const handleEdit = (tierId) => {
     navigate(`/edit-tier/${tierId}`);
   };
@@ -73,7 +73,7 @@ const TiersContent = () => {
         });
     }
   };
-
+ 
   const lightenColor = (color, percent) => {
     const num = parseInt(color.replace("#", ""), 16);
     const amt = Math.round(2.55 * percent);
@@ -82,7 +82,7 @@ const TiersContent = () => {
     const B = (num & 0x0000ff) + amt;
     return `rgb(${Math.min(R, 255)}, ${Math.min(G, 255)}, ${Math.min(B, 255)})`;
   };
-
+ 
   const getTextColor = (tierColor) => {
     const r = parseInt(tierColor?.substring(1, 3), 16);
     const g = parseInt(tierColor?.substring(3, 5), 16);
@@ -90,7 +90,7 @@ const TiersContent = () => {
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     return luminance > 0.5 ? "#000000" : "#ffffff";
   };
-
+ 
   return (
     <Container
       sx={{
@@ -132,7 +132,7 @@ const TiersContent = () => {
             Your Tiers
           </Typography>
         </Box>
-
+ 
         {tiers.length > 0 && (
           <Button
             variant="contained"
@@ -149,7 +149,7 @@ const TiersContent = () => {
           </Button>
         )}
       </Box>
-
+ 
       {tiers.length === 0 ? (
         <Box
           sx={{
@@ -330,5 +330,5 @@ const TiersContent = () => {
     </Container>
   );
 };
-
+ 
 export default TiersContent;
