@@ -11,21 +11,23 @@ import {
   ButtonGroup,
 } from "@mui/material";
 import { DeleteForever, Edit } from "@mui/icons-material";
-
+ 
 const ProgramCard = ({ program, onToggle, onDelete }) => {
   const { programId, programName, status, startDate, endDate } = program;
   const navigate = useNavigate();
-
+ 
   const backgroundGradient = status
     ? "linear-gradient(to bottom right, #A5D6A7, #66BB6A)"
     : "linear-gradient(to bottom right, #FFABAB, #FF8A80)";
-
+ 
   const handleEdit = () => {
-    navigate(`../edit-program/${programId}`, {
-      state: { program }
-    });
+    navigate(`../edit-program/${programId}`, { state: { program } });
   };
-
+ 
+  const handleDetails = () => {
+    navigate(`../program-details/${programId}`);
+  };
+ 
   return (
     <Box sx={{ p: 2 }}>
       <Card
@@ -44,6 +46,7 @@ const ProgramCard = ({ program, onToggle, onDelete }) => {
         }}
       >
         <CardContent sx={{ p: 3 }}>
+          {/* Title Section */}
           <Box
             sx={{
               display: "flex",
@@ -71,18 +74,19 @@ const ProgramCard = ({ program, onToggle, onDelete }) => {
               }}
             />
           </Box>
-
+ 
+          {/* Divider */}
           <Divider sx={{ my: 2, borderColor: "rgba(255,255,255,0.5)" }} />
-
+ 
+          {/* Program Dates */}
           <Typography variant="body2" sx={{ mb: 1 }}>
-            <strong>Start Date:</strong>{" "}
-            {new Date(startDate).toLocaleDateString()}
+            <strong>Start Date:</strong> {new Date(startDate).toLocaleDateString()}
           </Typography>
           <Typography variant="body2">
             <strong>End Date:</strong> {new Date(endDate).toLocaleDateString()}
           </Typography>
         </CardContent>
-
+ 
         <Box
           sx={{
             display: "flex",
@@ -93,11 +97,29 @@ const ProgramCard = ({ program, onToggle, onDelete }) => {
             borderTop: "1px solid rgba(255,255,255,0.3)",
           }}
         >
+          {/* Details Button */}
+          <Button
+            onClick={handleDetails}
+            variant="outlined"
+            size="small"
+            sx={{
+              color: "#ffffff",
+              borderColor: "#ffffff",
+              borderRadius: "20px",
+              fontWeight: "bold",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "rgba(255,255,255,0.2)",
+              },
+            }}
+          >
+            Details
+          </Button>
+ 
+          {/* Edit and Delete Button Group */}
           <ButtonGroup variant="outlined" aria-label="outlined primary button group">
             <Button
               onClick={handleEdit}
-              variant="outlined"
-              size="small"
               sx={{
                 color: "#ffffff",
                 borderColor: "#ffffff",
@@ -123,15 +145,15 @@ const ProgramCard = ({ program, onToggle, onDelete }) => {
               <DeleteForever />
             </Button>
           </ButtonGroup>
-        </Box> 
-          </Card>
         </Box>
-      );
-    };
-
-    ProgramCard.defaultProps = {
-      onEdit: () =>{},
-      onDelete: () => {},
-    };
-
-    export default ProgramCard;
+      </Card>
+    </Box>
+  );
+};
+ 
+ProgramCard.defaultProps = {
+  onEdit: () => {},
+  onDelete: () => {},
+};
+ 
+export default ProgramCard;

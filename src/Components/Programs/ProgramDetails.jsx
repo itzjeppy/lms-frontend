@@ -4,31 +4,31 @@ import {
   Typography,
   Box,
   Container,
+  Grid as MuiGrid,
   IconButton,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { useNavigate } from "react-router-dom";
-import OfferService from "../Services/OfferService"; // Adjust the import based on your service structure
-import CouponService from "../Services/CouponService"; // Import the CouponService
+import { useNavigate, useParams } from "react-router-dom";
+import OfferService from "../Services/OfferService";
+import CouponService from "../Services/CouponService";
 import OfferCard from "../Offers/OfferCard";
 import CouponsCard from "../Coupons/CouponsCard";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-
+ 
 const ProgramDetails = () => {
   const [offers, setOffers] = useState([]);
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
+  const { id } = useParams(); // Extract the ID from the URL
+ 
   useEffect(() => {
     const fetchProgramDetails = async () => {
       try {
-        // Fetch offers using OfferService
-        const offersResponse = await OfferService.getOffers();
+        const offersResponse = await OfferService.getOfferByProgramId(id);
         setOffers(offersResponse.data);
-
-        // Fetch coupons using CouponService
-        const couponsResponse = await CouponService.getCoupons();
+ 
+        const couponsResponse = await CouponService.getCouponByProgramId(id);
         setCoupons(couponsResponse.data);
       } catch (error) {
         console.error("Error fetching program details:", error);
@@ -36,14 +36,14 @@ const ProgramDetails = () => {
         setLoading(false);
       }
     };
-
+ 
     fetchProgramDetails();
   }, []);
-
+ 
   if (loading) {
     return <div>Loading...</div>;
   }
-
+ 
   return (
     <Container
       sx={{
@@ -73,7 +73,7 @@ const ProgramDetails = () => {
         <IconButton
           color="inherit"
           edge="start"
-          aria-label="open drawer"
+          aria-label="go back"
           onClick={() => navigate(-1)}
           sx={{ mr: 2 }}
         >
@@ -90,105 +90,83 @@ const ProgramDetails = () => {
           Program Details
         </Typography>
       </Box>
-
+ 
       {/* Offers Section */}
-      <Box
-        sx={{
-          flexGrow: 1,
-          overflowY: "auto",
-          bgcolor: "#ffffff",
-          p: 2,
-          borderRadius: 2,
-          boxShadow: "0 1px 6px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-          Offers
-        </Typography>
-        {offers.length > 0 ? (
-          offers.map((offer) => <OfferCard key={offer.partner_id} offer={offer} />)
-        ) : (
-          <Typography variant="body1" color="textSecondary" sx={{ textAlign: "center", mt: 2 }}>
-            No offers available. Start by adding a new offer!
-          </Typography>
-        )}
-        {/* Add Offer Button */}
-        <Box
-          sx={{
-            mt: 2,
-            p: 2,
-            bgcolor: "#e0f7fa",
-            borderRadius: 2,
-            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-            textAlign: "center",
-          }}
-        >
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddCircleOutlineIcon />}
-            onClick={() => navigate("../add-offer")}
+      <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+        Offers
+      </Typography>
+ 
+      <MuiGrid container spacing={3}>
+        {offers.map((offer) => (
+          <MuiGrid item xs={12} sm={6} md={4} key={offer.id}>
+            <OfferCard offer={offer} />
+          </MuiGrid>
+        ))}
+ 
+        {/* Add New Offer Card */}
+        <MuiGrid item xs={12} sm={6} md={4}>
+          <Box
+            onClick={() => navigate("../add-offer", { state: { programId: id } })}
             sx={{
-              fontWeight: " bold",
-              textTransform: "none",
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "#f3f4f6",
+              borderRadius: 8,
+              boxShadow: "0 6px 18px rgba(0, 0, 0, 0.15)",
+              transition: "transform 0.2s, box-shadow 0.2s",
+              cursor: "pointer",
+              "&:hover": {
+                transform: "scale(1.02)",
+                boxShadow: "0 10px 20px rgba(0, 0, 0, 0.2)",
+              },
             }}
           >
-            Add Offer
-          </Button>
-        </Box>
-      </Box>
-
-      {/* Coupons Section */}
-      <Box
-        sx={{
-          flexGrow: 1,
-          overflowY: "auto",
-          bgcolor: "#ffffff",
-          p: 2,
-          borderRadius: 2,
-          boxShadow: "0 1px 6px rgba(0, 0, 0, 0.1)",
-          mt: 2,
-        }}
-      >
-        <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-          Coupons
-        </Typography>
-        {coupons.length > 0 ? (
-          coupons.map((coupon) => <CouponsCard key={coupon.id} coupon={coupon} />)
-        ) : (
-          <Typography variant="body1" color="textSecondary" sx={{ textAlign: "center", mt: 2 }}>
-            No coupons available. Start by adding a new coupon!
-          </Typography>
-        )}
-        {/* Add Coupon Button */}
-        <Box
-          sx={{
-            mt: 2,
-            p: 2,
-            bgcolor: "#e0f7fa",
-            borderRadius: 2,
-            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-            textAlign: "center",
-          }}
-        >
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddCircleOutlineIcon />}
-            onClick={() => navigate("../add-coupon")}
+            <AddCircleOutlineIcon fontSize="large" color="primary" />
+          </Box>
+        </MuiGrid>
+      </MuiGrid>
+ 
+      <Typography variant="h5" sx={{ fontWeight: "bold", mt: 4, mb: 2 }}>
+        Coupons
+      </Typography>
+ 
+      <MuiGrid container spacing={3}>
+        {coupons.map((coupon) => (
+          <MuiGrid item xs={12} sm={6} md={4} key={coupon.id}>
+            <CouponsCard coupon={coupon} />
+          </MuiGrid>
+        ))}
+ 
+        {/* Add New Coupon Card */}
+        <MuiGrid item xs={12} sm={6} md={4}>
+          <Box
+            onClick={() => navigate("../add-coupon", { state: { programId: id } })}
             sx={{
-              fontWeight: "bold",
-              textTransform: "none",
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "#f3f4f6",
+              borderRadius: 8,
+              boxShadow: "0 6px 18px rgba(0, 0, 0, 0.15)",
+              transition: "transform 0.2s, box-shadow 0.2s",
+              cursor: "pointer",
+              "&:hover": {
+                transform: "scale(1.02)",
+                boxShadow: "0 10px 20px rgba(0, 0, 0, 0.2)",
+              },
             }}
           >
-            Add Coupon
-          </Button>
-        </Box>
-      </Box>
+            <AddCircleOutlineIcon fontSize="large" color="primary" />
+          </Box>
+        </MuiGrid>
+      </MuiGrid>
     </Container>
   );
 };
-
+ 
 export default ProgramDetails;
