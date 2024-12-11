@@ -55,10 +55,13 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignUp(props) {
+  const [email, setEmail] = React.useState('');
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
+  const [password, setPassword] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+  const [name, setName] = React.useState('');
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
   const [contactError, setContactError] = React.useState(false);
@@ -67,13 +70,9 @@ export default function SignUp(props) {
   const [countryCode, setCountryCode] = React.useState('');
 
   const validateInputs = () => {
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
-    const name = document.getElementById('name');
-
     let isValid = true;
 
-    if (!email.value || !/^\S+@\S+\.\S+$/.test(email.value)) {
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
       isValid = false;
@@ -82,7 +81,7 @@ export default function SignUp(props) {
       setEmailErrorMessage('');
     }
 
-    if (!password.value || password.value.length < 6) {
+    if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage('Password must be at least 6 characters long.');
       isValid = false;
@@ -91,7 +90,7 @@ export default function SignUp(props) {
       setPasswordErrorMessage('');
     }
 
-    if (!name.value || name.value.length < 1) {
+    if (!name || name.length < 1) {
       setNameError(true);
       setNameErrorMessage('Name is required.');
       isValid = false;
@@ -117,11 +116,10 @@ export default function SignUp(props) {
     if (!validateInputs()) {
       return;
     }
-    const data = new FormData(event.currentTarget);
     console.log({
-      name: data.get('name'),
-      email: data.get('email'),
-      password: data.get('password'),
+      name,
+      email,
+      password,
       contactNumber,
       countryCode,
     });
@@ -168,6 +166,7 @@ export default function SignUp(props) {
               <TextField
                 autoComplete="name"
                 name="name"
+                onChange={(e) => setName(e.target.value)}
                 required
                 fullWidth
                 id="name"
@@ -185,6 +184,7 @@ export default function SignUp(props) {
                 id="email"
                 placeholder="Enter your email"
                 name="email"
+                onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
                 variant="outlined"
                 error={emailError}
@@ -198,6 +198,7 @@ export default function SignUp(props) {
                 required
                 fullWidth
                 name="password"
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••••••"
                 type="password"
                 id="password"
