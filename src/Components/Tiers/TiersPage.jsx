@@ -37,11 +37,14 @@ const TiersContent = () => {
   useEffect(() => {
     const fetchTiers = async () => {
       try {
-        const response = await TierService.getTiersByPartnerId("5ef61c8d-c9eb-4ad1-aadd-041a5a889c33")
-        setTiers(response.data); 
+        const response = await TierService.getTiersByPartnerId(
+          "5ef61c8d-c9eb-4ad1-aadd-041a5a889c33"
+        );
+        setTiers(response.data);
+        localStorage.setItem("coupons", JSON.stringify(response.data));
       } catch (error) {
         console.error("Error fetching offers:", error);
-      } 
+      }
     };
 
     fetchTiers();
@@ -55,7 +58,7 @@ const TiersContent = () => {
     navigate(`/edit-tier/${tierId}`);
   };
   const handleDelete = (tierId) => {
-    console.log("tier id about to be deleted : "+tierId)
+    console.log("tier id about to be deleted : " + tierId);
     if (window.confirm("Are you sure you want to delete this tier?")) {
       // const updatedTiers = tiers.filter((tier) => tier.id !== id);
       // setTiers(updatedTiers);
@@ -189,10 +192,9 @@ const TiersContent = () => {
                 <TimelineSeparator>
                   <TimelineDot
                     style={{
-                      background: `linear-gradient(to bottom right, ${tier.colour}, ${lightenColor(
-                        tier.colour,
-                        40
-                      )})`,
+                      background: `linear-gradient(to bottom right, ${
+                        tier.colour
+                      }, ${lightenColor(tier.colour, 40)})`,
                       width: "20px",
                       height: "20px",
                     }}
@@ -207,10 +209,9 @@ const TiersContent = () => {
                       border: `3px solid`,
                       borderRadius: "10px",
                       mb: 2,
-                      borderImageSource: `linear-gradient(45deg, ${tier.colour}, ${lightenColor(
-                        tier.colour,
-                        40
-                      )})`,
+                      borderImageSource: `linear-gradient(45deg, ${
+                        tier.colour
+                      }, ${lightenColor(tier.colour, 40)})`,
                       borderImageSlice: 1,
                     }}
                   >
@@ -287,7 +288,9 @@ const TiersContent = () => {
                       </Grid2>
                       <Divider sx={{ my: 2 }} />
                       {!tier.isFreeTier && (
-                        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                        <Box
+                          sx={{ display: "flex", justifyContent: "flex-end" }}
+                        >
                           <ButtonGroup>
                             <Button
                               variant="contained"
