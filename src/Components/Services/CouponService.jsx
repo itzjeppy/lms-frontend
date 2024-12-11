@@ -29,7 +29,7 @@ class CouponService {
       deleteCoupons(couponId) {
         return axios({
           method: "delete",
-          url: BASE_URL + "/deleteCoupons?coupon_id=" + couponId ,
+          url: BASE_URL + "/deleteCoupon?coupon_id=" + couponId ,
           responseType: "string",
           headers: {
             "Access-Control-Allow-Origin": "*"
@@ -40,7 +40,7 @@ class CouponService {
       updateCoupons(couponObj,couponId) {
         return axios({
           method: "put",
-          url: BASE_URL + "/putCoupons?coupon_id="+ couponId,
+          url: BASE_URL + "/updateCoupon?coupon_id="+ couponId,
           data: couponObj,
           responseType: "json",
           headers: {
@@ -54,7 +54,7 @@ class CouponService {
         console.log("inside service of createCoupons", couponObj);
         return axios({
             method: "post",
-            url: BASE_URL + "/createCoupons",
+            url: BASE_URL + "/createCoupon",
             data: couponObj,
             responseType: "json",
             headers: {
@@ -67,7 +67,7 @@ class CouponService {
     getCouponByProgramId(ProgramId) {
       return axios({
         method: "get",
-        url: BASE_URL + "/getCouponByProgramId?program_id=" + ProgramId ,
+        url: BASE_URL + "/getCouponsByProgramId?program_id=" + ProgramId ,
         responseType: "json",
         headers: {
           "Access-Control-Allow-Origin": "*"

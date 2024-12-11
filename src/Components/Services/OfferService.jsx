@@ -29,7 +29,7 @@ class OfferService {
   deleteOffers(offerId) {
     return axios({
       method: "delete",
-      url: BASE_URL + "/deleteOffers?offer_id=" + offerId ,
+      url: BASE_URL + "/deleteOffer?offer_id=" + offerId ,
       responseType: "string",
       headers: {
         "Access-Control-Allow-Origin": "*"
@@ -40,7 +40,7 @@ class OfferService {
   updateOffers(offerObj,offerId) {
     return axios({
       method: "put",
-      url: BASE_URL + "/updateOffers?offer_id="+ offerId,
+      url: BASE_URL + "/updateOffer?offer_id="+ offerId,
       data: offerObj,
       responseType: "json",
       headers: {
@@ -54,7 +54,7 @@ class OfferService {
     console.log("inside service of createOffers", offerObj);
     return axios({
         method: "post",
-        url: BASE_URL + "/createOffers",
+        url: BASE_URL + "/createOffer",
         data: offerObj,
         responseType: "json",
         headers: {

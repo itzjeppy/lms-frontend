@@ -5,7 +5,7 @@ class TierService{
     getTiersByPartnerId(partnerId) {
         return axios({
           method: "get",
-          url: `${BASE_URL}/getAllTiers?id=${partnerId}`,
+          url: `${BASE_URL}/getAllPartnerTiers?id=${partnerId}`,
           responseType: "json",
           headers: {
             "Access-Control-Allow-Origin": "*"
@@ -17,7 +17,7 @@ class TierService{
       deleteTiers(tierId) {
         return axios({
           method: "delete",
-          url: BASE_URL + "/deleteTiersbyId?tierId="+tierId ,
+          url: BASE_URL + "/deleteTierbyId?tierId="+tierId ,
           responseType: "string",
           headers: {
             "Access-Control-Allow-Origin": "*"
@@ -29,7 +29,7 @@ class TierService{
         console.log("inside service of create", tierObj);
         return axios({
             method: "post",
-            url: BASE_URL + "/createTiers",
+            url: BASE_URL + "/createTier",
             data: tierObj,
             responseType: "json",
             headers: {
