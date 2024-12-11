@@ -39,6 +39,7 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
 
   const lightColor = lightenColor(tierColor, 60);
   const textColor = getTextColor(tierColor);
+  const commonTextColor = isActive ? textColor : "#ffffff";
 
   const handleInfoModalOpen = () => setOpenInfoModal(true);
   const handleInfoModalClose = () => setOpenInfoModal(false);
@@ -48,15 +49,21 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
     setIsActive((prevState) => !prevState);
   };
 
+  // Function to truncate the title
+  const truncateTitle = (title) => {
+    return title.length > 15 ? title.substring(0, 15) + "..." : title;
+  };
+
   return (
     <Box sx={{ p: 2 }}>
       <Card
         sx={{
-          width: "300px", // Increased width
-          background: isActive? `linear-gradient(to bottom right, ${lightColor}, ${tierColor})` : 'linear-gradient(to bottom right,#9e968b,#373738)',
+          width: "300px",
+          height: "234px",
+          background: isActive ? `linear-gradient(to bottom right, ${lightColor}, ${tierColor})` : 'linear-gradient(to bottom right, #9e968b, #373738)',
           borderRadius: 8,
           boxShadow: "0 6px 18px rgba(0, 0, 0, 0.15)",
-          color: isActive? textColor:"#ffffff",
+          color: commonTextColor,
           position: "relative",
           overflow: "hidden",
           transition: "transform 0.2s, box-shadow 0.2s",
@@ -67,7 +74,6 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
         }}
       >
         <CardContent sx={{ p: 3 }}>
-          {/* Title Section */}
           <Box
             sx={{
               display: "flex",
@@ -77,13 +83,15 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
             }}
           >
             <Typography
-              variant="h6"
+              variant="subtitle1"
+              noWrap
               sx={{
-                fontWeight: "bold",
                 textTransform: "uppercase",
+                maxWidth: "150px",
+                color: commonTextColor,
               }}
             >
-              {coupon.couponTitle}
+              {truncateTitle(coupon.couponTitle)}
             </Typography>
             <Chip
               label={isActive ? "Active" : "Inactive"}
@@ -91,88 +99,85 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
               onClick={handleChipClick}
               sx={{
                 color: "#fff",
-                fontWeight: "bold",
-                backgroundColor: isActive ? tierColor : "#C62828", // Solid darker colors
+                backgroundColor: isActive ? tierColor : "#C62828",
                 cursor: "pointer",
               }}
             />
           </Box>
 
-          {/* Divider */}
           <Divider sx={{ my: 2, borderColor: "rgba(255,255,255,0.5)" }} />
 
-          {/* Coupon Benefit */}
-          <Typography variant="h5" sx={{ fontWeight: "bold", mb: 1 }}>
-            Benefit: {coupon.benefit}
-          </Typography>
-
-          {/* Validity */}
           <Box
             sx={{
               display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              flexDirection: "column",
+              gap: 1,
             }}
           >
-
-          <Typography variant="body2">
-              <strong>Valid for:</strong> {coupon.validity} days
+            <Typography variant="body2" sx={{ color: commonTextColor }}>
+              Max Limit: <span style={{ fontWeight: "normal" }}>${coupon.maxLimit}</span>
+            </Typography>
+            <Typography variant="body2" sx={{ color: commonTextColor }}>
+              Percentage Discounted: <span style={{ fontWeight: "normal" }}>{coupon.percentage}%</span>
+            </Typography>
+            <Typography variant="body2" sx={{ color: commonTextColor }}>
+              Valid for: <span style={{ fontWeight: "normal" }}>{coupon.validity} days</span>
             </Typography>
           </Box>
         </CardContent>
 
-        {/* Footer Section */}
         <Box
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            p: 2,
-            backgroundColor: isActive? lightenColor(tierColor, 30): "#9e968b",
+            p: 1,
+            marginTop: "-10px",
+            paddingBottom: "10px",
+            backgroundColor: isActive ? lightenColor(tierColor, 30) : "#9e968b",
             borderTop: "1px solid rgba(255,255,255,0.3)",
           }}
         >
-            <IconButton
-              aria-label="info"
-              onClick={handleInfoModalOpen}
-              sx={{ color: isActive? textColor:"#ffffff", }}
-            >
-              <InfoIcon />
-         </IconButton>
+          <IconButton
+            aria-label="info"
+            onClick={handleInfoModalOpen}
+            sx={{ color: commonTextColor }}
+          >
+            <InfoIcon />
+          </IconButton>
 
           <ButtonGroup variant="outlined" size="small">
             <Button
               onClick={() => onEdit(coupon)}
               sx={{
-                color: isActive? textColor:"#ffffff",
-                borderColor: isActive? textColor:"#ffffff",
+                color: commonTextColor,
+                borderColor: commonTextColor,
                 borderRadius: "20px",
                 "&:hover": {
                   backgroundColor: "rgba(255,255,255,0.2)",
                 },
               }}
             >
-              <Edit/>
+              <Edit />
               Edit
             </Button>
             <Button
               onClick={() => onDelete(coupon)}
               sx={{
-                color: isActive? textColor:"#ffffff",
-                borderColor: isActive? textColor:"#ffffff",
+                color: commonTextColor,
+                borderColor: commonTextColor,
                 borderRadius: "20px",
                 "&:hover": {
                   backgroundColor: "rgba(255,255,255,0.2)",
                 },
               }}
             >
-              <DeleteForever/>
+              <DeleteForever />
               Delete
             </Button>
           </ButtonGroup>
         </Box>
       </Card>
 
-      {/* Modal for Details */}
       <Modal
         open={openInfoModal}
         onClose={handleInfoModalClose}
@@ -196,21 +201,24 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
             id="info-modal-title"
             variant="h6"
             component="h2"
-            sx={{ mb: 2 }}
+            sx={{ mb: 2, color: commonTextColor }}
           >
             Coupon Details
           </Typography>
 
-          <Typography variant="body1" sx={{ mb: 2 }}>
+          <Typography variant="body1" sx={{ mb: 2, color: commonTextColor }}>
             <strong>Title:</strong> {coupon.couponTitle}
           </Typography>
-          <Typography variant="body1" sx={{ mb: 2 }}>
+          <Typography variant="body1" sx={{ mb: 2, color: commonTextColor }}>
             <strong>Description:</strong> {coupon.couponDescription}
           </Typography>
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            <strong>Benefit:</strong> Save ${coupon.benefit}
+          <Typography variant="body1" sx={{ mb: 2, color: commonTextColor }}>
+            <strong>Max Limit:</strong> ${coupon.maxLimit}
           </Typography>
-          <Typography variant="body1" sx={{ mb: 2 }}>
+          <Typography variant="body1" sx={{ mb: 2, color: commonTextColor }}>
+            <strong>Percentage Discounted:</strong> {coupon.percentage}%
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 2, color: commonTextColor }}>
             <strong>Validity:</strong> {coupon.validity} days
           </Typography>
 

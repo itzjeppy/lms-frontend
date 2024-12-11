@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -7,15 +7,22 @@ import {
   Button,
   FormControl,
   FormHelperText,
-  Checkbox,
-  FormControlLabel,
   Box,
   Typography,
   Divider,
+  MenuItem,
+  CircularProgress,
+  Switch,
+  FormControlLabel,
+  Card,
+  CardContent,
 } from "@mui/material";
 import { Container } from "@mui/system";
 import OfferService from "../Services/OfferService";
+import TierService from "../Services/TierService";
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 
+// Validation schema
 const schema = Yup.object().shape({
   tierId: Yup.string().required("Tier ID is required"),
   offerTitle: Yup.string().required("Offer title is required"),
@@ -28,21 +35,36 @@ const schema = Yup.object().shape({
 const AddOffers = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { programId } = location.state ; // Access the programId from the state
+  const [tiers, setTiers] = useState([]);
+  const { programId } = location.state; // Access the programId from the state
+  const [loading, setLoading] = useState(false); // Loading state for form submission
+  const [fileInfo, setFileInfo] = useState({ name: '', size: 0 }); // State for file info
+
+  useEffect(() => {
+    const fetchTiers = async () => {
+      try {
+        const response = await TierService.getTiersByPartnerId("5ef61c8d-c9eb-4ad1-aadd-041a5a889c33");
+        setTiers(response.data);
+      } catch (error) {
+        console.error("Error fetching tiers:", error);
+      }
+    };
+
+    fetchTiers();
+  }, []);
 
   const handleSubmit = (values) => {
-    const {image,...value}=values
+    setLoading(true); // Set loading to true when starting submission
+    const { image, ...value } = values;
     const reader = new FileReader();
     reader.onload = () => {
       const imageData = reader.result;
-      const imageType = values.image.type;
       const base64Image = imageData.split(",")[1];
 
       const offer = {
         ...value,
-        //imageType: imageType,
-        //imageUrl: base64Image,
-        programId: programId, 
+        imageUrl: base64Image,
+        programId: programId,
       };
 
       console.log("Submitting new offer:", offer);
@@ -54,6 +76,9 @@ const AddOffers = () => {
         })
         .catch((error) => {
           console.error("Error creating offers", error);
+        })
+        .finally(() => {
+          setLoading(false); // Reset loading state
         });
     };
 
@@ -73,134 +98,163 @@ const AddOffers = () => {
         width: "100%",
       }}
     >
-      <Formik
-        initialValues={{
-          tierId: "",
-          offerTitle: "",
-          offerDescription: "",
-          image: "",
-          benefit: 0,
-          status: false,
-        }}
-        validationSchema={schema}
-        onSubmit={handleSubmit}
-      >
-        {({ isSubmitting, setFieldValue }) => (
-          <Form>
-            <Typography
-              variant="h3"
-              sx={{
-                fontWeight: "bold",
-                color: "#4A4A4A",
-              }}
-            >
-              Add Offer
-            </Typography>
-            <Divider />
-            <Box
-              sx={{
-                flexGrow: 1,
-                overflowY: "auto",
-                bgcolor: "#ffffff",
-                p: 2,
-                borderRadius: 2,
-                boxShadow: "0 1px 6px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              <Box mb={2}>
-                <FormControl fullWidth error={!!ErrorMessage.tierId}>
-                  <Field
-                    name="tierId"
-                    as={TextField}
-                    label="Tier ID"
-                    variant="outlined"
-                  />
-                  <ErrorMessage name="tierId">
-                    {(msg) => <FormHelperText>{msg}</FormHelperText>}
-                  </ErrorMessage>
-                </FormControl>
-              </Box>
-              <Box mb={2}>
-                <FormControl fullWidth error={!!ErrorMessage.offerTitle}>
-                  <Field
-                    name="offerTitle"
-                    as={TextField}
-                    label="Offer Title"
-                    variant="outlined"
-                  />
-                  <ErrorMessage name="offerTitle">
-                    {(msg) => <FormHelperText>{msg}</FormHelperText>}
-                  </ErrorMessage>
-                </FormControl>
-              </Box>
-              <Box mb={2}>
-                <FormControl fullWidth error={!!ErrorMessage.offerDescription}>
-                  <Field
-                    name="offerDescription"
-                    as={TextField}
-                    label="Offer Description"
-                    variant="outlined"
-                    multiline
-                    rows={4}
-                  />
-                  <ErrorMessage name="offerDescription">
-                    {(msg) => <FormHelperText>{msg}</FormHelperText>}
-                  </ErrorMessage>
-                </FormControl>
-              </Box>
-              <Box mb={2}>
-                <FormControl fullWidth error={!!ErrorMessage.image}>
-                  <input
-                    type="file"
-                    name="image"
-                    accept=".jpg, .png"
-                    onChange={(event) =>
-                      setFieldValue("image", event.target.files[0])
-                    }
-                  />
-                  <ErrorMessage name="image">
-                    {(msg) => <FormHelperText>{msg}</FormHelperText>}
-                  </ErrorMessage>
-                </FormControl>
-              </Box>
-              <Box mb={2}>
-                <FormControl fullWidth error={!!ErrorMessage.benefit}>
-                  <Field
-                    name="benefit"
-                    as={TextField}
-                    label="Benefit"
-                    type="number"
-                    variant="outlined"
-                  />
-                  <ErrorMessage name="benefit">
-                    {(msg) => <FormHelperText>{msg}</FormHelperText>}
-                  </ErrorMessage>
-                </FormControl>
-              </Box>
-              <Box mb={2}>
-                <FormControl error={!!ErrorMessage.status}>
-                  <Field name="status" as={Checkbox} color="primary" />
-                  <FormControlLabel
-                    control={<Checkbox name="status" />}
-                    label="Status"
-                  />
-                  <ErrorMessage name="status">
-                    {(msg) => <FormHelperText>{msg}</FormHelperText>}
-                  </ErrorMessage>
-                </FormControl>
-              </Box>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                variant="contained"
-                color="primary"
-              >
-                Submit
-              </Button>
-            </Box>
-          </Form>
-        )}
-      </Formik>
+      <Card variant="outlined" sx={{ mb: 3 }}>
+        <CardContent>
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: "bold",
+              color: "#4A4A4A",
+              mb: 2,
+            }}
+          >
+            Add Offer
+          </Typography>
+          <Divider sx={{ mb: 2 }} />
+          <Formik
+            initialValues={{
+              tierId: "",
+              offerTitle: "",
+              offerDescription: "",
+              image: "",
+              benefit: 0,
+              status: false,
+            }}
+            validationSchema={schema}
+            onSubmit={handleSubmit}
+          >
+            {({ isSubmitting, setFieldValue, values }) => (
+              <Form>
+                <Box mb={3 }>
+                  <FormControl fullWidth>
+                    <Field
+                      name="tierId"
+                      as={TextField}
+                      select
+                      label="Select Tier"
+                      variant="outlined"
+                      onChange={(event) => setFieldValue("tierId", event.target.value)}
+                    >
+                      {tiers.length > 0 ? (
+                        tiers.map((tier) => (
+                          <MenuItem key={tier.tierId} value={tier.tierId}>
+                            {tier.tierName}
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <MenuItem disabled>No tiers available</MenuItem>
+                      )}
+                    </Field>
+                    <ErrorMessage name="tierId" component={FormHelperText} />
+                  </FormControl>
+                </Box>
+                <Box mb={3}>
+                  <FormControl fullWidth error={!!ErrorMessage.offerTitle}>
+                    <Field
+                      name="offerTitle"
+                      as={TextField}
+                      label="Offer Title"
+                      variant="outlined"
+                    />
+                    <ErrorMessage name="offerTitle">
+                      {(msg) => <FormHelperText>{msg}</FormHelperText>}
+                    </ErrorMessage>
+                  </FormControl>
+                </Box>
+                <Box mb={3}>
+                  <FormControl fullWidth error={!!ErrorMessage.offerDescription}>
+                    <Field
+                      name="offerDescription"
+                      as={TextField}
+                      label="Offer Description"
+                      variant="outlined"
+                      multiline
+                      rows={4}
+                    />
+                    <ErrorMessage name="offerDescription">
+                      {(msg) => <FormHelperText>{msg}</FormHelperText>}
+                    </ErrorMessage>
+                  </FormControl>
+                </Box>
+                <Box mb={3} display="flex" alignItems="center">
+                  <FormControl fullWidth error={!!ErrorMessage.image}>
+                    <input
+                      type="file"
+                      name="image"
+                      accept=".jpg, .png"
+                      onChange={(event) => {
+                        const file = event.target.files[0];
+                        setFieldValue("image", file);
+                        if (file) {
+                          setFileInfo({ name: file.name, size: file.size });
+                        } else {
+                          setFileInfo({ name: '', size: 0 });
+                        }
+                      }}
+                      style={{ display: 'none' }}
+                      id="image-upload"
+                    />
+                    <label htmlFor="image-upload">
+                      <Button variant="contained" component="span" startIcon={<AttachFileIcon />}>
+                        {values.image ? "Image Selected" : "Upload Image"}
+                      </Button>
+                    </label>
+                    <ErrorMessage name="image">
+                      {(msg) => <FormHelperText>{msg}</FormHelperText>}
+                    </ErrorMessage>
+                  </FormControl>
+                  {fileInfo.name && (
+                    <Typography variant="body2" sx={{ ml: 2 }}>
+                      {fileInfo.name} ({(fileInfo.size / 1024).toFixed(2)} KB)
+                    </Typography>
+                  )}
+                </Box>
+                <Box mb={3}>
+                  <FormControl fullWidth error={!!ErrorMessage.benefit}>
+                    <Field
+                      name="benefit"
+                      as={TextField}
+                      label="Benefit"
+                      type="number"
+                      variant="outlined"
+                    />
+                    <ErrorMessage name="benefit">
+                      {(msg) => <FormHelperText>{msg}</FormHelperText>}
+                    </ErrorMessage>
+                  </FormControl>
+                </Box>
+                <Box mb={3}>
+                  <FormControl fullWidth>
+                    <FormControlLabel
+                      control={
+                        <Field
+                          name="status"
+                          as={Switch}
+                          color="primary"
+                          onChange={(event) => setFieldValue("status", event.target.checked)}
+                        />
+                      }
+                      label="Status"
+                    />
+                    <ErrorMessage name="status">
+                      {(msg) => <FormHelperText error>{msg}</FormHelperText>}
+                    </ErrorMessage>
+                  </FormControl>
+                </Box>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || loading}
+                  variant="contained"
+                  color="primary"
+                  sx={{ width: "100%", mt: 2 }}
+                >
+                  {loading ? <CircularProgress size={24} color="inherit" /> : "Submit"}
+                </Button>
+              </Form>
+            )}
+          </Formik>
+        </CardContent>
+      </Card>
     </Container>
   );
 };
