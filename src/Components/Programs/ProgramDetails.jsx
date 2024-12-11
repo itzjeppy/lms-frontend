@@ -74,7 +74,7 @@ const ProgramDetails = () => {
       OfferService.deleteOffers(itemToDelete) // Assuming you have a deleteOffer method
         .then(() => {
           setOffers((prevOffers) =>
-            prevOffers.filter((offer) => offer.id !== itemToDelete)
+            prevOffers.filter((offer) => offer.offerId !== itemToDelete)
           );
         })
         .catch((error) => {
@@ -148,10 +148,10 @@ const ProgramDetails = () => {
  
       <MuiGrid container spacing={3}>
         {offers.map((offer) => (
-          <MuiGrid item xs={12} sm={6} md={4} key={offer.id}>
+          <MuiGrid item xs={12} sm={6} md={4} key={offer.offerId}>
             <OfferCard 
               offer={offer} 
-              onDelete={() => handleDeleteConfirmation(offer.id, false)} // Pass false for offer
+              onDelete={() => handleDeleteConfirmation(offer.offerId, false)} // Pass false for offer
             />
           </MuiGrid>
         ))}
