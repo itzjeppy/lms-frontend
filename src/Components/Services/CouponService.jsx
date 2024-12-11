@@ -62,7 +62,18 @@ class CouponService {
                 "Access-Control-Allow-Origin": "*"
             },
         })
-    }    
+    }  
+    
+    getCouponByProgramId(ProgramId) {
+      return axios({
+        method: "get",
+        url: BASE_URL + "/getCouponByProgramId?program_id=" + ProgramId ,
+        responseType: "json",
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
+      });
+    }
 }
 
 export default new CouponService();

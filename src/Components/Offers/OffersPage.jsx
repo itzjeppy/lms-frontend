@@ -46,6 +46,20 @@ const OffersPage = () => {
     return <div>Loading...</div>;
   }
 
+  const handleDelete = (offerId) => {
+    if (window.confirm("Are you sure you want to delete this program?")) {
+     
+        OfferService.deleteOffers(offerId).then(() => {
+          setOffers((prevOffers) =>
+            prevOffers.filter((offer) => offer.offerId !== offerId)
+          );
+        })
+        .catch((error) => {
+          console.error("Error deleting program", error);
+        });
+    }
+  };
+
 
   return (
     <Container
@@ -119,7 +133,7 @@ const OffersPage = () => {
         }}
       >
         {offers.length > 0 ? (
-          <OffersList offers={offers} onStatusToggle={handleStatusToggle} />
+          <OffersList offers={offers} onStatusToggle={handleStatusToggle} onDelete={handleDelete}/>
         ) : (
           <Typography
             variant="body1"
