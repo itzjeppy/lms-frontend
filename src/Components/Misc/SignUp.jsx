@@ -14,6 +14,7 @@ import { styled } from '@mui/material/styles';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import GoogleIcon from '@mui/icons-material/Google';
 import LandingBar from './LandingBar';
+import { MuiTelInput } from 'mui-tel-input';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -60,12 +61,16 @@ export default function SignUp(props) {
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
+  const [contactError, setContactError] = React.useState(false);
+  const [contactErrorMessage, setContactErrorMessage] = React.useState('');
+  const [contactNumber, setContactNumber] = React.useState('');
+  const [countryCode, setCountryCode] = React.useState('');
 
   const validateInputs = () => {
     const email = document.getElementById('email');
     const password = document.getElementById('password');
     const name = document.getElementById('name');
-  
+
     let isValid = true;
 
     if (!email.value || !/^\S+@\S+\.\S+$/.test(email.value)) {
@@ -94,10 +99,18 @@ export default function SignUp(props) {
       setNameError(false);
       setNameErrorMessage('');
     }
-  
+
+    if (!contactNumber || contactNumber.length < 10) {
+      setContactError(true);
+      setContactErrorMessage('Please enter a valid contact number.');
+      isValid = false;
+    } else {
+      setContactError(false);
+      setContactErrorMessage('');
+    }
+
     return isValid;
   };
-  
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -107,33 +120,36 @@ export default function SignUp(props) {
     const data = new FormData(event.currentTarget);
     console.log({
       name: data.get('name'),
-      lastName: data.get('lastName'),
       email: data.get('email'),
       password: data.get('password'),
+      contactNumber,
+      countryCode,
     });
   };
 
+  const handleContactChange = (value, info) => {
+    setContactNumber(value);
+    setCountryCode(info.countryCallingCode);
+  };
+
   return (
-    <div
-    position="fixed"
-    >
+    <div position="fixed">
       <LandingBar />
       <CssBaseline enableColorScheme />
       <SignUpContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
           <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          component="img"
-          alignSelf= "center"
-          sx = {{
-            height:"75%",
-            width: "75%",
-            p: ""
-          }}
-          src='/final.png'
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            component="img"
+            alignSelf="center"
+            sx={{
+              height: '75%',
+              width: '75%',
+            }}
+            src="/final.png"
           />
           <Typography
             component="h1"
@@ -192,6 +208,18 @@ export default function SignUp(props) {
                 color={passwordError ? 'error' : 'primary'}
               />
             </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="contact">Contact Number</FormLabel>
+              <MuiTelInput
+                value={contactNumber}
+                onChange={handleContactChange}
+                required
+                fullWidth
+                error={contactError}
+                helperText={contactErrorMessage}
+                color={contactError ? 'error' : 'primary'}
+              />
+            </FormControl>
             <Button
               type="submit"
               fullWidth
@@ -223,11 +251,7 @@ export default function SignUp(props) {
             </Button>
             <Typography sx={{ textAlign: 'center' }}>
               Already have an account?{' '}
-              <Link
-                href="/signIn"
-                variant="body2"
-                sx={{ alignSelf: 'center' }}
-              >
+              <Link href="/signIn" variant="body2" sx={{ alignSelf: 'center' }}>
                 Sign in
               </Link>
             </Typography>
