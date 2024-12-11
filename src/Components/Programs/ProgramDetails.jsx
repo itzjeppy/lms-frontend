@@ -4,7 +4,7 @@ import {
   Typography,
   Box,
   Container,
-  Grid as MuiGrid,
+  Grid2 as MuiGrid,
   IconButton,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -14,20 +14,20 @@ import CouponService from "../Services/CouponService";
 import OfferCard from "../Offers/OfferCard";
 import CouponsCard from "../Coupons/CouponsCard";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-
+ 
 const ProgramDetails = () => {
   const [offers, setOffers] = useState([]);
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { id } = useParams(); // Extract the ID from the URL
-
+ 
   useEffect(() => {
     const fetchProgramDetails = async () => {
       try {
         const offersResponse = await OfferService.getOfferByProgramId(id);
         setOffers(offersResponse.data);
-
+ 
         const couponsResponse = await CouponService.getCouponByProgramId(id);
         setCoupons(couponsResponse.data);
       } catch (error) {
@@ -36,14 +36,14 @@ const ProgramDetails = () => {
         setLoading(false);
       }
     };
-
+ 
     fetchProgramDetails();
   }, []);
-
+ 
   if (loading) {
     return <div>Loading...</div>;
   }
-
+ 
   return (
     <Container
       sx={{
@@ -90,19 +90,19 @@ const ProgramDetails = () => {
           Program Details
         </Typography>
       </Box>
-
+ 
       {/* Offers Section */}
       <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
         Offers
       </Typography>
-
+ 
       <MuiGrid container spacing={3}>
         {offers.map((offer) => (
           <MuiGrid item xs={12} sm={6} md={4} key={offer.id}>
             <OfferCard offer={offer} />
           </MuiGrid>
         ))}
-
+ 
         {/* Add New Offer Card */}
         <MuiGrid item xs={12} sm={6} md={4}>
           <Box
@@ -128,18 +128,18 @@ const ProgramDetails = () => {
           </Box>
         </MuiGrid>
       </MuiGrid>
-
+ 
       <Typography variant="h5" sx={{ fontWeight: "bold", mt: 4, mb: 2 }}>
         Coupons
       </Typography>
-
+ 
       <MuiGrid container spacing={3}>
         {coupons.map((coupon) => (
           <MuiGrid item xs={12} sm={6} md={4} key={coupon.id}>
             <CouponsCard coupon={coupon} />
           </MuiGrid>
         ))}
-
+ 
         {/* Add New Coupon Card */}
         <MuiGrid item xs={12} sm={6} md={4}>
           <Box
@@ -168,5 +168,5 @@ const ProgramDetails = () => {
     </Container>
   );
 };
-
+ 
 export default ProgramDetails;

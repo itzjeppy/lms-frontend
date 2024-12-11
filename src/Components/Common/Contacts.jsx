@@ -4,15 +4,15 @@ import { Container, Typography, Grid2, Paper, Avatar, Box } from "@mui/material"
 const Contacts = () => {
   const teamMembers = [
     { name: "Saee Chormunge", image: "https://via.placeholder.com/150" },
-    { name: "Jholline Jepson", image: "https://via.placeholder.com/150" },
-    { name: "Cibi Sri Balaji", image: "https://via.placeholder.com/150" },
+    { name: "Cibi Sri Balaji M", image: "https://via.placeholder.com/150" },
     { name: "Balaji Senthilkumar", image: "https://via.placeholder.com/150" },
-    { name: "Lakshmi Sowmya", image: "https://via.placeholder.com/150" },
+    { name: "Om Prakash Gupta", image: "https://via.placeholder.com/150" },
+    { name: "Lakshmi Sowmya ", image: "https://via.placeholder.com/150" },
     { name: "Sadhana Madina", image: "https://via.placeholder.com/150" },
     { name: "Spoorthy Pateel", image: "https://via.placeholder.com/150" },
     { name: "K Bhavya Sri", image: "https://via.placeholder.com/150" },
-    { name: "Mohammed Zaid Farooki", image: "https://via.placeholder.com/150" },
-    { name: "Om Prakash Gupta", image: "https://via.placeholder.com/150" },
+    { name: "Muhammed Zaid  Farookhi", image: "https://via.placeholder.com/150" },
+    { name: "Jholline Jepson J", image: "https://via.placeholder.com/150" },
   ];
 
   return (
@@ -51,6 +51,7 @@ const Contacts = () => {
                 alignItems: "center",
                 borderRadius: 4,
                 bgcolor: "white",
+                width: "300px",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
                 transition: "transform 0.3s, box-shadow 0.3s",
                 "&:hover": {
