@@ -83,6 +83,14 @@ const TiersContent = () => {
     return `rgb(${Math.min(R, 255)}, ${Math.min(G, 255)}, ${Math.min(B, 255)})`;
   };
 
+  const getTextColor = (tierColor) => {
+    const r = parseInt(tierColor?.substring(1, 3), 16);
+    const g = parseInt(tierColor?.substring(3, 5), 16);
+    const b = parseInt(tierColor?.substring(5, 7), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.5 ? "#000000" : "#ffffff";
+  };
+
   return (
     <Container
       sx={{
@@ -203,22 +211,22 @@ const TiersContent = () => {
                 </TimelineSeparator>
                 <TimelineContent>
                   <Accordion
-                    defaultExpanded
                     sx={{
                       boxShadow: "none",
                       border: `3px solid`,
-                      borderRadius: "10px",
+                      borderColor: lightenColor(tier.colour,20),
                       mb: 2,
-                      borderImageSource: `linear-gradient(45deg, ${
-                        tier.colour
-                      }, ${lightenColor(tier.colour, 40)})`,
-                      borderImageSlice: 1,
+                      square:false,
                     }}
                   >
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls={`panel-${tier.tierId}-content`}
                       id={`panel-${tier.tierId}-header`}
+                      sx={{
+                        background: `linear-gradient(45deg, ${lightenColor(tier.colour, 20)}, ${lightenColor(tier.colour, 60)})`,
+                        color:getTextColor(tier.colour),
+                      }}
                     >
                       <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                         {tier.tierName}
