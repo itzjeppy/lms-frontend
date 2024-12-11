@@ -63,7 +63,7 @@ const AddOffers = () => {
 
       const offer = {
         ...value,
-        imageUrl: base64Image,
+        //imageUrl: base64Image,
         programId: programId,
       };
 

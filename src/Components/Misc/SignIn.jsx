@@ -56,8 +56,10 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn(props) {
+  const [email, setEmail] = React.useState('');
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
+  const [password, setPassword] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
@@ -72,12 +74,10 @@ export default function SignIn(props) {
   };
 
   const validateInputs = () => {
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
 
     let isValid = true;
 
-    if (!email.value || !/^\S+@\S+\.\S+$/.test(email.value)) {
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
       isValid = false;
@@ -86,7 +86,7 @@ export default function SignIn(props) {
       setEmailErrorMessage('');
     }
 
-    if (!password.value || password.value.length < 6) {
+    if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage('Password must be at least 6 characters long.');
       isValid = false;
@@ -102,9 +102,6 @@ export default function SignIn(props) {
     if (!validateInputs()) {
       return;
     }
-    const data = new FormData(event.currentTarget);
-    const email = data.get('email');
-    const password = data.get('password');
 
     if (email === 'admin@lms.com' && password === 'adminadmin') {
       localStorage.setItem('user', JSON.stringify({ email, password }));
@@ -165,6 +162,7 @@ export default function SignIn(props) {
                 id="email"
                 type="email"
                 name="email"
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 autoComplete="email"
                 autoFocus
@@ -180,6 +178,7 @@ export default function SignIn(props) {
                 error={passwordError}
                 helperText={passwordErrorMessage}
                 name="password"
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
                 type="password"
                 id="password"

@@ -15,7 +15,8 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import GoogleIcon from '@mui/icons-material/Google';
 import LandingBar from './LandingBar';
 import { MuiTelInput } from 'mui-tel-input';
-
+import PartnerService from '../Services/PartnerService';
+ 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -32,7 +33,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
     boxShadow: 'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
   }),
 }));
-
+ 
 const SignUpContainer = styled(Stack)(({ theme }) => ({
   height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
   minHeight: '100%',
@@ -53,7 +54,7 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
     }),
   },
 }));
-
+ 
 export default function SignUp(props) {
   const [email, setEmail] = React.useState('');
   const [emailError, setEmailError] = React.useState(false);
@@ -68,10 +69,10 @@ export default function SignUp(props) {
   const [contactErrorMessage, setContactErrorMessage] = React.useState('');
   const [contactNumber, setContactNumber] = React.useState('');
   const [countryCode, setCountryCode] = React.useState('');
-
+ 
   const validateInputs = () => {
     let isValid = true;
-
+ 
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
@@ -80,7 +81,7 @@ export default function SignUp(props) {
       setEmailError(false);
       setEmailErrorMessage('');
     }
-
+ 
     if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage('Password must be at least 6 characters long.');
@@ -89,7 +90,7 @@ export default function SignUp(props) {
       setPasswordError(false);
       setPasswordErrorMessage('');
     }
-
+ 
     if (!name || name.length < 1) {
       setNameError(true);
       setNameErrorMessage('Name is required.');
@@ -98,7 +99,7 @@ export default function SignUp(props) {
       setNameError(false);
       setNameErrorMessage('');
     }
-
+ 
     if (!contactNumber || contactNumber.length < 10) {
       setContactError(true);
       setContactErrorMessage('Please enter a valid contact number.');
@@ -107,29 +108,39 @@ export default function SignUp(props) {
       setContactError(false);
       setContactErrorMessage('');
     }
-
+ 
     return isValid;
   };
-
+ 
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!validateInputs()) {
       return;
     }
-    console.log({
+    const partner = {
       name,
       email,
       password,
       contactNumber,
       countryCode,
-    });
-  };
+    }
 
+    PartnerService.registerPartner(partner)
+    .then((response) => {
+      console.log("Created offers:", response.data);
+      // navigate(-1);
+    })
+    .catch((error) => {
+      console.error("Error creating offers", error);
+    })
+
+  };
+ 
   const handleContactChange = (value, info) => {
     setContactNumber(value);
     setCountryCode(info.countryCallingCode);
   };
-
+ 
   return (
     <div position="fixed">
       <LandingBar />

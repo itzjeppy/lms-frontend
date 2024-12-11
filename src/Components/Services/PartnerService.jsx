@@ -26,7 +26,18 @@ class PartnerService {
                 "Access-Control-Allow-Origin": "*"
             },
         })
-    }  
+    }
+  
+    Login(id,email) {
+      return axios({
+        method: "get",
+        url: BASE_URL + "partnerLogin/?email=" + email +"&pwd="+id,
+        responseType: "json",
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
+      });
+    }
     
 }
 
