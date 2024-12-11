@@ -35,11 +35,13 @@ const getTextColor = (tierColor) => {
 };
 
 const OfferCard = ({ offer, onEdit, onDelete }) => {
+  // Destructure the offer object
+  const { offerId,offerTitle, offerDescription, benefit, status, tiers, imageUrl } = offer;
   const [openInfoModal, setOpenInfoModal] = useState(false);
-  const [isActive, setIsActive] = useState(offer.status);
+  const [isActive, setIsActive] = useState(status);
 
   // Extract tier color from the offer's tier info
-  const tierColor = offer.tiers?.color || "#9E9E9E";
+  const tierColor = tiers?.color ||"#9E9E9E";
   const lightColor = lightenColor(tierColor, 60);
   const textColor = getTextColor(tierColor);
 
@@ -72,11 +74,11 @@ const OfferCard = ({ offer, onEdit, onDelete }) => {
         }}
       >
         {/* Offer Image */}
-        {offer.imageUrl && (
+        {imageUrl && (
           <CardMedia
             component="img"
             height="140"
-            image={offer.imageUrl}
+            image={imageUrl}
             alt="Offer Image"
             sx={{ borderTopLeftRadius: 8, borderTopRightRadius: 8 }}
           />
@@ -99,7 +101,7 @@ const OfferCard = ({ offer, onEdit, onDelete }) => {
                 textTransform: "uppercase",
               }}
             >
-              {offer.offerTitle}
+              {offerTitle}
             </Typography>
             <Chip
               label={isActive ? "Active" : "Inactive"}
@@ -119,15 +121,15 @@ const OfferCard = ({ offer, onEdit, onDelete }) => {
 
           {/* Key Offer Details */}
           <Typography variant="h5" sx={{ fontWeight: "bold", mb: 1 }}>
-            Benefit: ${offer.benefit}
+            Benefit: ${benefit}
           </Typography>
 
           <Box sx={{ mb: 1 }}>
             <Typography variant="body2">
-              <strong>Tier:</strong> {offer.tiers?.name}
+              <strong>Tier:</strong> {tiers?.name}
             </Typography>
             <Typography variant="body2">
-              <strong>Description:</strong> {offer.offerDescription.slice(0, 50)}...
+              <strong>Description:</strong> {offerDescription.slice(0, 50)}...
             </Typography>
           </Box>
         </CardContent>
@@ -166,7 +168,7 @@ const OfferCard = ({ offer, onEdit, onDelete }) => {
               Edit
             </Button>
             <Button
-              onClick={() => onDelete(offer)}
+              onClick={() => onDelete(offerId)}
               sx={{
                 color: isActive ? textColor : "#ffffff",
                 borderColor: isActive ? textColor : "#ffffff",
@@ -208,16 +210,16 @@ const OfferCard = ({ offer, onEdit, onDelete }) => {
           </Typography>
 
           <Typography variant="body1" sx={{ mb: 2 }}>
-            <strong>Title:</strong> {offer.offerTitle}
+            <strong>Title:</strong> {offerTitle}
           </Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            <strong>Description:</strong> {offer.offerDescription}
+            <strong>Description:</strong> {offerDescription}
           </Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            <strong>Benefit:</strong> ${offer.benefit}
+            <strong>Benefit:</strong> ${benefit}
           </Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            <strong>Status:</strong> {offer.status ? 'Active' : 'Inactive'}
+            <strong>Status:</strong> {status ? 'Active' : 'Inactive'}
           </Typography>
 
           <Button onClick={handleInfoModalClose} sx={{ mt: 2 }} variant="contained">

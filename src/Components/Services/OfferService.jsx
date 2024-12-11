@@ -64,6 +64,17 @@ class OfferService {
     })
 }
 
+getOfferByProgramId(programId) {
+  return axios({
+    method: "get",
+    url: BASE_URL + "/getOffersByProgramId?program_id=" + programId ,
+    responseType: "json",
+    headers: {
+      "Access-Control-Allow-Origin": "*"
+    },
+  });
+}
+
 
 }
 

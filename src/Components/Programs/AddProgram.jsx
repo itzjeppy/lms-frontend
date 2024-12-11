@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { Container } from "@mui/system";
 import ProgramService from "../Services/ProgramService";
+import { format } from "date-fns";
 
 // Validation Schema
 const schema = Yup.object().shape({
@@ -31,24 +32,33 @@ const AddProgram = () => {
   const navigate = useNavigate();
 
   const handleSubmit = (values) => {
-    const existingPrograms = JSON.parse(localStorage.getItem("programs") || "[]");
-    const {endDate,startDate,...newValues}=values;
+    console.log("Form values before submission:", values);
+
+    const { startDate, endDate, ...progValues } = values;
+    const formattedStartDate = format(new Date(values.startDate), "yyyy-MM-dd HH:mm:ss.SSS");
+    const formattedEndDate = format(new Date(values.endDate), "yyyy-MM-dd HH:mm:ss.SSS");
+
     const program = {
       partnerId: "5ef61c8d-c9eb-4ad1-aadd-041a5a889c33",
-      ...newValues,
+      ...progValues,
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
     };
 
-    console.log("Submitting new program:", program);
-  
-      ProgramService.createProgram(program).then((response) => {
+    console.log("Payload to create program:", program);
+
+    ProgramService.createProgram(program)
+      .then((response) => {
         console.log("Created program:", response.data);
+        navigate(-1);
       })
       .catch((error) => {
-        console.error("Error creating program", error);
+        console.error("Error creating program:", error);
+        alert("Failed to create program: " + error.response.data.detail);
       });
 
+    const existingPrograms = JSON.parse(localStorage.getItem("programs") ||"[]");
     localStorage.setItem("programs", JSON.stringify([...existingPrograms, program]));
-    navigate(-1);
   };
 
   return (
@@ -161,3 +171,4 @@ const AddProgram = () => {
 };
 
 export default AddProgram;
+

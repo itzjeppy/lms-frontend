@@ -56,6 +56,20 @@ const CouponsPage = () => {
     return tier ? tier.colour : "#cccccc";
   };
 
+  const handleDelete = (couponId) => {
+    if (window.confirm("Are you sure you want to delete this coupon?")) {
+      CouponService.deletecoupon(couponId)
+        .then(() => {
+          setCoupons((prevcoupons) =>
+            prevcoupons.filter((coupon) => coupon.couponId !== couponId)
+          );
+        })
+        .catch((error) => {
+          console.error("Error deleting coupon", error);
+        });
+    }
+  };
+
   if (loading) {
     return (
       <Box
@@ -170,7 +184,8 @@ const CouponsPage = () => {
                 <MuiGrid item xs={12} sm={6} md={4} key={coupon.couponTitle}>
                   <CouponsCard 
                     coupon={coupon} 
-                    tierColor={getTierColor(coupon.tierId)} 
+                    tierColor={getTierColor(coupon.tierId)}
+                    onDelete={handleDelete} 
                   />
                 </MuiGrid>
               ))}
