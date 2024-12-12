@@ -42,7 +42,8 @@ const AddCoupons = () => {
   useEffect(() => {  
     const fetchTiers = async () => {  
       try {  
-        const response = await TierService.getTiersByPartnerId("5ef61c8d-c9eb-4ad1-aadd-041a5a889c33")  
+        const partnerId = localStorage.getItem('partnerId');
+        const response = await TierService.getTiersByPartnerId(partnerId)  
         setTiers(response.data);  
       } catch (error) {  
         console.error("Error fetching tiers:", error);  

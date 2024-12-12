@@ -17,6 +17,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import LandingBar from './LandingBar';
 import { useNavigate } from 'react-router-dom';
 import PartnerService from '../Services/PartnerService';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -64,6 +65,7 @@ export default function SignIn(props) {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const [openDialog, setOpenDialog] = React.useState(false);
   const navigate = useNavigate();
 
   const handleClickOpen = () => {
@@ -103,15 +105,36 @@ export default function SignIn(props) {
     if (!validateInputs()) {
       return;
     }
-
-    PartnerService.Login(email,password)
-    .then((response) => {
-      console.log("sign in succesful:", response.data);
-      navigate("/dashboard");
-    })
-    .catch((error) => {
-      console.error("Error in signing in", error);
-    })
+  
+    PartnerService.Login(email, password)
+      .then((response) => {
+        console.log("sign in succesful:", response.data);
+        // Extract the individual fields from the response data
+        const partnerId = response.data.partnerId;
+        const email = response.data.email;
+        const status = response.data.status;
+        const partnerName = response.data.partnerName;
+        const countryCode = response.data.countryCode;
+        const contact = response.data.contact;
+  
+        // Store the individual fields in local storage
+        localStorage.setItem('partnerId', partnerId);
+        localStorage.setItem('email', email);
+        localStorage.setItem('status', status);
+        localStorage.setItem('partnerName', partnerName);
+        localStorage.setItem('countryCode', countryCode);
+        localStorage.setItem('contact', contact);
+        
+        if(status===true){
+        navigate("/dashboard");}
+        else{
+          setOpenDialog(true);
+        }
+        
+      })
+      .catch((error) => {
+        console.error("Error in signing in", error);
+      })
   };
 
   return (
@@ -232,6 +255,24 @@ export default function SignIn(props) {
           </Box>
         </Card>
       </SignInContainer>
+      <Dialog
+      open={openDialog}
+      onClose={() => setOpenDialog(false)}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">
+        {"Account Activation"}
+      </DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+          Your account hasn't been activated yet, wait for sometime.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setOpenDialog(false)}>OK</Button>
+      </DialogActions>
+    </Dialog>
     </div>
   );
 }
