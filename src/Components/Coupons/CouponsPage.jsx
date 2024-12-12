@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { 
-  Container, 
-  Box, 
-  Typography, 
-  Button, 
-  Grid2 as MuiGrid, 
-  CircularProgress, 
-  useTheme, 
-  useMediaQuery 
+import {
+  Container,
+  Box,
+  Typography,
+  Button,
+  Grid2 as MuiGrid,
+  CircularProgress,
+  useTheme,
+  useMediaQuery
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +17,7 @@ import TierService from "../Services/TierService";
 
 const CouponsPage = () => {
   const [coupons, setCoupons] = useState([]);
-  const [tiers, setTiers] = useState([]);
+  const [tiers, setTiers] = useState({});
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -25,43 +25,33 @@ const CouponsPage = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
-    const fetchCoupons = async () => {
+    const fetchCouponsAndTiers = async () => {
       try {
-        const response = await CouponService.getCoupons();
-        setCoupons(response.data); 
+        const couponsResponse = await CouponService.getCoupons();
+        setCoupons(couponsResponse.data);
+        
+        const tiersResponse = await TierService.getTiersByPartnerId("5ef61c8d-c9eb-4ad1-aadd-041a5a889c33");
+        const tiersMap = {};
+        tiersResponse.data.forEach(tier => {
+          tiersMap[tier.tierId] = tier.colour;
+        });
+        setTiers(tiersMap);
       } catch (error) {
-        console.error("Error fetching coupons:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    const fetchTiers = async () => {
-      try {
-        const response = await TierService.getTiersByPartnerId("5ef61c8d-c9eb-4ad1-aadd-041a5a889c33");
-        setTiers(response.data); 
-      } catch (error) {
-        console.error("Error fetching tiers:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCoupons();
-    fetchTiers();
+    fetchCouponsAndTiers();
   }, []);
-
-  const getTierColor = (tierId) => {
-    const tier = tiers.find((tier) => tier.id === tierId);
-    return tier ? tier.colour : "#cccccc";
-  };
 
   const handleDelete = (couponId) => {
     if (window.confirm("Are you sure you want to delete this coupon?")) {
       CouponService.deletecoupon(couponId)
         .then(() => {
-          setCoupons((prevcoupons) =>
-            prevcoupons.filter((coupon) => coupon.couponId !== couponId)
+          setCoupons((prevCoupons) =>
+            prevCoupons.filter((coupon) => coupon.couponId !== couponId)
           );
         })
         .catch((error) => {
@@ -122,7 +112,7 @@ const CouponsPage = () => {
           Standalone Coupons
         </Typography>
 
-        {tiers.length > 0 && (
+        {Object.keys(tiers).length > 0 && (
           <Button
             variant="contained"
             color="primary"
@@ -140,7 +130,7 @@ const CouponsPage = () => {
       </Box>
 
       {/* Display Create Tier Message if No Tiers Exist */}
-      {tiers.length === 0 ? (
+      {Object.keys(tiers).length === 0 ? (
         <Box
           sx={{
             textAlign: "center",
@@ -181,11 +171,11 @@ const CouponsPage = () => {
           {coupons.length > 0 ? (
             <MuiGrid container spacing={isMobile ? 2 : 3}>
               {coupons.map((coupon) => (
-                <MuiGrid item xs={12} sm={6} md={4} key={coupon.couponTitle}>
-                  <CouponsCard 
-                    coupon={coupon} 
-                    tierColor={getTierColor(coupon.tierId)}
-                    onDelete={handleDelete} 
+                <MuiGrid item xs={12} sm={6} md={4} key={coupon.couponId}>
+                  <CouponsCard
+                    coupon={coupon}
+                    tierColor={tiers[coupon.tierId] || "#cccccc"}
+                    onDelete={handleDelete}
                   />
                 </MuiGrid>
               ))}
