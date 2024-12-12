@@ -16,6 +16,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import LandingBar from './LandingBar';
 import { MuiTelInput } from 'mui-tel-input';
 import PartnerService from '../Services/PartnerService';
+import { useNavigate } from 'react-router-dom';
  
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -69,6 +70,7 @@ export default function SignUp(props) {
   const [contactError, setContactError] = React.useState(false);
   const [contactErrorMessage, setContactErrorMessage] = React.useState('');
   const [countryCode, setCountryCode] = React.useState('');
+  const navigate = useNavigate();
  
   const validateInputs = () => {
     let isValid = true;
@@ -118,20 +120,20 @@ export default function SignUp(props) {
       return;
     }
     const partner = {
-      name,
+      partnerName:name,
       email,
       password,
-      contactNumber,
+      contact:contactNumber,
       countryCode,
     }
 
     PartnerService.registerPartner(partner)
     .then((response) => {
-      console.log("Created offers:", response.data);
-      // navigate(-1);
+      console.log("sign up succesful:", response.data);
+      navigate("/SignIn");
     })
     .catch((error) => {
-      console.error("Error creating offers", error);
+      console.error("Error in signing up", error);
     })
 
   };
