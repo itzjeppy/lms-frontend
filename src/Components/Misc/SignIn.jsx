@@ -17,7 +17,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import LandingBar from './LandingBar';
 import { useNavigate } from 'react-router-dom';
 import PartnerService from '../Services/PartnerService';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar, Alert } from '@mui/material';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -66,6 +66,7 @@ export default function SignIn(props) {
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const [openDialog, setOpenDialog] = React.useState(false);
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const navigate = useNavigate();
 
   const handleClickOpen = () => {
@@ -76,11 +77,14 @@ export default function SignIn(props) {
     setOpen(false);
   };
 
-  const validateInputs = () => {
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
+  const validateInputs = () => {
     let isValid = true;
 
-    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
       isValid = false;
@@ -105,36 +109,29 @@ export default function SignIn(props) {
     if (!validateInputs()) {
       return;
     }
-  
+
     PartnerService.Login(email, password)
       .then((response) => {
-        console.log("sign in succesful:", response.data);
-        // Extract the individual fields from the response data
-        const partnerId = response.data.partnerId;
-        const email = response.data.email;
-        const status = response.data.status;
-        const partnerName = response.data.partnerName;
-        const countryCode = response.data.countryCode;
-        const contact = response.data.contact;
-  
-        // Store the individual fields in local storage
+        console.log("sign in successful:", response.data);
+        const { partnerId, email, status, partnerName, countryCode, contact } = response.data;
+
         localStorage.setItem('partnerId', partnerId);
         localStorage.setItem('email', email);
         localStorage.setItem('status', status);
         localStorage.setItem('partnerName', partnerName);
         localStorage.setItem('countryCode', countryCode);
         localStorage.setItem('contact', contact);
-        
-        if(status===true){
-        navigate("/dashboard");}
-        else{
+
+        if (status === true) {
+          navigate("/dashboard");
+        } else {
           setOpenDialog(true);
         }
-        
       })
       .catch((error) => {
         console.error("Error in signing in", error);
-      })
+        setSnackbarOpen(true); // Show snackbar on error
+      });
   };
 
   return (
@@ -199,7 +196,7 @@ export default function SignIn(props) {
                 helperText={passwordErrorMessage}
                 name="password"
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••••••"
+                placeholder="••••••••"
                 type="password"
                 id="password"
                 autoComplete="current-password"
@@ -256,23 +253,32 @@ export default function SignIn(props) {
         </Card>
       </SignInContainer>
       <Dialog
-      open={openDialog}
-      onClose={() => setOpenDialog(false)}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">
-        {"Account Activation"}
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          Your account hasn't been activated yet, wait for sometime.
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => setOpenDialog(false)}>OK</Button>
-      </DialogActions>
-    </Dialog>
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Account Activation"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Your account hasn't been activated yet, wait for sometime.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)}>OK</Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+          Invalid credentials. Please try again.
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
