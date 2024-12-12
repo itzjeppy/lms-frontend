@@ -37,9 +37,9 @@ const AddProgram = () => {
     const { startDate, endDate, ...progValues } = values;
     const formattedStartDate = format(new Date(values.startDate), "yyyy-MM-dd HH:mm:ss.SSS");
     const formattedEndDate = format(new Date(values.endDate), "yyyy-MM-dd HH:mm:ss.SSS");
-
+    const partner = localStorage.getItem('partnerId');
     const program = {
-      partnerId: "5ef61c8d-c9eb-4ad1-aadd-041a5a889c33",
+      partnerId: partner,
       ...progValues,
       startDate: formattedStartDate,
       endDate: formattedEndDate,

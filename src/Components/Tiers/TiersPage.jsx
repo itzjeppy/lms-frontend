@@ -37,8 +37,9 @@ const TiersContent = () => {
   useEffect(() => {
     const fetchTiers = async () => {
       try {
+        const partnerId = localStorage.getItem('partnerId');
         const response = await TierService.getTiersByPartnerId(
-          "5ef61c8d-c9eb-4ad1-aadd-041a5a889c33"
+          partnerId
         );
         setTiers(response.data);
         localStorage.setItem("coupons", JSON.stringify(response.data));

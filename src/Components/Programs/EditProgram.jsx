@@ -116,9 +116,9 @@ const EditProgram = ({ handleEdit }) => {
       new Date(values.endDate),
       "yyyy-MM-dd HH:mm:ss.SSS"
     );
-
+    const partner = localStorage.getItem('partnerId');
     const newValue = {
-      partnerId: "5ef61c8d-c9eb-4ad1-aadd-041a5a889c33",
+      partnerId: partner,
       ...progValues,
       startDate: formattedStartDate,
       endDate: formattedEndDate,

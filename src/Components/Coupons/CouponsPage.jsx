@@ -29,8 +29,8 @@ const CouponsPage = () => {
       try {
         const couponsResponse = await CouponService.getCoupons();
         setCoupons(couponsResponse.data);
-        
-        const tiersResponse = await TierService.getTiersByPartnerId("5ef61c8d-c9eb-4ad1-aadd-041a5a889c33");
+        const partnerId = localStorage.getItem('partnerId');
+        const tiersResponse = await TierService.getTiersByPartnerId(partnerId);
         const tiersMap = {};
         tiersResponse.data.forEach(tier => {
           tiersMap[tier.tierId] = tier.colour;
