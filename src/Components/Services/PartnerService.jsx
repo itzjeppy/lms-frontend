@@ -1,12 +1,12 @@
 import axios from "axios";
-const BASE_URL = "http://localhost:8080/lms/api/v1/partner/";
+const BASE_URL = "http://localhost:8080/api/v1/lms/partner";
  
 
 class PartnerService {
     getPartnerById(id) {
         return axios({
           method: "get",
-          url: BASE_URL + "getPartnerById?id=" + id ,
+          url: BASE_URL + "/getPartnerById?id=" + id ,
           responseType: "json",
           headers: {
             "Access-Control-Allow-Origin": "*"
@@ -18,20 +18,20 @@ class PartnerService {
         console.log("inside service of createCoupons", partnerObj);
         return axios({
             method: "post",
-            url: BASE_URL + "registerPartner",
+            url: BASE_URL + "/registerPartner",
             data: partnerObj,
             responseType: "json",
             headers: {
                 "Content-Type": "application/json", 
-                "Access-Control-Allow-Origin": "*"
+                 "Access-Control-Allow-Origin": "*"
             },
         })
     }
   
-    Login(id,email) {
+    Login(email,password) {
       return axios({
         method: "get",
-        url: BASE_URL + "partnerLogin/?email=" + email +"&pwd="+id,
+        url: BASE_URL + "/partnerLogin?email=" + email +"&pwd="+password,
         responseType: "json",
         headers: {
           "Access-Control-Allow-Origin": "*"

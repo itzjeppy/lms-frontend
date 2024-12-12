@@ -38,6 +38,17 @@ class TierService{
             },
         })
     }
+
+    getTierByTierId(tierId) {
+      return axios({
+        method: "get",
+        url: `${BASE_URL}/getTierByTierId?id=${tierId}`,
+        responseType: "json",
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
+      });
+    }
 }
 
 export default new TierService();

@@ -16,6 +16,7 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import GoogleIcon from '@mui/icons-material/Google';
 import LandingBar from './LandingBar';
 import { useNavigate } from 'react-router-dom';
+import PartnerService from '../Services/PartnerService';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -103,18 +104,14 @@ export default function SignIn(props) {
       return;
     }
 
-    if (email === 'admin@lms.com' && password === 'adminadmin') {
-      localStorage.setItem('user', JSON.stringify({ email, password }));
-      navigate('/admin');
-    } else if (email === 'partner@company.com' && password === 'partner') {
-      localStorage.setItem('user', JSON.stringify({ email, password }));
-      navigate('/dashboard');
-    } else {
-      console.log({
-        email,
-        password,
-      });
-    }
+    PartnerService.Login(email,password)
+    .then((response) => {
+      console.log("sign in succesful:", response.data);
+      navigate("/dashboard");
+    })
+    .catch((error) => {
+      console.error("Error in signing in", error);
+    })
   };
 
   return (
