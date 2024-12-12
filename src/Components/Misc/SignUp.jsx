@@ -135,11 +135,7 @@ export default function SignUp(props) {
     })
 
   };
- 
-  const handleCountryCode = (value) => {
-    setCountryCode(value.countryCallingCode);
-  };
- 
+
   return (
     <div position="fixed">
       <LandingBar />
