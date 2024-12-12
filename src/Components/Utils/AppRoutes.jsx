@@ -12,8 +12,10 @@ import SignUp from "../Misc/SignUp";
 // Dashboard Pages
 import OffersPage from "../Offers/OffersPage";
 import AddOffers from "../Offers/AddOffers";
+import EditOffer from "../Offers/EditOffer";
 import CouponsPage from "../Coupons/CouponsPage";
 import AddCoupons from "../Coupons/AddCoupon";
+import EditCoupon from "../Coupons/EditCoupon";
 import TiersPage from "../Tiers/TiersPage";
 import AddTier from "../Tiers/AddTier";
 import EditTier from "../Tiers/EditTier";
@@ -54,16 +56,18 @@ const AppRoutes = () => {
         <Route index element={<Contacts />} /> {/* Default dashboard page */}
         <Route path="offers" element={<OffersPage />} />
         <Route path="add-offer" element={<AddOffers />} />
+        <Route path="edit-coupon/:id" element={<EditCoupon />} />
         {/* Coupons */}
         <Route path="coupons" element={<CouponsPage />} />
         <Route path="add-coupon" element={<AddCoupons />} />
+        <Route path="edit-coupon/:id" element={<EditCoupon />} />
         {/* Tiers */}
         <Route path="tiers" element={<TiersPage />} />
         <Route path="add-tier" element={<AddTier />} />
         <Route path="edit-tier/:id" element={<EditTier />} />
         {/* Programs */}
         <Route path="programs" element={<ProgramsPage />} />
-        <Route path="program-details/:id" element ={<ProgramDetails/>} />
+        <Route path="program-details/:id" element={<ProgramDetails />} />
         <Route path="add-program" element={<AddProgram />} />
         <Route path="edit-program/:id" element={<EditProgram />} />
         {/* Misc */}

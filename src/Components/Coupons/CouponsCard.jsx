@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import { DeleteForever, Edit } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 // Utility function to lighten colors
 const lightenColor = (color, percent) => {
@@ -34,6 +35,7 @@ const getTextColor = (tierColor) => {
 };
 
 const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
+  const navigate = useNavigate();
   const [openInfoModal, setOpenInfoModal] = useState(false);
   const [isActive, setIsActive] = useState(coupon.isActive);
 
@@ -49,6 +51,10 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
     setIsActive((prevState) => !prevState);
   };
 
+  const handleEditClick = () => {
+    navigate(`/edit-coupon/${coupon.couponId}`);
+  };
+
   // Function to truncate the title
   const truncateTitle = (title) => {
     return title.length > 15 ? title.substring(0, 15) + "..." : title;
@@ -60,7 +66,9 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
         sx={{
           width: "300px",
           height: "234px",
-          background: isActive ? `linear-gradient(to bottom right, ${lightColor}, ${tierColor})` : 'linear-gradient(to bottom right, #9e968b, #373738)',
+          background: isActive
+            ? `linear-gradient(to bottom right, ${lightColor}, ${tierColor})`
+            : "linear-gradient(to bottom right, #9e968b, #373738)",
           borderRadius: 8,
           boxShadow: "0 6px 18px rgba(0, 0, 0, 0.15)",
           color: commonTextColor,
@@ -115,13 +123,18 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
             }}
           >
             <Typography variant="body2" sx={{ color: commonTextColor }}>
-              Max Limit: <span style={{ fontWeight: "normal" }}>${coupon.maxLimit}</span>
+              Max Limit:{" "}
+              <span style={{ fontWeight: "normal" }}>${coupon.maxLimit}</span>
             </Typography>
             <Typography variant="body2" sx={{ color: commonTextColor }}>
-              Percentage Discounted: <span style={{ fontWeight: "normal" }}>{coupon.percentage}%</span>
+              Percentage Discounted:{" "}
+              <span style={{ fontWeight: "normal" }}>{coupon.percentage}%</span>
             </Typography>
             <Typography variant="body2" sx={{ color: commonTextColor }}>
-              Valid for: <span style={{ fontWeight: "normal" }}>{coupon.validity} days</span>
+              Valid for:{" "}
+              <span style={{ fontWeight: "normal" }}>
+                {coupon.validity} days
+              </span>
             </Typography>
           </Box>
         </CardContent>
@@ -147,7 +160,7 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
 
           <ButtonGroup variant="outlined" size="small">
             <Button
-              onClick={() => onEdit(coupon)}
+              onClick={() => handleEditClick()}
               sx={{
                 color: commonTextColor,
                 borderColor: commonTextColor,

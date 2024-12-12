@@ -10,8 +10,9 @@ import {
   ButtonGroup,
   Divider,
   Modal,
-  CardMedia
+  CardMedia,
 } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
 import { DeleteForever, Edit } from "@mui/icons-material";
 
@@ -35,13 +36,22 @@ const getTextColor = (tierColor) => {
 };
 
 const OfferCard = ({ offer, onEdit, onDelete }) => {
+  const navigate = useNavigate();
   // Destructure the offer object
-  const { offerId,offerTitle, offerDescription, benefit, status, tiers, imageUrl } = offer;
+  const {
+    offerId,
+    offerTitle,
+    offerDescription,
+    benefit,
+    status,
+    tiers,
+    imageUrl,
+  } = offer;
   const [openInfoModal, setOpenInfoModal] = useState(false);
   const [isActive, setIsActive] = useState(status);
 
   // Extract tier color from the offer's tier info
-  const tierColor = tiers?.color ||"#9E9E9E";
+  const tierColor = tiers?.color || "#9E9E9E";
   const lightColor = lightenColor(tierColor, 60);
   const textColor = getTextColor(tierColor);
 
@@ -51,6 +61,10 @@ const OfferCard = ({ offer, onEdit, onDelete }) => {
   // Toggle isActive status when the Chip is clicked
   const handleChipClick = () => {
     setIsActive((prevState) => !prevState);
+  };
+
+  const handleEditClick = () => {
+    navigate(`/edit-offer/${offer.offerId}`);
   };
 
   return (
@@ -154,7 +168,7 @@ const OfferCard = ({ offer, onEdit, onDelete }) => {
 
           <ButtonGroup variant="outlined" size="small">
             <Button
-              onClick={() => onEdit(offer)}
+              onClick={() => handleEditClick()}
               sx={{
                 color: isActive ? textColor : "#ffffff",
                 borderColor: isActive ? textColor : "#ffffff",
@@ -219,10 +233,14 @@ const OfferCard = ({ offer, onEdit, onDelete }) => {
             <strong>Benefit:</strong> ${benefit}
           </Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            <strong>Status:</strong> {status ? 'Active' : 'Inactive'}
+            <strong>Status:</strong> {status ? "Active" : "Inactive"}
           </Typography>
 
-          <Button onClick={handleInfoModalClose} sx={{ mt: 2 }} variant="contained">
+          <Button
+            onClick={handleInfoModalClose}
+            sx={{ mt: 2 }}
+            variant="contained"
+          >
             Close
           </Button>
         </Box>
