@@ -69,9 +69,9 @@ const AddTier = () => {
     setIsSubmitting(true);
     const existingTiers = JSON.parse(localStorage.getItem("tiers") || "[]");
     const { isFreeTier, ...tierValues } = values;
-
+    const partnerId = localStorage.getItem('partnerId');
     const tier = {
-      partner_id: localStorage.getItem("partnerId"),
+      partner_id: partnerId,
       ...tierValues,
     };
 
