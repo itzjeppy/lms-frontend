@@ -71,7 +71,7 @@ const AddTier = () => {
     const { isFreeTier, ...tierValues } = values;
 
     const tier = {
-      partner_id: "5ef61c8d-c9eb-4ad1-aadd-041a5a889c33",
+      partner_id: localStorage.getItem("partnerId"),
       ...tierValues,
     };
 

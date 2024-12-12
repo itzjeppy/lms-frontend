@@ -42,6 +42,7 @@ const TiersContent = () => {
           partnerId
         );
         setTiers(response.data);
+        console.log(response);
         localStorage.setItem("coupons", JSON.stringify(response.data));
       } catch (error) {
         console.error("Error fetching offers:", error);
