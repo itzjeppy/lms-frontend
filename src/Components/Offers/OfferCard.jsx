@@ -64,7 +64,7 @@ const OfferCard = ({ offer, onEdit, onDelete }) => {
   };
 
   const handleEditClick = () => {
-    navigate(`/edit-offer/${offer.offerId}`);
+    navigate(`../edit-offer/${offer.offerId}`);
   };
 
   return (

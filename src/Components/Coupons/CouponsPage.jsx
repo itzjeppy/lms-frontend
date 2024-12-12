@@ -66,7 +66,7 @@ const CouponsPage = () => {
         sx={{
           display: "flex",
           justifyContent: "center",
-          alignItems: "center",
+          aagnItems: "center",
           height: "100vh",
         }}
       >

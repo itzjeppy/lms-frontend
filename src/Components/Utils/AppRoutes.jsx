@@ -56,7 +56,7 @@ const AppRoutes = () => {
         <Route index element={<Contacts />} /> {/* Default dashboard page */}
         <Route path="offers" element={<OffersPage />} />
         <Route path="add-offer" element={<AddOffers />} />
-        <Route path="edit-coupon/:id" element={<EditCoupon />} />
+        <Route path="edit-offer/:id" element={<EditOffer />} />
         {/* Coupons */}
         <Route path="coupons" element={<CouponsPage />} />
         <Route path="add-coupon" element={<AddCoupons />} />
