@@ -65,9 +65,9 @@ export default function SignUp(props) {
   const [name, setName] = React.useState('');
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
+  const [contactNumber, setContactNumber] = React.useState('');
   const [contactError, setContactError] = React.useState(false);
   const [contactErrorMessage, setContactErrorMessage] = React.useState('');
-  const [contactNumber, setContactNumber] = React.useState('');
   const [countryCode, setCountryCode] = React.useState('');
  
   const validateInputs = () => {
@@ -136,9 +136,8 @@ export default function SignUp(props) {
 
   };
  
-  const handleContactChange = (value, info) => {
-    setContactNumber(value);
-    setCountryCode(info.countryCallingCode);
+  const handleCountryCode = (value) => {
+    setCountryCode(value.countryCallingCode);
   };
  
   return (
@@ -221,12 +220,29 @@ export default function SignUp(props) {
               />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="contact">Contact Number</FormLabel>
-              <MuiTelInput
-                value={contactNumber}
-                onChange={handleContactChange}
+              <FormLabel htmlFor="country">Country Code</FormLabel>
+              <MuiTelInput 
                 required
                 fullWidth
+                name="countryCode"
+                value={countryCode}
+                onChange={(value) => setCountryCode(value)}
+                placeholder="Enter your Country Code"
+                variant="outlined"
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="contact">Contact Number</FormLabel>
+              <TextField
+                required
+                fullWidth
+                name="contactNumber"
+                onChange={(e) => setContactNumber(e.target.value)}
+                placeholder="Enter your 10-digit Contact number"
+                type="number"
+                id="contactNumber"
+                autoComplete="contact"
+                variant="outlined"
                 error={contactError}
                 helperText={contactErrorMessage}
                 color={contactError ? 'error' : 'primary'}
