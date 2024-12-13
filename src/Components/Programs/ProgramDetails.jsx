@@ -21,7 +21,7 @@ const ProgramDetails = () => {
   const [offers, setOffers] = useState([]);
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [tiers, setTiers] = useState([]);
+  const [tiers, setTiers] = useState({});
   
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
@@ -29,29 +29,55 @@ const ProgramDetails = () => {
   
   const navigate = useNavigate();
   const { id } = useParams(); // Extract the ID from the URL
-
-  const getTierColor = (tierId) => {
-    const tier = tiers.find((tier) => tier.id === tierId);
-    return tier ? tier.colour : "#cccccc";
-  };
  
   useEffect(() => {
     const fetchProgramDetails = async () => {
       try {
         const offersResponse = await OfferService.getOfferByProgramId(id);
         setOffers(offersResponse.data);
- 
+  
         const couponsResponse = await CouponService.getCouponByProgramId(id);
         setCoupons(couponsResponse.data);
+  
+        const partnerId = localStorage.getItem('partnerId');
+        const tiersResponse = await TierService.getTiersByPartnerId(partnerId);
+        const tiersMap = {};
+        tiersResponse.data.forEach(tier => {
+          tiersMap[tier.id] = tier.colour; // Ensure correct property names are used
+        });
+        setTiers(tiersMap);
       } catch (error) {
         console.error("Error fetching program details:", error);
       } finally {
         setLoading(false);
       }
     };
- 
+  
     fetchProgramDetails();
   }, [id]);
+  
+  useEffect(() => {
+    const fetchCouponsAndTiers = async () => {
+      try {
+        const couponsResponse = await CouponService.getCoupons();
+        setCoupons(couponsResponse.data);
+        const partnerId = localStorage.getItem('partnerId');
+        const tiersResponse = await TierService.getTiersByPartnerId(partnerId);
+        const tiersMap = {};
+        tiersResponse.data.forEach(tier => {
+          tiersMap[tier.tierId] = tier.colour;
+        });
+        setTiers(tiersMap); // Set the state
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchCouponsAndTiers();
+  },[]);
+
 
   const handleDeleteConfirmation = (itemId, isCoupon) => {
     setItemToDelete(itemId);
@@ -113,7 +139,6 @@ const ProgramDetails = () => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: { xs: "center", md: "space-between" },
           flexDirection: { xs: "column", md: "row" },
           alignItems: "center",
           mb: 2,
@@ -161,8 +186,8 @@ const ProgramDetails = () => {
           <Box
             onClick={() => navigate("../add-offer", { state: { programId: id } })}
             sx={{
-              width: "100%",
-              height: "100%",
+              width: "300px",
+              height: "240px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -187,12 +212,12 @@ const ProgramDetails = () => {
       </Typography>
  
       <MuiGrid container spacing={3}>
-        {coupons.map((coupon) => (
+              {coupons.map((coupon) => (
           <MuiGrid item xs={12} sm={6} md={4} key={coupon.id}>
-            <CouponsCard 
-              coupon={coupon} 
-              tierColor={getTierColor(coupon.tierId)}
-              onDelete={() => handleDeleteConfirmation(coupon.couponId, true)} // Pass true for coupon
+            <CouponsCard  
+              coupon={coupon}  
+              tierColor={tiers[coupon.colour] || "#cccccc"} // Make sure tierId is correctly passed
+              onDelete={() => handleDeleteConfirmation(coupon.couponId, true)} // Correct function reference
             />
           </MuiGrid>
         ))}

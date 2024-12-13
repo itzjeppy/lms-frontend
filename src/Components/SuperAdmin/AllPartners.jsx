@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import superAdminService from "../Services/SuperAdminService";
 import {
   Container,
   Typography,
@@ -13,35 +14,49 @@ import {
   TablePagination,
   Box,
 } from "@mui/material";
+import SuperAdminService from "../Services/SuperAdminService";
 
 const AllPartnersPage = () => {
   const [page, setPage] = useState(0);
   const rowsPerPage = 10;
+  const [partners, setPartners] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [partners, setPartners] = useState(
-    Array.from({ length: 30 }, (_, i) => ({
-      name: `Partner ${i + 1}`,
-      company: `Company ${i + 1}`,
-      email: `partner${i + 1}@company.com`,
-      dateJoined: `${i + 1}/12/2024`,
-      isActive: true,
-    }))
-  );
+  useEffect(() => {
+    setIsSubmitting(true);
+    getPartners();
+  }, []);
 
-  const handleDeactivate = (index) => {
-    setPartners((prev) =>
-      prev.map((partner, i) =>
-        i === index ? { ...partner, isActive: false } : partner
-      )
-    );
-  };
+  const getPartners = () => {
+    SuperAdminService.getAllPartners()
+    .then((response) => {
+      console.log("All Partners", response.data);
+      setPartners(response.data);
+    })
+    .catch((error) => {
+      console.error("Error getting partners", error);
+    })
+    .finally(() => {
+      setIsSubmitting(false);
+    });
+  }
+
+  const handleDeactivate = (partnerId) => {
+        SuperAdminService.updatePartner(partnerId, false).then((response) => {
+          console.log(response.data);}).catch((error) => {
+            console.error("Error getting partners", error);
+          }).finally(() => {
+            getPartners();
+          });
+      };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
   // Filter active partners
-  const activePartners = partners.filter((partner) => partner.isActive);
+  const activePartners = partners.filter((partner) => partner.status);
+  console.log(activePartners)
 
   return (
     <Container
@@ -49,7 +64,6 @@ const AllPartnersPage = () => {
         mt: 2,
         mb: 4,
         p: 2,
-        // background: "linear-gradient(to right bottom, #e3f2fd, #e1bee7)",
         background: "#ECEFF5",
         borderRadius: 3,
         boxShadow: 6,
@@ -82,10 +96,10 @@ const AllPartnersPage = () => {
                 <Typography fontWeight="bold">Partner's Name</Typography>
               </TableCell>
               <TableCell>
-                <Typography fontWeight="bold">Company Name</Typography>
+                <Typography fontWeight="bold">Email</Typography>
               </TableCell>
               <TableCell>
-                <Typography fontWeight="bold">Email</Typography>
+                <Typography fontWeight="bold">Contact Number</Typography>
               </TableCell>
               <TableCell>
                 <Typography fontWeight="bold">Date Joined</Typography>
@@ -98,17 +112,17 @@ const AllPartnersPage = () => {
           <TableBody>
             {activePartners
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((partner, index) => (
-                <TableRow key={index}>
-                  <TableCell>{partner.name}</TableCell>
-                  <TableCell>{partner.company}</TableCell>
+              .map((partner) => (
+                <TableRow key={partner.partnerId}>
+                  <TableCell>{partner.partnerName}</TableCell>
                   <TableCell>{partner.email}</TableCell>
+                  <TableCell>{"+" + partner.countryCode + " " + partner.contact}</TableCell>
                   <TableCell>{partner.dateJoined}</TableCell>
                   <TableCell align="center">
                     <Button
                       variant="contained"
                       color="error"
-                      onClick={() => handleDeactivate(partners.indexOf(partner))}
+                      onClick={() => handleDeactivate(partner.partnerId)}
                     >
                       Deactivate
                     </Button>

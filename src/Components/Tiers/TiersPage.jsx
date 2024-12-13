@@ -215,8 +215,6 @@ const TiersContent = () => {
                   <Accordion
                     sx={{
                       boxShadow: "none",
-                      border: `3px solid`,
-                      borderColor: lightenColor(tier.colour,20),
                       mb: 2,
                       square:false,
                     }}
@@ -226,7 +224,7 @@ const TiersContent = () => {
                       aria-controls={`panel-${tier.tierId}-content`}
                       id={`panel-${tier.tierId}-header`}
                       sx={{
-                        background: `linear-gradient(45deg, ${lightenColor(tier.colour, 20)}, ${lightenColor(tier.colour, 60)})`,
+                        background: `linear-gradient(45deg, ${lightenColor(tier.colour, 10)}, ${lightenColor(tier.colour, 20)})`,
                         color:getTextColor(tier.colour),
                       }}
                     >

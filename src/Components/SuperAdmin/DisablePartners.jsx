@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import SuperAdminService from "../Services/SuperAdminService";
 import {
   Container,
   Typography,
@@ -12,37 +13,58 @@ import {
 } from "@mui/material";
 
 const DisabledPartnersPage = () => {
-  const [partners, setPartners] = useState(
-    Array.from({ length: 30 }, (_, i) => ({
-      name: `Existing Partner ${i + 1}`,
-      company: `Existing Company ${i + 1}`,
-      email: `existingpartner${i + 1}@example.com`,
-      dateJoined: `${i + 1}/12/2024`,
-      isActive: false,
-    }))
-  );
+  const [partners, setPartners] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+  
+    useEffect(() => {
+      setIsSubmitting(true);
+      getPartners();
+    }, []);
+    const getPartners = () => {
+      SuperAdminService.getAllPartners()
+      .then((response) => {
+        console.log("All Partners", response.data);
+        setPartners(response.data);
+      })
+      .catch((error) => {
+        console.error("Error getting partners", error);
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+    }
 
   const [page, setPage] = useState(1);
   const cardsPerPage = 9;
 
-  const handleApprove = (index) => {
-    setPartners((prev) =>
-      prev.map((partner, i) =>
-        i === index ? { ...partner, isActive: true } : partner
-      )
-    );
-  };
+   const handleApprove = (partnerId) => {
+      SuperAdminService.updatePartner(partnerId, true).then((response) => {
+        console.log(response.data);}).catch((error) => {
+          console.error("Error getting partners", error);
+        }).finally(() => {
+          getPartners();
+        });
+    };
 
-  const handleDeny = (index) => {
-    setPartners((prev) => prev.filter((_, i) => i !== index));
-  };
+  const handleDelete = (partnerId) => {
+      SuperAdminService.deletePartner(partnerId)
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error("Error getting partners", error);
+        })
+        .finally(() => {
+          getPartners();
+        });
+    };
 
   const handlePageChange = (event, value) => {
     setPage(value);
   };
 
   // Filter partners with isActive status as false
-  const inactivePartners = partners.filter((partner) => !partner.isActive);
+  const inactivePartners = partners.filter((partner) => !partner.status && !partner.newPartner);
 
   const displayedPartners = inactivePartners.slice(
     (page - 1) * cardsPerPage,
@@ -82,9 +104,9 @@ const DisabledPartnersPage = () => {
             >
               <CardContent>
                 <Typography variant="h5" fontWeight="bold">
-                  {partner.name}
+                  {partner.partnerName}
                 </Typography>
-                <Typography variant="body1">{partner.company}</Typography>
+                <Typography variant="body1">{partner.dateJoined}</Typography>
                 <Typography variant="body2">{partner.email}</Typography>
               </CardContent>
               <CardActions sx={{ justifyContent: "center" }}>
@@ -92,7 +114,7 @@ const DisabledPartnersPage = () => {
                   variant="contained"
                   color="success"
                   onClick={() =>
-                    handleApprove(index + (page - 1) * cardsPerPage)
+                    handleApprove(partner.partnerId)
                   }
                 >
                   Re-enable
@@ -101,7 +123,7 @@ const DisabledPartnersPage = () => {
                   variant="outlined"
                   color="error"
                   onClick={() =>
-                    handleDeny(index + (page - 1) * cardsPerPage)
+                    handleDelete(partner.partnerId)
                   }
                 >
                   Delete

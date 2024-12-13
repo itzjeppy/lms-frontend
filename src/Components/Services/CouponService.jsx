@@ -67,7 +67,7 @@ class CouponService {
     getCouponByProgramId(ProgramId) {
       return axios({
         method: "get",
-        url: BASE_URL + "/getCouponsByProgramId?program_id=" + ProgramId ,
+        url: BASE_URL + "/getCouponByProgramId?program_id=" + ProgramId ,
         responseType: "json",
         headers: {
           "Access-Control-Allow-Origin": "*"

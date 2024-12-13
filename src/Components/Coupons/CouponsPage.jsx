@@ -24,25 +24,25 @@ const CouponsPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  useEffect(() => {
-    const fetchCouponsAndTiers = async () => {
-      try {
-        const couponsResponse = await CouponService.getCoupons();
-        setCoupons(couponsResponse.data);
-        const partnerId = localStorage.getItem('partnerId');
-        const tiersResponse = await TierService.getTiersByPartnerId(partnerId);
-        const tiersMap = {};
-        tiersResponse.data.forEach(tier => {
-          tiersMap[tier.tierId] = tier.colour;
-        });
-        setTiers(tiersMap);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchCouponsAndTiers = async () => {
+    try {
+      const couponsResponse = await CouponService.getCoupons();
+      setCoupons(couponsResponse.data);
+      const partnerId = localStorage.getItem('partnerId');
+      const tiersResponse = await TierService.getTiersByPartnerId(partnerId);
+      const tiersMap = {};
+      tiersResponse.data.forEach(tier => {
+        tiersMap[tier.tierId] = tier.colour;
+      });
+      setTiers(tiersMap);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchCouponsAndTiers();
   }, []);
 
