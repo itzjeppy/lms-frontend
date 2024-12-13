@@ -64,7 +64,7 @@ const OfferCard = ({ offer, onEdit, onDelete }) => {
   };
 
   const handleEditClick = () => {
-    navigate(`../edit-offer/${offer.offerId}`);
+    navigate(`../edit-offer/${offer.offerId}`,{ state: { offer } });
   };
 
   return (
@@ -140,7 +140,7 @@ const OfferCard = ({ offer, onEdit, onDelete }) => {
 
           <Box sx={{ mb: 1 }}>
             <Typography variant="body2">
-              <strong>Tier:</strong> {tiers?.name}
+              <strong>Tier:</strong> {tiers.tierName}
             </Typography>
             <Typography variant="body2">
               <strong>Description:</strong> {offerDescription.slice(0, 50)}...
