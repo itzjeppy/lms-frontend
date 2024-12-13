@@ -21,6 +21,7 @@ import { Container } from "@mui/system";
 import OfferService from "../Services/OfferService";
 import TierService from "../Services/TierService";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import { format } from "date-fns";
 
 // Validation schema
 const schema = Yup.object().shape({
@@ -37,25 +38,32 @@ const EditOffer = () => {
   const { id } = useParams();
   const [offer, setOffer] = useState({});
   const [tiers, setTiers] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [fileInfo, setFileInfo] = useState({ name: "", size: 0 });
 
   useEffect(() => {
     const fetchOffer = async () => {
       try {
         const response = await OfferService.getOfferById(id);
-        setOffer(response.data);
+        const offerData = response.data;
+
+        // Format any date fields if necessary
+        // Assuming offer has date fields, e.g., createdAt, updatedAt
+        // offerData.createdAt = format(new Date(offerData.createdAt), "yyyy-MM-dd");
+        // offerData.updatedAt = format(new Date(offerData.updatedAt), "yyyy-MM-dd");
+
+        setOffer(offerData);
       } catch (error) {
         console.error("Error fetching offer:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     const fetchTiers = async () => {
       try {
         const partner = localStorage.getItem('partnerId');
-        const response = await TierService.getTiersByPartnerId(
-          partner
-        );
+        const response = await TierService.getTiersByPartnerId(partner);
         setTiers(response.data);
       } catch (error) {
         console.error("Error fetching tiers:", error);
@@ -67,7 +75,6 @@ const EditOffer = () => {
   }, [id]);
 
   const handleSubmit = (values) => {
-    setLoading(true);
     const { image, ...value } = values;
     const reader = new FileReader();
     reader.onload = () => {
@@ -82,13 +89,14 @@ const EditOffer = () => {
         })
         .catch((error) => {
           console.error("Error updating offer", error);
-        })
-        .finally(() => {
-          setLoading(false);
         });
     };
     reader.readAsDataURL(values.image);
   };
+
+  if (loading) {
+    return <CircularProgress />;
+  }
 
   return (
     <Container
@@ -114,12 +122,12 @@ const EditOffer = () => {
           <Divider sx={{ mb: 2 }} />
           <Formik
             initialValues={{
-              tierId: offer.tierId,
-              offerTitle: offer.offerTitle,
-              offerDescription: offer.offerDescription,
-              image: offer.imageUrl,
-              benefit: offer.benefit,
-              status: offer.status,
+              tierId: offer.tierId || '',
+              offerTitle: offer.offerTitle || '',
+              offerDescription: offer.offerDescription || '',
+              image: offer.imageUrl || null,
+              benefit: offer.benefit || '',
+              status: offer.status || false,
             }}
             validationSchema={schema}
             onSubmit={handleSubmit}
@@ -129,13 +137,14 @@ const EditOffer = () => {
               <Form>
                 {/* Tier ID */}
                 <Box mb={3}>
-                  <FormControl fullWidth>
+                <FormControl fullWidth>
                     <Field
                       name="tierId"
                       as={TextField}
                       select
                       label="Select Tier"
                       variant="outlined"
+                      value={offer.tierId}
                       onChange={(event) =>
                         setFieldValue("tierId", event.target.value)
                       }
@@ -163,17 +172,13 @@ const EditOffer = () => {
                       variant="outlined"
                     />
                     <ErrorMessage name="offerTitle">
-                      {" "}
-                      {(msg) => <FormHelperText>{msg}</FormHelperText>}{" "}
+                      {(msg) => <FormHelperText>{msg}</FormHelperText>}
                     </ErrorMessage>
                   </FormControl>
                 </Box>
                 {/* Offer Description */}
                 <Box mb={3}>
-                  <FormControl
-                    fullWidth
-                    error={!!ErrorMessage.offerDescription}
-                  >
+                  <FormControl fullWidth error={!!ErrorMessage.offerDescription}>
                     <Field
                       name="offerDescription"
                       as={TextField}
@@ -183,8 +188,7 @@ const EditOffer = () => {
                       rows={4}
                     />
                     <ErrorMessage name="offerDescription">
-                      {" "}
-                      {(msg) => <FormHelperText>{msg}</FormHelperText>}{" "}
+                      {(msg) => <FormHelperText>{msg}</FormHelperText>}
                     </ErrorMessage>
                   </FormControl>
                 </Box>
@@ -217,8 +221,7 @@ const EditOffer = () => {
                       </Button>
                     </label>
                     <ErrorMessage name="image">
-                      {" "}
-                      {(msg) => <FormHelperText>{msg}</FormHelperText>}{" "}
+                      {(msg) => <FormHelperText>{msg}</FormHelperText>}
                     </ErrorMessage>
                   </FormControl>
                   {fileInfo.name && (
@@ -238,8 +241,7 @@ const EditOffer = () => {
                       variant="outlined"
                     />
                     <ErrorMessage name="benefit">
-                      {" "}
-                      {(msg) => <FormHelperText>{msg}</FormHelperText>}{" "}
+                      {(msg) => <FormHelperText>{msg}</FormHelperText>}
                     </ErrorMessage>
                   </FormControl>
                 </Box>
@@ -260,22 +262,21 @@ const EditOffer = () => {
                       label="Status"
                     />
                     <ErrorMessage name="status">
-                      {" "}
                       {(msg) => (
                         <FormHelperText error>{msg}</FormHelperText>
-                      )}{" "}
+                      )}
                     </ErrorMessage>
                   </FormControl>
                 </Box>
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  disabled={isSubmitting || loading}
+                  disabled={isSubmitting}
                   variant="contained"
                   color="primary"
-                  sx={{ width: "100%", mt: 2 }}
+                  sx={{ width: "100%", mt:  2 }}
                 >
-                  {loading ? (
+                  {isSubmitting ? (
                     <CircularProgress size={24} color="inherit" />
                   ) : (
                     "Update Offer"
