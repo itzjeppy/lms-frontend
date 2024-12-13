@@ -17,7 +17,7 @@ import LandingBar from './LandingBar';
 import { MuiTelInput } from 'mui-tel-input';
 import PartnerService from '../Services/PartnerService';
 import { useNavigate } from 'react-router-dom';
- 
+
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -30,11 +30,8 @@ const Card = styled(MuiCard)(({ theme }) => ({
   [theme.breakpoints.up('sm')]: {
     width: '450px',
   },
-  ...theme.applyStyles('dark', {
-    boxShadow: 'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
-  }),
 }));
- 
+
 const SignUpContainer = styled(Stack)(({ theme }) => ({
   height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
   minHeight: '100%',
@@ -50,12 +47,9 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
     inset: 0,
     backgroundImage: 'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
     backgroundRepeat: 'no-repeat',
-    ...theme.applyStyles('dark', {
-      backgroundImage: 'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
-    }),
   },
 }));
- 
+
 export default function SignUp(props) {
   const [email, setEmail] = React.useState('');
   const [emailError, setEmailError] = React.useState(false);
@@ -69,12 +63,12 @@ export default function SignUp(props) {
   const [contactNumber, setContactNumber] = React.useState('');
   const [contactError, setContactError] = React.useState(false);
   const [contactErrorMessage, setContactErrorMessage] = React.useState('');
-  const [countryCode, setCountryCode] = React.useState('');
+  const [countryCode, setCountryCode] = React.useState('+91'); 
   const navigate = useNavigate();
- 
+
   const validateInputs = () => {
     let isValid = true;
- 
+
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
@@ -83,7 +77,7 @@ export default function SignUp(props) {
       setEmailError(false);
       setEmailErrorMessage('');
     }
- 
+
     if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage('Password must be at least 6 characters long.');
@@ -92,7 +86,7 @@ export default function SignUp(props) {
       setPasswordError(false);
       setPasswordErrorMessage('');
     }
- 
+
     if (!name || name.length < 1) {
       setNameError(true);
       setNameErrorMessage('Name is required.');
@@ -101,41 +95,55 @@ export default function SignUp(props) {
       setNameError(false);
       setNameErrorMessage('');
     }
- 
+
     if (!contactNumber || contactNumber.length < 10) {
       setContactError(true);
       setContactErrorMessage('Please enter a valid contact number.');
-      isValid = false;
+ isValid = false;
     } else {
       setContactError(false);
       setContactErrorMessage('');
     }
- 
+
     return isValid;
   };
- 
+
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!validateInputs()) {
       return;
     }
     const partner = {
-      partnerName:name,
+      partnerName: name,
       email,
       password,
-      contact:contactNumber,
+      contact: contactNumber.replace(/\s+/g, ''),
       countryCode,
-    }
+    };
 
     PartnerService.registerPartner(partner)
-    .then((response) => {
-      console.log("sign up succesful:", response.data);
-      navigate("/SignIn");
-    })
-    .catch((error) => {
-      console.error("Error in signing up", error);
-    })
+      .then((response) => {
+        console.log("Sign up successful:", response.data);
+        navigate("/SignIn");
+      })
+      .catch((error) => {
+        console.error("Error in signing up", error);
+      });
+  };
 
+  const handleTelChange = (value) => {
+    // Assuming the value is formatted as "+Code Number"
+    const spaceIndex = value.indexOf(' ');
+    if (spaceIndex !== -1) {
+      const code = value.substring(0, spaceIndex);
+      const number = value.substring(spaceIndex + 1);
+      setCountryCode(code);
+      setContactNumber(number);
+    } else {
+      // Handle cases where no space is found (likely no country code)
+      setContactNumber(value);
+    }
+    console.log("Country Code:", countryCode, "Contact Number:", contactNumber);
   };
 
   return (
@@ -218,33 +226,18 @@ export default function SignUp(props) {
               />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="country">Country Code</FormLabel>
-              <MuiTelInput 
-                required
-                fullWidth
-                name="countryCode"
-                value={countryCode}
-                onChange={(value) => setCountryCode(value)}
-                placeholder="Enter your Country Code"
-                variant="outlined"
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="contact">Contact Number</FormLabel>
-              <TextField
-                required
-                fullWidth
-                name="contactNumber"
-                onChange={(e) => setContactNumber(e.target.value)}
-                placeholder="Enter your 10-digit Contact number"
-                type="number"
-                id="contactNumber"
-                autoComplete="contact"
-                variant="outlined"
-                error={contactError}
-                helperText={contactErrorMessage}
-                color={contactError ? 'error' : 'primary'}
-              />
+            <FormLabel htmlFor="contact">Contact Number</FormLabel>
+            <MuiTelInput
+              required
+              fullWidth
+              name="contactNumber"
+              value={`${countryCode} ${contactNumber}`} // Ensure this reflects the correct format
+              onChange={handleTelChange}
+              placeholder="Enter your Country Code and Phone Number"
+              variant="outlined"
+              error={contactError}
+              helperText={contactErrorMessage}
+            />
             </FormControl>
             <Button
               type="submit"
@@ -286,4 +279,4 @@ export default function SignUp(props) {
       </SignUpContainer>
     </div>
   );
-}
+} 
