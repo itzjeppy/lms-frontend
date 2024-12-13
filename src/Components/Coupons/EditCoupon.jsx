@@ -23,6 +23,7 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import TierService from "../Services/TierService";
 import CouponService from "../Services/CouponService";
 
+// Validation schema
 const schema = Yup.object().shape({
   couponTitle: Yup.string().required("Coupon title is required"),
   couponDescription: Yup.string().required("Coupon description is required"),
@@ -38,14 +39,14 @@ const EditCoupon = () => {
   const { couponId } = useParams();
   const [tiers, setTiers] = useState([]);
   const [coupon, setCoupon] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchTiers = async () => {
       try {
         const partnerId = localStorage.getItem('partnerId');
-        const response = await TierService.getTiersByPartnerId(
-          partnerId
-        );
+        const response = await TierService.getTiersByPartnerId(partnerId);
         setTiers(response.data);
       } catch (error) {
         console.error("Error fetching tiers:", error);
@@ -58,6 +59,9 @@ const EditCoupon = () => {
         setCoupon(response.data);
       } catch (error) {
         console.error("Error fetching coupon:", error);
+        setError("Failed to fetch coupon details.");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -76,6 +80,15 @@ const EditCoupon = () => {
         console.error("Error updating coupon:", error);
       });
   };
+
+  // Show loading state or error message
+  if (loading) {
+    return <Typography>Loading...</Typography>;
+  }
+
+  if (error) {
+    return <Typography color="error">{error}</Typography>;
+  }
 
   return (
     <Container
@@ -108,13 +121,13 @@ const EditCoupon = () => {
         <Divider sx={{ mb: 3 }} />
         <Formik
           initialValues={{
-            couponTitle: coupon.couponTitle,
-            couponDescription: coupon.couponDescription,
-            tierId: coupon.tierId,
-            validity: coupon.validity,
-            maxLimit: coupon.maxLimit,
-            percentage: coupon.percentage,
-            status: coupon.status,
+            couponTitle: coupon.couponTitle || '',
+            couponDescription: coupon.couponDescription || '',
+            tierId: coupon.tierId || '',
+            validity: coupon.validity || '',
+            maxLimit: coupon.maxLimit || '',
+            percentage: coupon.percentage || 0,
+            status: coupon.status || false,
           }}
           validationSchema={schema}
           onSubmit={handleSubmit}
@@ -125,7 +138,7 @@ const EditCoupon = () => {
                 Coupon Details
               </Typography>
               <Box sx={{ display: "grid", gap: 2 }}>
-                <FormControl fullWidth>
+                < FormControl fullWidth>
                   <Field
                     name="couponTitle"
                     as={TextField}

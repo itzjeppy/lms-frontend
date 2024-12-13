@@ -52,7 +52,8 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
   };
 
   const handleEditClick = () => {
-    navigate(`/edit-coupon/${coupon.couponId}`);
+    console.log("Coupon ID:", coupon.couponId);
+    navigate(`../edit-coupon/${coupon.couponId}`);
   };
 
   // Function to truncate the title

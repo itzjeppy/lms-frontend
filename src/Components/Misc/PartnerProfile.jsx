@@ -1,82 +1,106 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import { Container, Typography, Avatar, Divider, Grid2, Paper, Button } from '@mui/material';
+import { Container, Typography, Avatar, Divider, Grid, Paper, Button } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-
+import UserService from "../Services/UserService";
+import TierService from "../Services/TierService";
+import PartnerService from '../Services/PartnerService';
+ 
 const ProfilePage = () => {
-  // Sample partner data
-  const partner = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    profilePicture: "https://via.placeholder.com/150" // Replace with actual image URL
-  };
-
-  // Sample user data for the DataGrid
-  const users = [
-    { id: 1, name: 'Alice Smith', email: 'alice@example.com' },
-    { id: 2, name: 'Bob Johnson', email: 'bob@example.com' },
-    { id: 3, name: 'Charlie Brown', email: 'charlie@example.com' },
-    { id: 4, name: 'David Wilson', email: 'david@example.com' },
-    { id: 5, name: 'Eva Green', email: 'eva@example.com' },
-    { id: 6, name: 'Frank Castle', email: 'frank@example.com' },
-    { id: 7, name: 'Grace Lee', email: 'grace@example.com' },
-    { id: 8, name: 'Hank Pym', email: 'hank@example.com' },
-    { id: 9, name: 'Ivy Adams', email: 'ivy@example.com' },
-    { id: 10, name: 'Jack Sparrow', email: 'jack@example.com' },
-  ];
-
+  const [users, setUsers] = useState([]);
+  const [partner, setPartner] = useState({});
+ 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'name', headerName: 'Name', width: 150 },
-    { field: 'email', headerName: 'Email', width: 200 },
+    { field: 'id', headerName: 'Id', width: 200 },
+    { field: 'userID', headerName: 'User ID', width: 90 },
+    { field: 'totalPoints', headerName: 'Total Points', width: 150 },
+    { field: 'tierName', headerName: 'Tier Name', width: 150 },
   ];
-
+ 
   const navigate = useNavigate();
-
+ 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem("user");
     navigate("/");
-  }
-
+  };
+ 
+  useEffect(() => {
+    const partnerId = localStorage.getItem('partnerId');
+ 
+    const fetchPartner = async () => {
+      try {
+        const response = await PartnerService.getPartnerById(partnerId);
+        const partnerData = response.data;
+        setPartner(partnerData);
+      } catch (error) {
+        console.error("Error fetching partner details:", error);
+      }
+    };
+ 
+    const fetchUsers = async () => {
+      try {
+        const response = await UserService.getUserByPartnerId(partnerId);
+        const usersWithTier = await Promise.all(response.data.map(async (user) => {
+          const tierResponse = await TierService.getTierByTierId(user.tiers.tierId);
+          return {
+            id: user.uId,
+            userID: user.userId,
+            totalPoints: user.totalPoints,
+            tierName: tierResponse.data.tierName,
+          };
+        }));
+        setUsers(usersWithTier);
+      } catch (error) {
+        console.error("Error fetching users or tier names:", error);
+      }
+    };
+ 
+    fetchPartner();
+    fetchUsers();
+  }, []);
+ 
   return (
     <Container
       sx={{
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        p: { xs: 2, md: 3 }, // Adjust padding for small and larger screens
-        bgcolor: "#f9f9f9", // Light background
+        p: { xs: 2, md: 3 },
+        bgcolor: "#f9f9f9",
         borderRadius: 2,
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)", // Subtle shadow
-        maxWidth: "1200px", // Limit maximum width
-        margin: "0 auto", // Center horizontally
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+        maxWidth: "1200px",
+        margin: "0 auto",
         width: "100%",
       }}
     >
-      <Grid2 container spacing={4}>
-        <Grid2 item xs={12} md={4}>
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={4}>
           <Avatar
             alt={partner.name}
-            src={partner.profilePicture}
+            src="https://via.placeholder.com/150"
             sx={{ width: 200, height: 200, margin: '0 auto' }}
           />
-        </Grid2>
-        <Grid2 item xs={12} md={8}>
+        </Grid>
+        <Grid item xs={12} md={8}>
           <Typography variant="h2" sx={{ mt: 2 }}>
-            {partner.name}
+            {partner.partnerName}
           </Typography>
           <Typography variant="h5" color="textSecondary">
             {partner.email}
           </Typography>
+          <Typography variant="h6" color="textSecondary">
+            +{partner.countryCode} {partner.contact}
+          </Typography>
           <Button variant="contained" color="error" sx={{ my: 2 }} onClick={handleLogout}>Logout</Button>
-        </Grid2>
-      </Grid2>
-      <Divider sx={{ my: 4 }} /> {/* Divider between profile and users */}
+        </Grid>
+      </Grid>
+      <Divider sx={{ my: 4 }} />
       <Paper
         elevation={3}
         sx={{
-          p: 0, // Remove padding
-          bgcolor: 'transparent', // Remove background color
+          p: 0,
+          bgcolor: 'transparent',
           borderRadius: 2,
         }}
       >
@@ -88,15 +112,13 @@ const ProfilePage = () => {
             rows={users}
             columns={columns}
             pageSize={5}
-            rowsPerPageOptions={[5]}
-            disableSelectionOnClick // Disable checkbox selection
-            autoHeight // Automatically adjust height based on rows
-            pageSizeOptions={[5, 10, 25]}
+            rowsPerPageOptions={[5, 10, 25]}
+            autoHeight
           />
         </div>
       </Paper>
     </Container>
   );
 };
-
+ 
 export default ProfilePage;
