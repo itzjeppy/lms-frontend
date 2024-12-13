@@ -22,28 +22,28 @@ const ProgramDetails = () => {
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [tiers, setTiers] = useState({});
-  
+
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
-  const [isCoupon, setIsCoupon] = useState(false); // Track if the item is a coupon or offer
-  
+  const [isCoupon, setIsCoupon] = useState(false);
+
   const navigate = useNavigate();
-  const { id } = useParams(); // Extract the ID from the URL
- 
+  const { id } = useParams();
+
   useEffect(() => {
     const fetchProgramDetails = async () => {
       try {
         const offersResponse = await OfferService.getOfferByProgramId(id);
         setOffers(offersResponse.data);
-  
+
         const couponsResponse = await CouponService.getCouponByProgramId(id);
         setCoupons(couponsResponse.data);
-  
+
         const partnerId = localStorage.getItem('partnerId');
         const tiersResponse = await TierService.getTiersByPartnerId(partnerId);
         const tiersMap = {};
         tiersResponse.data.forEach(tier => {
-          tiersMap[tier.id] = tier.colour; // Ensure correct property names are used
+          tiersMap[tier.id] = tier.colour;
         });
         setTiers(tiersMap);
       } catch (error) {
@@ -52,37 +52,14 @@ const ProgramDetails = () => {
         setLoading(false);
       }
     };
-  
+
     fetchProgramDetails();
   }, [id]);
-  
-  useEffect(() => {
-    const fetchCouponsAndTiers = async () => {
-      try {
-        const couponsResponse = await CouponService.getCoupons();
-        setCoupons(couponsResponse.data);
-        const partnerId = localStorage.getItem('partnerId');
-        const tiersResponse = await TierService.getTiersByPartnerId(partnerId);
-        const tiersMap = {};
-        tiersResponse.data.forEach(tier => {
-          tiersMap[tier.tierId] = tier.colour;
-        });
-        setTiers(tiersMap); // Set the state
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchCouponsAndTiers();
-  },[]);
 
-
-  const handleDeleteConfirmation = (itemId, isCoupon) => {
+  const handleDelete = (itemId, isCoupon) => {
     setItemToDelete(itemId);
     setIsCoupon(isCoupon);
-    setShowDeleteDialog(true); // Open the confirmation dialog
+    setShowDeleteDialog(true);
   };
 
   const confirmDelete = () => {
@@ -97,7 +74,7 @@ const ProgramDetails = () => {
           console.error("Error deleting coupon", error);
         });
     } else {
-      OfferService.deleteOffers(itemToDelete) // Assuming you have a deleteOffer method
+      OfferService.deleteOffers(itemToDelete)
         .then(() => {
           setOffers((prevOffers) =>
             prevOffers.filter((offer) => offer.offerId !== itemToDelete)
@@ -107,19 +84,19 @@ const ProgramDetails = () => {
           console.error("Error deleting offer", error);
         });
     }
-    setShowDeleteDialog(false); // Close the dialog
-    setItemToDelete(null); // Reset the item to delete
+    setShowDeleteDialog(false);
+    setItemToDelete(null);
   };
 
   const cancelDelete = () => {
-    setShowDeleteDialog(false); // Close the dialog
-    setItemToDelete(null); // Reset the item to delete
+    setShowDeleteDialog(false);
+    setItemToDelete(null);
   };
 
   if (loading) {
     return <div>Loading...</div>;
   }
- 
+
   return (
     <Container
       sx={{
@@ -165,22 +142,23 @@ const ProgramDetails = () => {
           Program Details
         </Typography>
       </Box>
- 
+
       {/* Offers Section */}
       <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
         Offers
       </Typography>
- 
+
       <MuiGrid container spacing={3}>
         {offers.map((offer) => (
           <MuiGrid item xs={12} sm={6} md={4} key={offer.offerId}>
-            <OfferCard 
-              offer={offer} 
-              onDelete={() => handleDeleteConfirmation(offer.offerId, false)} // Pass false for offer
+            <OfferCard
+              offer={offer}
+              tierColor={tiers[offer.colour] || "#cccccc"}
+              onDelete={() => handleDelete(offer.offerId, false)}
             />
           </MuiGrid>
         ))}
- 
+
         {/* Add New Offer Card */}
         <MuiGrid item xs={12} sm={6} md={4}>
           <Box
@@ -206,22 +184,22 @@ const ProgramDetails = () => {
           </Box>
         </MuiGrid>
       </MuiGrid>
- 
+
       <Typography variant="h5" sx={{ fontWeight: "bold", mt: 4, mb: 2 }}>
         Coupons
       </Typography>
- 
+
       <MuiGrid container spacing={3}>
-              {coupons.map((coupon) => (
+        {coupons.map((coupon) => (
           <MuiGrid item xs={12} sm={6} md={4} key={coupon.id}>
-            <CouponsCard  
-              coupon={coupon}  
-              tierColor={tiers[coupon.colour] || "#cccccc"} // Make sure tierId is correctly passed
-              onDelete={() => handleDeleteConfirmation(coupon.couponId, true)} // Correct function reference
+            <CouponsCard
+              coupon={coupon}
+              tierColor={tiers[coupon.colour] || "#cccccc"}
+              onDelete={() => handleDelete(coupon.couponId, true)}
             />
           </MuiGrid>
         ))}
- 
+
         {/* Add New Coupon Card */}
         <MuiGrid item xs={12} sm={6} md={4}>
           <Box
@@ -259,5 +237,5 @@ const ProgramDetails = () => {
     </Container>
   );
 };
- 
+
 export default ProgramDetails;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -12,9 +12,10 @@ import {
   Modal,
   CardMedia,
 } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
 import { DeleteForever, Edit } from "@mui/icons-material";
+import TierService from "../Services/TierService"; // Import your TierService
 
 // Utility function to lighten colors
 const lightenColor = (color, percent) => {
@@ -37,21 +38,35 @@ const getTextColor = (tierColor) => {
 
 const OfferCard = ({ offer, onEdit, onDelete }) => {
   const navigate = useNavigate();
-  // Destructure the offer object
   const {
     offerId,
     offerTitle,
     offerDescription,
     benefit,
     status,
-    tiers,
+    tierId,
     imageUrl,
   } = offer;
+
   const [openInfoModal, setOpenInfoModal] = useState(false);
   const [isActive, setIsActive] = useState(status);
+  const [tierName, setTierName] = useState(""); // State to hold the tier name
+  const [tierColor, setTierColor] = useState("#9E9E9E"); // Default color
 
-  // Extract tier color from the offer's tier info
-  const tierColor = tiers?.color || "#9E9E9E";
+  useEffect(() => {
+    const fetchTier = async () => {
+      try {
+        const response = await TierService.getTierByTierId(tierId);
+        setTierName(response.data.tierName); // Assuming the response has tierName
+        setTierColor(response.data.color); // Assuming the response has color
+      } catch (error) {
+        console.error("Error fetching tier:", error);
+      }
+    };
+
+    fetchTier();
+  }, [tierId]);
+
   const lightColor = lightenColor(tierColor, 60);
   const textColor = getTextColor(tierColor);
 
@@ -64,7 +79,7 @@ const OfferCard = ({ offer, onEdit, onDelete }) => {
   };
 
   const handleEditClick = () => {
-    navigate(`../edit-offer/${offer.offerId}`,{ state: { offer } });
+    navigate(`../edit-offer/${offerId}`, { state: { offer } });
   };
 
   return (
@@ -140,7 +155,7 @@ const OfferCard = ({ offer, onEdit, onDelete }) => {
 
           <Box sx={{ mb: 1 }}>
             <Typography variant="body2">
-              <strong>Tier:</strong> {tiers.tierName}
+              <strong>Tier:</strong> {tierName || "Loading..."}
             </Typography>
             <Typography variant="body2">
               <strong>Description:</strong> {offerDescription.slice(0, 50)}...
@@ -168,7 +183,7 @@ const OfferCard = ({ offer, onEdit, onDelete }) => {
 
           <ButtonGroup variant="outlined" size="small">
             <Button
-              onClick={() => handleEditClick()}
+              onClick={handleEditClick}
               sx={{
                 color: isActive ? textColor : "#ffffff",
                 borderColor: isActive ? textColor : "#ffffff",

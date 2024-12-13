@@ -299,15 +299,6 @@ const TiersContent = () => {
                         <Box
                           sx={{ display: "flex", justifyContent: "flex-end" }}
                         >
-                          <ButtonGroup>
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              startIcon={<EditIcon />}
-                              onClick={() => handleEdit(tier.id)}
-                            >
-                              Edit
-                            </Button>
                             <Button
                               variant="contained"
                               color="secondary"
@@ -316,7 +307,6 @@ const TiersContent = () => {
                             >
                               Delete
                             </Button>
-                          </ButtonGroup>
                         </Box>
                       )}
                     </AccordionDetails>
