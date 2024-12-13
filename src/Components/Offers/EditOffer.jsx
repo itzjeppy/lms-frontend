@@ -52,9 +52,9 @@ const EditOffer = () => {
 
     const fetchTiers = async () => {
       try {
-        const partnerId = localStorage.getItem('partnerId');
+        const partner = localStorage.getItem('partnerId');
         const response = await TierService.getTiersByPartnerId(
-          partnerId
+          partner
         );
         setTiers(response.data);
       } catch (error) {
@@ -123,6 +123,7 @@ const EditOffer = () => {
             }}
             validationSchema={schema}
             onSubmit={handleSubmit}
+            enableReinitialize={true}
           >
             {({ isSubmitting, setFieldValue, values }) => (
               <Form>
