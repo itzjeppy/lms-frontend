@@ -18,7 +18,7 @@ import LandingBar from './LandingBar';
 import { useNavigate } from 'react-router-dom';
 import PartnerService from '../Services/PartnerService';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar, Alert } from '@mui/material';
-
+ 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -35,7 +35,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
     boxShadow: 'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
   }),
 }));
-
+ 
 const SignInContainer = styled(Stack)(({ theme }) => ({
   height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
   minHeight: '100%',
@@ -56,7 +56,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
     }),
   },
 }));
-
+ 
 export default function SignIn(props) {
   const [email, setEmail] = React.useState('');
   const [emailError, setEmailError] = React.useState(false);
@@ -68,22 +68,22 @@ export default function SignIn(props) {
   const [openDialog, setOpenDialog] = React.useState(false);
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const navigate = useNavigate();
-
+ 
   const handleClickOpen = () => {
     setOpen(true);
   };
-
+ 
   const handleClose = () => {
     setOpen(false);
   };
-
+ 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
-
+ 
   const validateInputs = () => {
     let isValid = true;
-
+ 
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
@@ -92,7 +92,7 @@ export default function SignIn(props) {
       setEmailError(false);
       setEmailErrorMessage('');
     }
-
+ 
     if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage('Password must be at least 6 characters long.');
@@ -103,25 +103,25 @@ export default function SignIn(props) {
     }
     return isValid;
   };
-
+ 
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!validateInputs()) {
       return;
     }
-
+ 
     PartnerService.Login(email, password)
       .then((response) => {
         console.log("sign in successful:", response.data);
         const { partnerId, email, status, partnerName, countryCode, contact } = response.data;
-
+ 
         localStorage.setItem('partnerId', partnerId);
         localStorage.setItem('email', email);
         localStorage.setItem('status', status);
         localStorage.setItem('partnerName', partnerName);
         localStorage.setItem('countryCode', countryCode);
         localStorage.setItem('contact', contact);
-
+ 
         if (status === true) {
           navigate("/dashboard");
         } else {
@@ -133,7 +133,7 @@ export default function SignIn(props) {
         setSnackbarOpen(true); // Show snackbar on error
       });
   };
-
+ 
   return (
     <div position="fixed">
       <LandingBar />
@@ -148,8 +148,8 @@ export default function SignIn(props) {
             component="img"
             alignSelf="center"
             sx={{
-              height: '75%',
-              width: '75%',
+              height: '35%',
+              width: '45%',
             }}
             src="/final.png"
           />
@@ -215,34 +215,10 @@ export default function SignIn(props) {
             >
               Sign in
             </Button>
-            <Link
-              component="button"
-              type="button"
-              onClick={handleClickOpen}
-              variant="body2"
-              sx={{ alignSelf: 'center' }}
-            >
-              Forgot your password?
-            </Link>
           </Box>
           <Divider>or</Divider>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert('Sign in with Google')}
-              startIcon={<GoogleIcon />}
-            >
-              Sign in with Google
-            </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert('Sign in with Facebook')}
-              startIcon={<FacebookIcon />}
-            >
-              Sign in with Facebook
-            </Button>
+           
             <Typography sx={{ textAlign: 'center' }}>
               Don't have an account?{' '}
               <Link href="/signUp" variant="body2" sx={{ alignSelf: 'center' }}>

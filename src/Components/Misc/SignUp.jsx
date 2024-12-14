@@ -1,282 +1,181 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
-import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
-import Link from '@mui/material/Link';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import GoogleIcon from '@mui/icons-material/Google';
-import LandingBar from './LandingBar';
-import { MuiTelInput } from 'mui-tel-input';
-import PartnerService from '../Services/PartnerService';
-import { useNavigate } from 'react-router-dom';
-
-const Card = styled(MuiCard)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignSelf: 'center',
-  width: '100%',
+import React, { useState } from "react";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Box,
+  Button,
+  Divider,
+  FormControl,
+  FormLabel,
+  Link,
+  TextField,
+  Card,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import GoogleIcon from "@mui/icons-material/Google";
+import { MuiTelInput } from "mui-tel-input";
+import { useNavigate } from "react-router-dom";
+import LandingBar from "./LandingBar";
+ 
+const StyledContainer = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "center",
+  gap: theme.spacing(4),
   padding: theme.spacing(4),
+  maxWidth: "1200px",
+  margin: "auto",
+}));
+ 
+const StyledCard = styled(Card)(({ theme }) => ({
+  flex: 1,
+  padding: theme.spacing(4),
+  borderRadius: theme.spacing(2),
+  boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.1)",
+}));
+ 
+const FormSection = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing(2),
-  margin: 'auto',
-  boxShadow: 'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
-  [theme.breakpoints.up('sm')]: {
-    width: '450px',
-  },
 }));
-
-const SignUpContainer = styled(Stack)(({ theme }) => ({
-  height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
-  minHeight: '100%',
-  padding: theme.spacing(2),
-  [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(4),
-  },
-  '&:before': {
-    content: '""',
-    display: 'block',
-    position: 'absolute',
-    zIndex: -1,
-    inset: 0,
-    backgroundImage: 'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
-    backgroundRepeat: 'no-repeat',
-  },
+ 
+const SocialSection = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: theme.spacing(3),
 }));
-
-export default function SignUp(props) {
-  const [email, setEmail] = React.useState('');
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-  const [name, setName] = React.useState('');
-  const [nameError, setNameError] = React.useState(false);
-  const [nameErrorMessage, setNameErrorMessage] = React.useState('');
-  const [contactNumber, setContactNumber] = React.useState('');
-  const [contactError, setContactError] = React.useState(false);
-  const [contactErrorMessage, setContactErrorMessage] = React.useState('');
-  const [countryCode, setCountryCode] = React.useState('+91'); 
+ 
+const LogoContainer = styled(Box)(({ theme }) => ({
+  textAlign: "center",
+  marginBottom: theme.spacing(4),
+}));
+ 
+const SignUp = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
+  const [countryCode, setCountryCode] = useState("+91");
   const navigate = useNavigate();
-
+ 
   const validateInputs = () => {
-    let isValid = true;
-
-    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-      setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
-    }
-
-    if (!password || password.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters long.');
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage('');
-    }
-
-    if (!name || name.length < 1) {
-      setNameError(true);
-      setNameErrorMessage('Name is required.');
-      isValid = false;
-    } else {
-      setNameError(false);
-      setNameErrorMessage('');
-    }
-
-    if (!contactNumber || contactNumber.length < 10) {
-      setContactError(true);
-      setContactErrorMessage('Please enter a valid contact number.');
- isValid = false;
-    } else {
-      setContactError(false);
-      setContactErrorMessage('');
-    }
-
-    return isValid;
+    return email && password.length >= 6 && name && contactNumber.length >= 10;
   };
-
+ 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!validateInputs()) {
-      return;
-    }
-    const partner = {
-      partnerName: name,
-      email,
-      password,
-      contact: contactNumber.replace(/\s+/g, ''),
-      countryCode,
-    };
-
-    PartnerService.registerPartner(partner)
-      .then((response) => {
-        console.log("Sign up successful:", response.data);
-        navigate("/SignIn");
-      })
-      .catch((error) => {
-        console.error("Error in signing up", error);
-      });
+    if (!validateInputs()) return;
+    navigate("/signIn");
   };
-
+ 
   const handleTelChange = (value) => {
-    // Assuming the value is formatted as "+Code Number"
-    const spaceIndex = value.indexOf(' ');
+    const spaceIndex = value.indexOf(" ");
     if (spaceIndex !== -1) {
       const code = value.substring(0, spaceIndex);
       const number = value.substring(spaceIndex + 1);
       setCountryCode(code);
       setContactNumber(number);
     } else {
-      // Handle cases where no space is found (likely no country code)
       setContactNumber(value);
     }
-    console.log("Country Code:", countryCode, "Contact Number:", contactNumber);
   };
-
+ 
   return (
-    <div position="fixed">
+    <div>
+      <br/>
+      <br/>
+    <Box >
+      {/* Navbar */}
       <LandingBar />
-      <CssBaseline enableColorScheme />
-      <SignUpContainer direction="column" justifyContent="space-between">
-        <Card variant="outlined">
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            component="img"
-            alignSelf="center"
-            sx={{
-              height: '75%',
-              width: '75%',
-            }}
-            src="/final.png"
-          />
-          <Typography
-            component="h1"
-            variant="h4"
-            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
-          >
-            Sign up
+      {/* Content Container */}
+ 
+     
+      <StyledContainer sx={{height: "40%",width: "50%"}}>
+       
+        {/* Left Card: Sign-up Form */}
+        <StyledCard>
+ 
+       
+          <Typography variant="h4" gutterBottom>
+           
+          <center><img
+          src="/final.png"
+          alt="Logo"
+          style={{ height: "30%", width: "40%" }}
+        /></center>
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
-          >
-            <FormControl>
-              <FormLabel htmlFor="name">Full name</FormLabel>
+          <Typography variant="h4" gutterBottom>
+           
+            Sign up
+            <br/>
+          </Typography>
+          <Box component="form" onSubmit={handleSubmit}>
+            <FormControl fullWidth>
+              <FormLabel>Full Name</FormLabel>
               <TextField
-                autoComplete="name"
-                name="name"
+                variant="outlined"
+                placeholder="Enter your name"
+                value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                fullWidth
-                id="name"
-                placeholder="Enter your name"
-                error={nameError}
-                helperText={nameErrorMessage}
-                color={nameError ? 'error' : 'primary'}
               />
             </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
+            <FormControl fullWidth>
+              <FormLabel>Email</FormLabel>
               <TextField
-                required
-                fullWidth
-                id="email"
+                variant="outlined"
                 placeholder="Enter your email"
-                name="email"
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-                variant="outlined"
-                error={emailError}
-                helperText={emailErrorMessage}
-                color={emailError ? 'error' : 'primary'}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
-              <TextField
                 required
-                fullWidth
-                name="password"
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••••••••••"
-                type="password"
-                id="password"
-                autoComplete="new-password"
-                variant="outlined"
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                color={passwordError ? 'error' : 'primary'}
               />
             </FormControl>
-            <FormControl>
-            <FormLabel htmlFor="contact">Contact Number</FormLabel>
-            <MuiTelInput
-              required
-              fullWidth
-              name="contactNumber"
-              value={`${countryCode} ${contactNumber}`} // Ensure this reflects the correct format
-              onChange={handleTelChange}
-              placeholder="Enter your Country Code and Phone Number"
-              variant="outlined"
-              error={contactError}
-              helperText={contactErrorMessage}
-            />
+            <FormControl fullWidth>
+              <FormLabel>Password</FormLabel>
+              <TextField
+                type="password"
+                variant="outlined"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </FormControl>
+            <FormControl fullWidth>
+              <FormLabel>Contact Number</FormLabel>
+              <MuiTelInput
+                fullWidth
+                value={`${countryCode} ${contactNumber}`}
+                onChange={handleTelChange}
+                required
+              />
             </FormControl>
             <Button
               type="submit"
-              fullWidth
               variant="contained"
-              onClick={validateInputs}
+              color="primary"
+              fullWidth
+              sx={{ mt: 2 }}
             >
               Sign up
             </Button>
+           
           </Box>
-          <Divider>
-            <Typography sx={{ color: 'text.secondary' }}>or</Typography>
-          </Divider>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert('Sign up with Google')}
-              startIcon={<GoogleIcon />}
-            >
-              Sign up with Google
-            </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert('Sign up with Facebook')}
-              startIcon={<FacebookIcon />}
-            >
-              Sign up with Facebook
-            </Button>
-            <Typography sx={{ textAlign: 'center' }}>
-              Already have an account?{' '}
-              <Link href="/signIn" variant="body2" sx={{ alignSelf: 'center' }}>
-                Sign in
-              </Link>
+ 
+          <Typography>
+              Already have an account?{" "}
+              <Link href="/signIn">Sign in</Link>
             </Typography>
-          </Box>
-        </Card>
-      </SignUpContainer>
+        </StyledCard>
+      </StyledContainer>
+    </Box>
     </div>
+   
   );
-} 
+};
+ 
+export default SignUp;
