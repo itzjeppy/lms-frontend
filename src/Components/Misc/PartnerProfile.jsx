@@ -111,8 +111,14 @@ const ProfilePage = () => {
           <DataGrid
             rows={users}
             columns={columns}
-            pageSize={5}
-            rowsPerPageOptions={[5, 10, 25]}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 5,
+                },
+              },
+            }}
+            pageSizeOptions={[5]}
             autoHeight
           />
         </div>
