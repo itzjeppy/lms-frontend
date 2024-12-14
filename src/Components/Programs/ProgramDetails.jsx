@@ -22,6 +22,7 @@ const ProgramDetails = () => {
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [tiers, setTiers] = useState({});
+  const [tierColor, setTierColor] = useState([]);
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
@@ -35,9 +36,13 @@ const ProgramDetails = () => {
       try {
         const offersResponse = await OfferService.getOfferByProgramId(id);
         setOffers(offersResponse.data);
+        console.log("Fetched Offers: ", offersResponse.data);
+
 
         const couponsResponse = await CouponService.getCouponByProgramId(id);
         setCoupons(couponsResponse.data);
+        console.log("Fetched Coupons: ", couponsResponse.data);
+
 
         const partnerId = localStorage.getItem('partnerId');
         const tiersResponse = await TierService.getTiersByPartnerId(partnerId);
@@ -45,7 +50,7 @@ const ProgramDetails = () => {
         tiersResponse.data.forEach(tier => {
           tiersMap[tier.id] = tier.colour;
         });
-        setTiers(tiersMap);
+        setTierColor(tiersMap);
       } catch (error) {
         console.error("Error fetching program details:", error);
       } finally {
@@ -153,7 +158,7 @@ const ProgramDetails = () => {
           <MuiGrid item xs={12} sm={6} md={4} key={offer.offerId}>
             <OfferCard
               offer={offer}
-              tierColor={tiers[offer.colour] || "#cccccc"}
+              tierColor={tierColor[offer.tierId] || "#cccccc"}
               onDelete={() => handleDelete(offer.offerId, false)}
             />
           </MuiGrid>
@@ -190,15 +195,16 @@ const ProgramDetails = () => {
       </Typography>
 
       <MuiGrid container spacing={3}>
-        {coupons.map((coupon) => (
-          <MuiGrid item xs={12} sm={6} md={4} key={coupon.id}>
-            <CouponsCard
-              coupon={coupon}
-              tierColor={tiers[coupon.colour] || "#cccccc"}
-              onDelete={() => handleDelete(coupon.couponId, true)}
-            />
-          </MuiGrid>
-        ))}
+        {coupons.map((coupon, index) => (
+          <MuiGrid item xs={12} sm={6} md={4} key={coupon.couponId || index}>
+              <CouponsCard
+                coupon={coupon}
+                tierColor={tierColor[coupon.tierId] || "#cccccc"}
+                onDelete={() => handleDelete(coupon.couponId, true)}
+              />
+        </MuiGrid>
+
+      ))}
 
         {/* Add New Coupon Card */}
         <MuiGrid item xs={12} sm={6} md={4}>

@@ -39,7 +39,7 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
   const [openInfoModal, setOpenInfoModal] = useState(false);
   const [isActive, setIsActive] = useState(coupon.isActive);
 
-  const lightColor = lightenColor(tierColor, 60);
+  const lightColor = lightenColor(tierColor, 40);
   const textColor = getTextColor(tierColor);
   const commonTextColor = isActive ? textColor : "#ffffff";
 
@@ -52,9 +52,14 @@ const CouponsCard = ({ coupon, tierColor, onEdit, onDelete }) => {
   };
 
   const handleEditClick = () => {
-    console.log("Coupon ID:", coupon.couponId);
+    if (!coupon || !coupon.couponId) {
+      console.error("Coupon data or couponId is missing:", coupon);
+      return;
+    }
+    console.log("Coupon ID: ", coupon.couponId);
     navigate(`../edit-coupon/${coupon.couponId}`);
   };
+  
 
   // Function to truncate the title
   const truncateTitle = (title) => {

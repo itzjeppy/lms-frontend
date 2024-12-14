@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -9,25 +9,33 @@ import {
   Button,
   Chip,
   ButtonGroup,
+  CircularProgress,
 } from "@mui/material";
 import { DeleteForever, Edit } from "@mui/icons-material";
- 
+
 const ProgramCard = ({ program, onToggle, onDelete }) => {
   const { programId, programName, status, startDate, endDate } = program;
   const navigate = useNavigate();
- 
+  const [loading, setLoading] = useState(false); // Local state for loading
+
   const backgroundGradient = status
     ? "linear-gradient(to bottom right, #A5D6A7, #66BB6A)"
     : "linear-gradient(to bottom right, #FFABAB, #FF8A80)";
- 
+
   const handleEdit = () => {
     navigate(`../edit-program/${programId}`, { state: { program } });
   };
- 
+
   const handleDetails = () => {
     navigate(`../program-details/${programId}`);
   };
- 
+
+  const handleToggle = async () => {
+    setLoading(true); // Set loading to true
+    await onToggle(); // Call the toggle function
+    setLoading(false); // Reset loading after the toggle is complete
+  };
+
   return (
     <Box sx={{ p: 2 }}>
       <Card
@@ -62,22 +70,24 @@ const ProgramCard = ({ program, onToggle, onDelete }) => {
               {programName}
             </Typography>
             <Chip
-              label={status ? "Active" : "Inactive"}
+              label={loading ? <CircularProgress size={20} color="inherit" /> : (status ? "Active" : "Inactive")}
               color={status ? "success" : "error"}
-              onClick={onToggle}
+              onClick={handleToggle}
               size="small"
               sx={{
                 color: "#fff",
                 fontWeight: "bold",
                 backgroundColor: status ? "#4CAF50" : "#D32F2F",
                 marginLeft: "10px",
+                cursor: loading ? "not-allowed" : "pointer", // Change cursor when loading
               }}
+              disabled={loading} // Disable chip when loading
             />
           </Box>
- 
+
           {/* Divider */}
           <Divider sx={{ my: 2, borderColor: "rgba(255,255,255,0.5)" }} />
- 
+
           {/* Program Dates */}
           <Typography variant="body2" sx={{ mb: 1 }}>
             <strong>Start Date:</strong> {new Date(startDate).toLocaleDateString()}
@@ -86,7 +96,7 @@ const ProgramCard = ({ program, onToggle, onDelete }) => {
             <strong>End Date:</strong> {new Date(endDate).toLocaleDateString()}
           </Typography>
         </CardContent>
- 
+
         <Box
           sx={{
             display: "flex",
@@ -108,14 +118,14 @@ const ProgramCard = ({ program, onToggle, onDelete }) => {
               borderRadius: "20px",
               fontWeight: "bold",
               textTransform: "none",
-              "&:hover": {
+              "& :hover": {
                 backgroundColor: "rgba(255,255,255,0.2)",
               },
             }}
           >
             Details
           </Button>
- 
+
           {/* Edit and Delete Button Group */}
           <ButtonGroup variant="outlined" aria-label="outlined primary button group">
             <Button
@@ -150,10 +160,10 @@ const ProgramCard = ({ program, onToggle, onDelete }) => {
     </Box>
   );
 };
- 
+
 ProgramCard.defaultProps = {
   onEdit: () => {},
   onDelete: () => {},
 };
- 
+
 export default ProgramCard;

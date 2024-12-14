@@ -1,12 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   TextField,
   Button,
-  FormControlLabel,
-  Switch,
   Box,
   Typography,
   Paper,
@@ -17,8 +15,7 @@ import {
   Container,
   Grid2,
   Slider,
-  Tooltip,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import { MuiColorInput } from "mui-color-input";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -32,14 +29,14 @@ const schema = Yup.object().shape({
     .required("Trigger Amount is required")
     .min(0, "Trigger Amount cannot be negative"),
   triggerDuration: Yup.number()
-    .when('isFreeTier', (isFreeTier) => { 
+    .nullable()
+    .when("isFreeTier", (isFreeTier, schema) => {
       if (!isFreeTier) {
-        return Yup.number()
+        return schema
           .min(1, "Duration must be at least 1 month for non-free tiers")
           .required("Trigger Duration is required");
-      } else {
-        return Yup.number().notRequired();
       }
+      return schema.nullable(); // Allow null for free tiers
     }),
   accrualMultiplier: Yup.number()
     .required("Accrual Multiplier is required")
@@ -58,18 +55,30 @@ const schema = Yup.object().shape({
   colour: Yup.string()
     .required("Colour is required")
     .matches(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Enter a valid hex color"),
+  isFreeTier: Yup.boolean(),
 });
+
 
 const AddTier = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isFreeTier, setIsFreeTier] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    // Set `isFreeTier` based on location state
+    if (location.state?.isFreeTier) {
+      setIsFreeTier(true);
+    }
+  }, [location.state?.isFreeTier]);
+
   const handleSubmit = (values) => {
     setIsSubmitting(true);
+
     const existingTiers = JSON.parse(localStorage.getItem("tiers") || "[]");
-    const { isFreeTier, ...tierValues } = values;
-    const partnerId = localStorage.getItem('partnerId');
+    const { isFreeTier, ...tierValues } = values; // Remove `isFreeTier` from the payload
+    const partnerId = localStorage.getItem("partnerId");
+
     const tier = {
       partner_id: partnerId,
       ...tierValues,
@@ -77,12 +86,12 @@ const AddTier = () => {
 
     TierService.createTiers(tier)
       .then((response) => {
-        console.log("Created tiers:", response.data);
+        console.log("Created tier:", response.data);
         localStorage.setItem("tiers", JSON.stringify([...existingTiers, tier]));
-        navigate(-1);
+        navigate(-1); // Navigate back
       })
       .catch((error) => {
-        console.error("Error creating tiers", error);
+        console.error("Error creating tier:", error);
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -107,23 +116,24 @@ const AddTier = () => {
       <Paper
         sx={{
           p: { xs: 2, md: 3 },
-          borderRadius : 2,
+          borderRadius: 2,
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <Formik
+      <Formik
           initialValues={{
             tierName: "",
-            triggerAmount: isFreeTier ? 0 : "",
-            triggerDuration: isFreeTier ? 0 : "",
+            triggerAmount: isFreeTier ? 0 : "", // Ensure triggerAmount is set
+            triggerDuration: isFreeTier ? 0 : "", // Ensure triggerDuration is set
             accrualMultiplier: "",
             redemptionLimitOfPurchase: "",
             conversion: "",
             description: "",
-            couponProbability: 0, // Initialize with 0
+            couponProbability: 0,
             colour: "#FFFFFF",
             isFreeTier,
           }}
+          enableReinitialize // Reinitialize Formik values when `isFreeTier` changes
           validationSchema={schema}
           onSubmit={handleSubmit}
         >
@@ -139,33 +149,14 @@ const AddTier = () => {
                 }}
               >
                 <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                  Add New Tier
+                  {isFreeTier ? "Add Free Tier" : "Add New Tier"}
                 </Typography>
                 <AddCircleOutlineIcon color="primary" fontSize="large" />
               </Box>
 
-              {/* Free Tier Toggle */}
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={isFreeTier}
-                    onChange={(event) => {
-                      setIsFreeTier(event.target.checked);
-                      setFieldValue("isFreeTier", event.target.checked);
-                      setFieldValue("triggerAmount", event.target.checked ? 0 : "");
-                      setFieldValue("triggerDuration", event.target.checked ? 0 : "");
-                    }}
-                    color="primary"
-                  />
-                }
-                label="Is this a Free Tier?"
-                sx={{ mb: 3 }}
-              />
-
-              {/* Accordion for Form Sections */}
-              <Accordion defaultExpanded sx={{ boxShadow:"none"}}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}
-                >
+              {/* Basic Details Section */}
+              <Accordion defaultExpanded sx={{ boxShadow: "none" }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                     Basic Details
                   </Typography>
@@ -215,7 +206,8 @@ const AddTier = () => {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion sx={{ boxShadow:"none"}}>
+              {/* Rewards Section */}
+              <Accordion sx={{ boxShadow: "none" }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                     Rewards and Metrics
@@ -272,10 +264,9 @@ const AddTier = () => {
                           setFieldValue("couponProbability", newValue);
                         }}
                         step={0.01}
-                        min={ 0}
+                        min={0}
                         max={1}
                         valueLabelDisplay="auto"
-                        size="large"
                       />
                       <ErrorMessage
                         name="couponProbability"
@@ -286,7 +277,8 @@ const AddTier = () => {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion sx={{ boxShadow:"none"}}>
+              {/* Additional Info Section */}
+              <Accordion sx={{ boxShadow: "none" }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                     Additional Information
@@ -324,9 +316,20 @@ const AddTier = () => {
                   variant="contained"
                   color="primary"
                   size="large"
-                  sx={{ position: 'relative' }}
+                  sx={{ position: "relative" }}
                 >
-                  {isSubmitting && <CircularProgress size={24} sx={{ position: 'absolute', left: '50%', top: '50%', marginLeft: '-12px', marginTop: '-12px' }} />}
+                  {isSubmitting && (
+                    <CircularProgress
+                      size={24}
+                      sx={{
+                        position: "absolute",
+                        left: "50%",
+                        top: "50%",
+                        marginLeft: "-12px",
+                        marginTop: "-12px",
+                      }}
+                    />
+                  )}
                   Submit
                 </Button>
               </Box>

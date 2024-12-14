@@ -53,8 +53,12 @@ const TiersContent = () => {
   }, []);
  
   const handleAddFreeTier = () => {
-    navigate("../add-tier");
+    navigate("../add-tier", { state: { isFreeTier: true } });
   };
+
+  const handleAddTier = () => {
+    navigate("../add-tier", { state: { isFreeTier: false } });
+  }
  
   const handleEdit = (tierId) => {
     navigate(`/edit-tier/${tierId}`);
@@ -140,7 +144,7 @@ const TiersContent = () => {
             variant="contained"
             color="primary"
             startIcon={<AddCircleOutlineIcon />}
-            onClick={handleAddFreeTier}
+            onClick={handleAddTier}
             sx={{
               fontWeight: "bold",
               textTransform: "none",
@@ -169,12 +173,8 @@ const TiersContent = () => {
             variant="contained"
             color="primary"
             startIcon={<AddCircleOutlineIcon />}
-            onClick={handleAddFreeTier}
-            sx={{
-              fontWeight: "bold",
-              textTransform: "none",
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
-            }}
+            onClick={handleAddFreeTier} 
+            sx={{ fontWeight: "bold", textTransform: "none", boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)" }}
           >
             Create Free Tier
           </Button>

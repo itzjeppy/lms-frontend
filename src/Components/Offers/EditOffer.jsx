@@ -35,7 +35,7 @@ const schema = Yup.object().shape({
 
 const EditOffer = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { offerId } = useParams();
   const [offer, setOffer] = useState({});
   const [tiers, setTiers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +44,7 @@ const EditOffer = () => {
   useEffect(() => {
     const fetchOffer = async () => {
       try {
-        const response = await OfferService.getOfferById(id);
+        const response = await OfferService.getOfferById(offerId);
         const offerData = response.data;
 
         // Format any date fields if necessary
@@ -72,7 +72,7 @@ const EditOffer = () => {
 
     fetchOffer();
     fetchTiers();
-  }, [id]);
+  }, [offerId]);
 
   const handleSubmit = (values) => {
     const { image, ...value } = values;
@@ -82,7 +82,7 @@ const EditOffer = () => {
       const base64Image = imageData.split(",")[1];
       const updatedOffer = { ...value, imageUrl: base64Image };
       console.log("Updating offer:", updatedOffer);
-      OfferService.updateOffers(updatedOffer, id)
+      OfferService.updateOffers(updatedOffer, offerId)
         .then((response) => {
           console.log("Updated offer:", response.data);
           navigate(-1);
@@ -121,46 +121,44 @@ const EditOffer = () => {
           </Typography>
           <Divider sx={{ mb: 2 }} />
           <Formik
-            initialValues={{
-              tierId: offer.tierId || '',
-              offerTitle: offer.offerTitle || '',
-              offerDescription: offer.offerDescription || '',
-              image: offer.imageUrl || null,
-              benefit: offer.benefit || '',
-              status: offer.status || false,
-            }}
-            validationSchema={schema}
-            onSubmit={handleSubmit}
-            enableReinitialize={true}
-          >
+              initialValues={{
+                tierId: offer.tierId || '', // Use the tierId from the fetched offer
+                offerTitle: offer.offerTitle || '',
+                offerDescription: offer.offerDescription || '',
+                image: offer.imageUrl || null,
+                benefit: offer.benefit || '',
+                status: offer.status || false,
+              }}
+              validationSchema={schema}
+              onSubmit={handleSubmit}
+              enableReinitialize
+            >
             {({ isSubmitting, setFieldValue, values }) => (
               <Form>
                 {/* Tier ID */}
                 <Box mb={3}>
                 <FormControl fullWidth>
-                    <Field
-                      name="tierId"
-                      as={TextField}
-                      select
-                      label="Select Tier"
-                      variant="outlined"
-                      value={offer.tierId}
-                      onChange={(event) =>
-                        setFieldValue("tierId", event.target.value)
-                      }
-                    >
-                      {tiers.length > 0 ? (
-                        tiers.map((tier) => (
-                          <MenuItem key={tier.tierId} value={tier.tierId}>
-                            {tier.tierName}
-                          </MenuItem>
-                        ))
-                      ) : (
-                        <MenuItem disabled>No tiers available</MenuItem>
-                      )}
-                    </Field>
-                    <ErrorMessage name="tierId" component={FormHelperText} />
-                  </FormControl>
+          <Field
+            name="tierId"
+            as={TextField}
+            select
+            label="Select Tier"
+            variant="outlined"
+            value={values.tierId} // Explicitly set the value
+            onChange={(event) => setFieldValue("tierId", event.target.value)}
+          >
+            {tiers.length > 0 ? (
+              tiers.map((tier) => (
+                <MenuItem key={tier.tierId} value={tier.tierId}>
+                  {tier.tierName}
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem disabled>No tiers available</MenuItem>
+            )}
+          </Field>
+          <ErrorMessage name="tierId" component={FormHelperText} />
+        </FormControl>
                 </Box>
                 {/* Offer Title */}
                 <Box mb={3}>

@@ -1,95 +1,87 @@
 import React, { useState } from "react";
 import {
-  AppBar,
-  Toolbar,
   Typography,
   Box,
   Button,
-  Divider,
   FormControl,
   FormLabel,
-  Link,
   TextField,
   Card,
+  Alert,
+  Link,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import GoogleIcon from "@mui/icons-material/Google";
 import { MuiTelInput } from "mui-tel-input";
 import { useNavigate } from "react-router-dom";
 import LandingBar from "./LandingBar";
 import PartnerService from "../Services/PartnerService";
- 
+
 const StyledContainer = styled(Box)(({ theme }) => ({
   display: "flex",
-  flexDirection: "row",
   justifyContent: "center",
-  gap: theme.spacing(4),
-  padding: theme.spacing(4),
-  maxWidth: "1200px",
-  margin: "auto",
+  alignItems: "center",
+  height: "100vh",
+  backgroundColor: "#F3F4F6",
 }));
- 
+
 const StyledCard = styled(Card)(({ theme }) => ({
-  flex: 1,
+  width: "100%",
+  maxWidth: "450px",
   padding: theme.spacing(4),
   borderRadius: theme.spacing(2),
-  boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.1)",
+  boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.1)",
 }));
- 
+
 const FormSection = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing(2),
 }));
- 
-const SocialSection = styled(Box)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  gap: theme.spacing(3),
-}));
- 
+
 const LogoContainer = styled(Box)(({ theme }) => ({
   textAlign: "center",
   marginBottom: theme.spacing(4),
 }));
- 
+
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [contactNumber, setContactNumber] = useState("");
   const [countryCode, setCountryCode] = useState("+91");
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
- 
+
   const validateInputs = () => {
-    return email && password.length >= 6 && name && contactNumber.length >= 10;
+    const isEmailValid = email.includes("@") && email.includes(".");
+    const isPasswordValid = password.length >= 6;
+    const isContactValid = contactNumber.length >= 10;
+    return name && isEmailValid && isPasswordValid && isContactValid;
   };
- 
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!validateInputs()) {
-      return;
-    }
+    if (!validateInputs()) return;
+
     const partner = {
       partnerName: name,
       email,
       password,
-      contact: contactNumber.replace(/\s+/g, ''),
+      contact: contactNumber.replace(/\s+/g, ""),
       countryCode,
     };
 
     PartnerService.registerPartner(partner)
       .then((response) => {
         console.log("Sign up successful:", response.data);
-        navigate("/SignIn");
+        navigate("/signIn");
       })
       .catch((error) => {
         console.error("Error in signing up", error);
+        setError("Sign up failed. Please try again.");
       });
   };
- 
+
   const handleTelChange = (value) => {
     const spaceIndex = value.indexOf(" ");
     if (spaceIndex !== -1) {
@@ -101,99 +93,112 @@ const SignUp = () => {
       setContactNumber(value);
     }
   };
- 
+
   return (
     <div>
-      <br/>
-      <br/>
-    <Box >
-      {/* Navbar */}
       <LandingBar />
-      {/* Content Container */}
- 
-     
-      <StyledContainer sx={{height: "40%",width: "50%"}}>
-       
-        {/* Left Card: Sign-up Form */}
+      <StyledContainer sx={{display: "flex", justifyContent:"center", alignContent: "center", marginTop:"30px"}}>
         <StyledCard>
- 
-       
-          <Typography variant="h4" gutterBottom>
-           
-          <center><img
-          src="/final.png"
-          alt="Logo"
-          style={{ height: "30%", width: "40%" }}
-        /></center>
+          <LogoContainer>
+            <img 
+              src="/final.png" 
+              alt="Logo" 
+              style={{ height: "80px", width: "auto" }} 
+            />
+          </LogoContainer>
+
+          <Typography 
+            variant="h4" 
+            sx={{ fontWeight: "bold", textAlign: "center", mb: 2 }}
+          >
+            Sign Up
           </Typography>
-          <Typography variant="h4" gutterBottom>
-           
-            Sign up
-            <br/>
-          </Typography>
+
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+
           <Box component="form" onSubmit={handleSubmit}>
-            <FormControl fullWidth>
-              <FormLabel>Full Name</FormLabel>
-              <TextField
-                variant="outlined"
-                placeholder="Enter your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </FormControl>
-            <FormControl fullWidth>
-              <FormLabel>Email</FormLabel>
-              <TextField
-                variant="outlined"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </FormControl>
-            <FormControl fullWidth>
-              <FormLabel>Password</FormLabel>
-              <TextField
-                type="password"
-                variant="outlined"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </FormControl>
-            <FormControl fullWidth>
-              <FormLabel>Contact Number</FormLabel>
-              <MuiTelInput
+            <FormSection>
+              <FormControl fullWidth>
+                <FormLabel>Full Name</FormLabel>
+                <TextField
+                  variant="outlined"
+                  placeholder="Enter your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+              </FormControl>
+
+              <FormControl fullWidth>
+                <FormLabel>Email</FormLabel>
+                <TextField
+                  variant="outlined"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </FormControl>
+
+              <FormControl fullWidth>
+                <FormLabel>Password</FormLabel>
+                <TextField
+                  type="password"
+                  variant="outlined"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  helperText={password && password.length < 6 ? "Password must be at least 6 characters" : ""}
+                />
+              </FormControl>
+
+              <FormControl fullWidth>
+                <FormLabel>Contact Number</FormLabel>
+                <MuiTelInput
+                  fullWidth
+                  value={`${countryCode} ${contactNumber}`}
+                  onChange={handleTelChange}
+                  required
+                />
+              </FormControl>
+
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
                 fullWidth
-                value={`${countryCode} ${contactNumber}`}
-                onChange={handleTelChange}
-                required
-              />
-            </FormControl>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{ mt: 2 }}
-            >
-              Sign up
-            </Button>
-           
+                sx={{
+                  mt: 2, 
+                  borderRadius: "20px", 
+                  height: "48px", 
+                  fontWeight: "bold",
+                }}
+                disabled={!validateInputs()}
+              >
+                Sign up
+              </Button>
+
+              <Typography 
+                variant="body2" 
+                sx={{ textAlign: "center", mt: 2 }}
+              >
+                Already have an account?{" "}
+                <Link href="/signIn" sx={{ color: "primary.main", fontWeight: "bold" }}>
+                  Sign in
+                </Link>
+              </Typography>
+            </FormSection>
           </Box>
- 
-          <Typography>
-              Already have an account?{" "}
-              <Link href="/signIn">Sign in</Link>
-            </Typography>
         </StyledCard>
       </StyledContainer>
-    </Box>
     </div>
-   
   );
 };
- 
+
 export default SignUp;

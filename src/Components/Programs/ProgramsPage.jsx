@@ -121,8 +121,18 @@ const ProgramsPage = () => {
           <Typography variant="h6" color="textSecondary" sx={{ mb: 2 }}>
             Please create at least one tier before managing programs.
           </Typography>
-          <Button variant="contained" color="primary" onClick={() => navigate("../add-tier")}>
-            Create Tier
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddCircleOutlineIcon />}
+            onClick={() => navigate("../add-tier")}
+            sx={{
+              fontWeight: "bold",
+              textTransform: "none",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+            }}
+          >
+            Create Free Tier
           </Button>
         </Box>
       ) : (

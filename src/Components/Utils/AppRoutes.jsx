@@ -56,11 +56,11 @@ const AppRoutes = () => {
         <Route index element={<Contacts />} /> {/* Default dashboard page */}
         <Route path="offers" element={<OffersPage />} />
         <Route path="add-offer" element={<AddOffers />} />
-        <Route path="edit-offer/:id" element={<EditOffer />} />
+        <Route path="edit-offer/:offerId" element={<EditOffer />} />
         {/* Coupons */}
         <Route path="coupons" element={<CouponsPage />} />
         <Route path="add-coupon" element={<AddCoupons />} />
-        <Route path="edit-coupon/:id" element={<EditCoupon />} />
+        <Route path="edit-coupon/:couponId" element={<EditCoupon />} />
         {/* Tiers */}
         <Route path="tiers" element={<TiersPage />} />
         <Route path="add-tier" element={<AddTier />} />
