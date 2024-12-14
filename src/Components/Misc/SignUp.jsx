@@ -18,6 +18,7 @@ import GoogleIcon from "@mui/icons-material/Google";
 import { MuiTelInput } from "mui-tel-input";
 import { useNavigate } from "react-router-dom";
 import LandingBar from "./LandingBar";
+import PartnerService from "../Services/PartnerService";
  
 const StyledContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -68,8 +69,25 @@ const SignUp = () => {
  
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!validateInputs()) return;
-    navigate("/signIn");
+    if (!validateInputs()) {
+      return;
+    }
+    const partner = {
+      partnerName: name,
+      email,
+      password,
+      contact: contactNumber.replace(/\s+/g, ''),
+      countryCode,
+    };
+
+    PartnerService.registerPartner(partner)
+      .then((response) => {
+        console.log("Sign up successful:", response.data);
+        navigate("/SignIn");
+      })
+      .catch((error) => {
+        console.error("Error in signing up", error);
+      });
   };
  
   const handleTelChange = (value) => {

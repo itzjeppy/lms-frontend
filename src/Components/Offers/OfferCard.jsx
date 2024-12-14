@@ -59,7 +59,8 @@ const OfferCard = ({ offer, onEdit, onDelete }) => {
         const response = await TierService.getTierByTierId(tierId);
         setTierName(response.data.tierName); // Assuming the response has tierName
         console.log(response.data.tierName)
-        setTierColor(response.data.color); // Assuming the response has color
+        setTierColor(response.data.colour); // Assuming the response has color
+        console.log(response.data.colour)
       } catch (error) {
         console.error("Error fetching tier:", error);
       }
