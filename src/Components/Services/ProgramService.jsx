@@ -78,6 +78,17 @@ getProgramsById(programId) {
   });
 }
 
+getDefaultProgramsById(partnerId) {
+  return axios({
+    method: "get",
+    url: `${BASE_URL}/getDefaultProgramId?partnerId=${partnerId}`,
+    responseType: "json",
+    headers: {
+      "Access-Control-Allow-Origin": "*"
+    },
+  });
+}
+
 }
 
 export default new ProgramService();

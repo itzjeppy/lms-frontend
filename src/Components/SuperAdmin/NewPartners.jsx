@@ -58,6 +58,7 @@ const NewPartnersPage = () => {
       programName: "Default program",
       partnerId: partnerId,
       status: "true",
+      defaultProgram:"true"
     };
 
     SuperAdminService.updatePartner(partnerId, true)

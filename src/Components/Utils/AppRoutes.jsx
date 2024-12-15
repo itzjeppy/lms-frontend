@@ -35,6 +35,7 @@ import AllPartnersPage from "../SuperAdmin/AllPartners";
 import NewPartnersPage from "../SuperAdmin/NewPartners";
 import DisabledPartnersPage from "../SuperAdmin/DisablePartners";
 import ProgramDetails from "../Programs/ProgramDetails";
+import UserDetails from "../UserProgress/UserDetails";
 
 const AppRoutes = () => {
   return (
@@ -75,6 +76,7 @@ const AppRoutes = () => {
         <Route path="contact" element={<Contacts />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="add-user" element={<AddUser />} />
+        <Route path="user-details" element={<UserDetails/>} />
         <Route path="progress" element={<ProgressPage />} />
       </Route>
     </Routes>
