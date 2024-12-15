@@ -74,6 +74,16 @@ class CouponService {
         },
       });
     }
+    getStandaloneCouponByPartnerId(PartnerId) {
+      return axios({
+        method: "get",
+        url: BASE_URL + "/getStandaloneCouponsByPartner?partner_id=" + PartnerId ,
+        responseType: "json",
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
+      });
+    }
 }
 
 export default new CouponService();

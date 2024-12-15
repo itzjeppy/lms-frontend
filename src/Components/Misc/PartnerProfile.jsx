@@ -18,14 +18,28 @@ const ProfilePage = () => {
   const [users, setUsers] = useState([]);
   const [partner, setPartner] = useState({});
 
+  const navigate = useNavigate();
+
   const columns = [
     { field: "id", headerName: "Id", width: 200 },
     { field: "userID", headerName: "User ID", width: 90 },
     { field: "totalPoints", headerName: "Total Points", width: 150 },
     { field: "tierName", headerName: "Tier Name", width: 150 },
+    {
+      field: "details",
+      headerName: "Details",
+      width: 150,
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate("../user-details", { state: { uId:params.row.id } })}
+        >
+          Details
+        </Button>
+      ),
+    },
   ];
-
-  const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("user");
