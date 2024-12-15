@@ -1,32 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Typography, Avatar, Divider, Grid, Paper, Button } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import {
+  Container,
+  Typography,
+  Avatar,
+  Divider,
+  Grid,
+  Paper,
+  Button,
+} from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
 import UserService from "../Services/UserService";
 import TierService from "../Services/TierService";
-import PartnerService from '../Services/PartnerService';
- 
+import PartnerService from "../Services/PartnerService";
+
 const ProfilePage = () => {
   const [users, setUsers] = useState([]);
   const [partner, setPartner] = useState({});
- 
+
   const columns = [
-    { field: 'id', headerName: 'Id', width: 200 },
-    { field: 'userID', headerName: 'User ID', width: 90 },
-    { field: 'totalPoints', headerName: 'Total Points', width: 150 },
-    { field: 'tierName', headerName: 'Tier Name', width: 150 },
+    { field: "id", headerName: "Id", width: 200 },
+    { field: "userID", headerName: "User ID", width: 90 },
+    { field: "totalPoints", headerName: "Total Points", width: 150 },
+    { field: "tierName", headerName: "Tier Name", width: 150 },
   ];
- 
+
   const navigate = useNavigate();
- 
+
   const handleLogout = () => {
     localStorage.removeItem("user");
     navigate("/");
   };
- 
+
   useEffect(() => {
-    const partnerId = localStorage.getItem('partnerId');
- 
+    const partnerId = localStorage.getItem("partnerId");
+
     const fetchPartner = async () => {
       try {
         const response = await PartnerService.getPartnerById(partnerId);
@@ -36,29 +44,33 @@ const ProfilePage = () => {
         console.error("Error fetching partner details:", error);
       }
     };
- 
+
     const fetchUsers = async () => {
       try {
         const response = await UserService.getUserByPartnerId(partnerId);
-        const usersWithTier = await Promise.all(response.data.map(async (user) => {
-          const tierResponse = await TierService.getTierByTierId(user.tiers.tierId);
-          return {
-            id: user.uId,
-            userID: user.userId,
-            totalPoints: user.totalPoints,
-            tierName: tierResponse.data.tierName,
-          };
-        }));
+        const usersWithTier = await Promise.all(
+          response.data.map(async (user) => {
+            const tierResponse = await TierService.getTierByTierId(
+              user.tiers.tierId
+            );
+            return {
+              id: user.uId,
+              userID: user.userId,
+              totalPoints: user.totalPoints,
+              tierName: tierResponse.data.tierName,
+            };
+          })
+        );
         setUsers(usersWithTier);
       } catch (error) {
         console.error("Error fetching users or tier names:", error);
       }
     };
- 
+
     fetchPartner();
     fetchUsers();
   }, []);
- 
+
   return (
     <Container
       sx={{
@@ -79,7 +91,7 @@ const ProfilePage = () => {
           <Avatar
             alt={partner.name}
             src="https://via.placeholder.com/150"
-            sx={{ width: 200, height: 200, margin: '0 auto' }}
+            sx={{ width: 200, height: 200, margin: "0 auto" }}
           />
         </Grid>
         <Grid item xs={12} md={8}>
@@ -92,7 +104,14 @@ const ProfilePage = () => {
           <Typography variant="h6" color="textSecondary">
             +{partner.countryCode} {partner.contact}
           </Typography>
-          <Button variant="contained" color="error" sx={{ my: 2 }} onClick={handleLogout}>Logout</Button>
+          <Button
+            variant="contained"
+            color="error"
+            sx={{ my: 2 }}
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
         </Grid>
       </Grid>
       <Divider sx={{ my: 4 }} />
@@ -100,14 +119,23 @@ const ProfilePage = () => {
         elevation={3}
         sx={{
           p: 0,
-          bgcolor: 'transparent',
+          bgcolor: "transparent",
           borderRadius: 2,
         }}
       >
+        <Button
+          variant="contained"
+          color="success"
+          sx={{ my: 2 }}
+          style={{ marginLeft: "60vw" }}
+          onClick={() => navigate("../add-user")}
+        >
+          Add User
+        </Button>
         <Typography variant="h6" sx={{ p: 1 }}>
           Users
         </Typography>
-        <div style={{ height: 'auto', width: '100%' }}>
+        <div style={{ height: "auto", width: "100%" }}>
           <DataGrid
             rows={users}
             columns={columns}
@@ -126,5 +154,5 @@ const ProfilePage = () => {
     </Container>
   );
 };
- 
+
 export default ProfilePage;

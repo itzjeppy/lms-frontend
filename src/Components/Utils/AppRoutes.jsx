@@ -22,6 +22,7 @@ import EditTier from "../Tiers/EditTier";
 
 import Contacts from "../Common/Contacts";
 import ProfilePage from "../Misc/PartnerProfile";
+import AddUser from "../Misc/AddUser";
 
 // Programs Pages
 import ProgramsPage from "../Programs/ProgramsPage";
@@ -73,6 +74,7 @@ const AppRoutes = () => {
         {/* Misc */}
         <Route path="contact" element={<Contacts />} />
         <Route path="profile" element={<ProfilePage />} />
+        <Route path="add-user" element={<AddUser />} />
         <Route path="progress" element={<ProgressPage />} />
       </Route>
     </Routes>

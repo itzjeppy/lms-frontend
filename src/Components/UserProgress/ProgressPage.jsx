@@ -103,9 +103,9 @@ const ProgressPage = () => {
               boxShadow: "0 1px 6px rgba(0, 0, 0, 0.1)",
             }}
           >
-            <Slider {...carouselSettings(coupons.length)}>
-              {coupons.map((coupon) => (
-                <Box key={coupon.couponTitle} sx={{ px: 1 }}>
+            <Slider {...carouselSettings(coupons?.length)}>
+              {coupons?.map((coupon) => (
+                <Box key={coupon?.couponTitle} sx={{ px: 1 }}>
                   <CouponsCard coupon={coupon} />
                 </Box>
               ))}
