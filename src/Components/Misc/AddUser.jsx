@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import React, { useState, useEffect } from "react";
+import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import {
   TextField,
@@ -9,15 +9,44 @@ import {
   Paper,
   Container,
   CircularProgress,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 import UserService from "../Services/UserService";
+import TierService from "../Services/TierService";
+import { useNavigate } from "react-router-dom";
 
 const AddUser = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [tiers, setTiers] = useState([]);
+  const partnerId = localStorage.getItem('partnerId');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchTiers = async () => {
+      try {
+        const response = await TierService.getTiersByPartnerId(partnerId);
+        setTiers(response.data); // Assuming response.data is an array of tier objects
+      } catch (error) {
+        console.error("Error fetching tiers:", error);
+      }
+    };
+
+    fetchTiers();
+  }, [partnerId]);
 
   const handleSubmit = (values) => {
     setIsSubmitting(true);
-    UserService.createUser(values)
+    const userData = {
+      ...values,
+      partnerId: partnerId  // Ensure this is not null or undefined
+    };
+  
+    console.log("Submitting User Data:", userData); // Check the data being submitted
+  
+    UserService.createUser(userData)
       .then((response) => {
         console.log("User created successfully:", response.data);
         // Navigate to user list page or display success message
@@ -27,8 +56,10 @@ const AddUser = () => {
       })
       .finally(() => {
         setIsSubmitting(false);
+        navigate(-1);
       });
   };
+  
 
   return (
     <Container
@@ -58,39 +89,22 @@ const AddUser = () => {
         <Formik
           initialValues={{
             userId: "",
-            partner: "",
             tiers: "",
             totalPoints: "",
             tierSetDate: "",
             expiry: "",
-            tierTransactionAmount: "",
-            totalTransactionAmount: "",
           }}
           validationSchema={Yup.object().shape({
             userId: Yup.number().required("User ID is required"),
-            partner: Yup.string().required("Partner is required"),
-            tierName: Yup.string().required("Tiers is required"),
+            tiers: Yup.string().required("Tiers is required"),
             totalPoints: Yup.number().required("Total Points is required"),
             tierSetDate: Yup.date().required("Tier Set Date is required"),
             expiry: Yup.date().required("Expiry is required"),
-            tierTransactionAmount: Yup.number().required(
-              "Tier Transaction Amount is required"
-            ),
-            totalTransactionAmount: Yup.number().required(
-              "Total Transaction Amount is required"
-            ),
           })}
           onSubmit={handleSubmit}
         >
-          {({
-            values,
-            errors,
-            touched,
-            handleChange,
-            handleBlur,
-            handleSubmit,
-          }) => (
-            <Form onSubmit={handleSubmit}>
+          {({ handleChange, handleBlur }) => (
+            <Form>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <Field
                   name="userId"
@@ -98,27 +112,24 @@ const AddUser = () => {
                   label="User ID"
                   fullWidth
                   variant="outlined"
-                  error={touched.userId && Boolean(errors.userId)}
-                  helperText={touched.userId && errors.userId}
                 />
-                <Field
-                  name="partner"
-                  as={TextField}
-                  label="Partner"
-                  fullWidth
-                  variant="outlined"
-                  error={touched.partner && Boolean(errors.partner)}
-                  helperText={touched.partner && errors.partner}
-                />
-                <Field
-                  name="tierName"
-                  as={TextField}
-                  label="Tier Name"
-                  fullWidth
-                  variant="outlined"
-                  error={touched.tierName && Boolean(errors.tierName)}
-                  helperText={touched.tierName && errors.tierName}
-                />
+                <FormControl fullWidth>
+                  <InputLabel id="tier-select-label">Tier Name</InputLabel>
+                  <Field
+                    name="tiers"
+                    as={Select}
+                    labelId="tier-select-label"
+                    label="Tier Name"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  >
+                    {tiers.map((tier) => (
+                      <MenuItem key={tier.tierId} value={tier.tierName}>
+                        {tier.tierName}
+                      </MenuItem>
+                    ))}
+                  </Field>
+                </FormControl>
                 <Field
                   name="totalPoints"
                   as={TextField}
@@ -126,8 +137,6 @@ const AddUser = () => {
                   type="number"
                   fullWidth
                   variant="outlined"
-                  error={touched.totalPoints && Boolean(errors.totalPoints)}
-                  helperText={touched.totalPoints && errors.totalPoints}
                 />
                 <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
                   <Field
@@ -137,13 +146,10 @@ const AddUser = () => {
                     type="date"
                     variant="outlined"
                     fullWidth
-                    sx={{ flex: 1 }} // Takes equal space
+                    sx={{ flex: 1 }}
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    placeholder=""
-                    error={touched.tierSetDate && Boolean(errors.tierSetDate)}
-                    helperText={touched.tierSetDate && errors.tierSetDate}
                   />
                   <Field
                     name="expiry"
@@ -152,39 +158,10 @@ const AddUser = () => {
                     type="date"
                     variant="outlined"
                     fullWidth
-                    sx={{ flex: 1 }} // Takes equal space
+                    sx={{ flex: 1 }}
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    placeholder=""
-                    error={touched.expiry && Boolean(errors.expiry)}
-                    helperText={touched.expiry && errors.expiry}
-                  />
-                </Box>
-                <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
-                  <Field
-                    name="tierTransactionAmount"
-                    as={TextField}
-                    label="Tier Transaction Amount"
-                    type="number"
-                    fullWidth
-                    variant="outlined"
-                    error={
-                      touched.tierTransactionAmount &&
-                      Boolean(errors.tierTransactionAmount)
-                    }
-                    helperText={
-                      touched.tierTransactionAmount &&
-                      errors.tierTransactionAmount
-                    }
-                  />
-                  <Field
-                    name="totalTransactionAmount"
-                    as={TextField}
-                    label="Total Transaction Amount"
-                    type="number"
-                    fullWidth
-                    variant="outlined"
                   />
                 </Box>
               </Box>
@@ -196,19 +173,7 @@ const AddUser = () => {
                   color="primary"
                   size="large"
                 >
-                  {isSubmitting && (
-                    <CircularProgress
-                      size={24}
-                      sx={{
-                        position: "absolute",
-                        left: "50%",
-                        top: "50%",
-                        marginLeft: "-12px",
-                        marginTop: "-12px",
-                      }}
-                    />
-                  )}
-                  Submit
+                  {isSubmitting ? <CircularProgress size={24} /> : "Submit"}
                 </Button>
               </Box>
             </Form>
